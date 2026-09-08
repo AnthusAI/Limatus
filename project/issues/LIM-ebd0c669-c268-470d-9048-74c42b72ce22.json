@@ -3,7 +3,7 @@
   "title": "Luna: document the portable style-profile contract",
   "description": "Implements LIM-2a1ca5 after its configuration tests are stable.\n\nScope:\n- Add a concise README section with a complete portable profile example and command examples.\n- Explain reference sample paths, optional rules and checks, density settings, validation behavior, and the detector-score prohibition.\n- Ensure every documented command runs against checked-in fixtures.\n\nDefinition of done:\n- A fresh user can create a profile and run diagnose using only this repository.\n- Documentation names no Papyrus dependency.\n- Examples are exercised by an automated test or a documented verification command.\n\nOut of scope: SDK and apply workflow documentation.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": "luna-docs",
   "creator": null,
@@ -17,10 +17,18 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "91e09268-a90d-4733-be58-01926261cb81",
+      "author": "home",
+      "text": "Implemented in commit 26532a8. README now documents the complete portable YAML profile contract, relative reference sample paths, optional checks/rules/density defaults, validation and detector-score prohibition, plus runnable fixture commands. Added tests/test_readme_examples.py to execute the documented limatus diagnose command against checked-in fixtures. Verification: python -m unittest discover -s tests -p 'test*.py' (5 passed); behave features/editorial-style-profile.feature (7 scenarios, 26 steps passed); git diff --check.",
+      "created_at": "2026-09-08T19:24:24.569142Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T19:10:49.451228Z",
-  "updated_at": "2026-09-08T19:11:06.772450Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T19:24:26.220549Z",
+  "closed_at": "2026-09-08T19:24:26.220523Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",

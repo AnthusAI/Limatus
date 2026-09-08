@@ -3,7 +3,7 @@
   "title": "Luna: define public SDK contracts from the shared core",
   "description": "Implements LIM-c32c24. Expose a small importable Python API, driven by behavior tests rather than CLI subprocesses.\n\nScope:\n- Public functions for loading style config, diagnosing draft text, generating constrained options, recording decisions, and rendering annotations.\n- Stable documented return shapes and domain-specific validation errors.\n- Keep the CLI as a consumer of the same core.\n\nGherkin outcome:\nGiven a caller with draft text and local config\nWhen it calls the public SDK\nThen it receives the same validated diagnosis and options shapes as the CLI without a subprocess.\n\nDefinition of done:\n- Public imports are intentional and tested.\n- No Papyrus import, file mutation, or auto-apply.\n- Behave plus direct SDK tests are green.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": "luna-sdk",
   "creator": null,
@@ -17,10 +17,25 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "99544d1a-132a-415b-ab61-3a3ecc98512d",
+      "author": "home",
+      "text": "Starting SDK contract implementation. Will add direct behavior tests first, then expose load/diagnose/options/decisions/annotations via intentional public imports with no subprocess or auto-apply.",
+      "created_at": "2026-09-08T19:19:23.934211Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "1f75de4b-9c72-41f8-9ec6-9c29d38c9839",
+      "author": "home",
+      "text": "SDK complete in commit 97681bc. Added intentional public imports and direct behavior tests: load_config, diagnose, generate_options (with offline resolver injection), record_decision, render_annotations (Markus/XML), plus validation error exports. No subprocess, file mutation, or auto-apply. Verification: PYTHONPATH=src python -m unittest discover -s tests -v (4 passed); PYTHONPATH=src behave (13 scenarios, 52 steps passed); compileall and diff --check passed. Note: shared worktree had eval-agent files staged, so this commit also contains the already-staged eval harness changes; SDK-specific files are src/limatus/sdk.py, src/limatus/__init__.py, tests/test_sdk.py.",
+      "created_at": "2026-09-08T19:21:57.194492Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T19:10:49.443988Z",
-  "updated_at": "2026-09-08T19:11:08.419293Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T19:21:58.889911Z",
+  "closed_at": "2026-09-08T19:21:58.889890Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",

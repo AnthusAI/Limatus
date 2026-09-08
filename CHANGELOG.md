@@ -1,6 +1,33 @@
 # CHANGELOG
 
 
+## v0.3.0 (2026-09-08)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`b4c438f`](https://github.com/AnthusAI/Limatus/commit/b4c438f71aedff39e3d8fed9ea27d8752af914cb))
+
+- **kanbus**: Commit board state (issues)
+  ([`c85d09d`](https://github.com/AnthusAI/Limatus/commit/c85d09ddf4a8fe001a2d5545c3c629f7264e4c2e))
+
+- **kanbus**: Record completed Luna tasks
+  ([`345a101`](https://github.com/AnthusAI/Limatus/commit/345a101fb9a587d2ee14a9ce3f09fd60947a726a))
+
+- **kanbus**: Record task planning events
+  ([`a173553`](https://github.com/AnthusAI/Limatus/commit/a173553738e2b141a5deb2d4fa766823bac7ecea))
+
+### Documentation
+
+- Document portable style profiles
+  ([`26532a8`](https://github.com/AnthusAI/Limatus/commit/26532a8b4ff7d8eb807c3fb7387372c2f5fadb34))
+
+### Features
+
+- Expose public Limatus Python SDK
+  ([`97681bc`](https://github.com/AnthusAI/Limatus/commit/97681bc64464c756447b6a33c731cc9d51d37cb6))
+
+
 ## v0.2.0 (2026-09-08)
 
 ### Features

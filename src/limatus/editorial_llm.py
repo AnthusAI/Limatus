@@ -7,6 +7,17 @@ import urllib.request
 from typing import Any
 
 
+class EditorialResponseTruncationError(RuntimeError):
+    """The model stopped before completing the requested structured response."""
+
+
+def _incomplete_response(payload: dict[str, Any]) -> bool:
+    details = payload.get("incomplete_details")
+    return payload.get("status") == "incomplete" or (
+        isinstance(details, dict) and bool(details.get("reason"))
+    )
+
+
 def extract_response_text(payload: dict[str, Any]) -> str:
     if isinstance(payload.get("output_text"), str):
         return payload["output_text"]
@@ -60,6 +71,15 @@ def call_structured_responses_api(
         raise RuntimeError(
             f"OpenAI editorial rewrite request failed: {error.code} {body[:400]}"
         ) from error
+
+    if _incomplete_response(parsed):
+        details = parsed.get("incomplete_details")
+        reason = details.get("reason") if isinstance(details, dict) else "unknown"
+        raise EditorialResponseTruncationError(
+            "OpenAI editorial rewrite response was incomplete "
+            f"(reason: {reason}). Increase max_output_tokens and retry; "
+            "no partial candidate was returned."
+        )
 
     text = extract_response_text(parsed)
     if not text:

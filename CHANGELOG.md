@@ -1,6 +1,43 @@
 # CHANGELOG
 
 
+## v0.4.0 (2026-09-08)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`42fdfb8`](https://github.com/AnthusAI/Limatus/commit/42fdfb8a0fe862889a52f2d4cc056736de278cbe))
+
+- **kanbus**: Record live suggestion dogfood
+  ([`dbfbb4e`](https://github.com/AnthusAI/Limatus/commit/dbfbb4e591d7bfec1e9a85ee1f6658b22cfd783c))
+
+### Features
+
+- Add no-emoji ban, per-surface contrast caps, and standfirst checks
+  ([`be2d079`](https://github.com/AnthusAI/Limatus/commit/be2d079db6209c555ebe6be6195de2377f40aef4))
+
+Extends the style-profile schema so a single profile can cover what a hand-rolled per-site editorial
+  checker was covering separately:
+
+- rules.noEmojis: bans emoji characters outright, checked the same way as banned
+  phrases/intensifiers. - rules.bySurface: lets one profile give specific surfaces (marketing,
+  legal, etc.) a looser or fully disabled contrast cap instead of forking the whole profile per
+  surface. Threaded through diagnose_draft, the CLI's --surface flag, and the SDK's diagnose(). - A
+  new standfirst schema block and `limatus standfirst` command/SDK function: checks the parts of a
+  good standfirst a script can actually decide -- length, whether it names somebody the reader
+  hasn't met yet (capitalized-word heuristic, cross-referenced against an allowlist),
+  insider-vocabulary terms and patterns, and how much it overlaps with the article's description.
+  Lets a copywriting agent iterate on a candidate sentence before it's written to a file, the way a
+  real editorial gate already worked at Chattic.us-web -- ported and generalized from that repo's
+  bespoke check_editorial_rules.py rather than reinvented, so a publication doesn't need a one-off
+  script to get the same coverage.
+
+Adds features/editorial-surface-rules.feature and features/editorial-standfirst.feature (9 new
+  scenarios) alongside a dedicated fixture profile.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+
 ## v0.3.2 (2026-09-08)
 
 ### Bug Fixes

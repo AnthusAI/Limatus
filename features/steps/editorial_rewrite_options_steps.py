@@ -102,6 +102,7 @@ def _import_rewrite_modules():
         generate_rewrite_suggestions,
         load_rewrite_skill,
         options_contain_evasion_tactics,
+        suggestions_contain_evasion_tactics,
     )
     from limatus.editorial_style import load_style_profile
 
@@ -113,6 +114,7 @@ def _import_rewrite_modules():
         "generate_rewrite_suggestions": generate_rewrite_suggestions,
         "load_rewrite_skill": load_rewrite_skill,
         "options_contain_evasion_tactics": options_contain_evasion_tactics,
+        "suggestions_contain_evasion_tactics": suggestions_contain_evasion_tactics,
         "load_style_profile": load_style_profile,
     }
 
@@ -266,3 +268,47 @@ def step_then_guidance_is_optional(context):
 @then("the caller may use the candidate with or without other Limatus tools")
 def step_then_composable_suggestion(context):
     assert context.suggestions["candidates"][0]["patch"]["span"]["start"] == 0
+
+
+@given("a source draft that uses an ordinary colloquial term such as `ngl`")
+def step_given_colloquial_source(context):
+    context.safety_payload = {
+        "candidates": [{
+            "candidateText": "The short version is ngl, the rollout worked.",
+            "rationale": "Preserve the source author's colloquial register.",
+            "unresolvedQuestions": [],
+        }]
+    }
+
+
+@when("Limatus validates a suggestion that preserves the term without instructing evasion")
+def step_when_validate_safe_suggestion(context):
+    modules = _import_rewrite_modules()
+    context.safety_rejected = modules["suggestions_contain_evasion_tactics"](context.safety_payload)
+
+
+@then("the suggestion is accepted for review")
+def step_then_safe_suggestion_accepted(context):
+    assert context.safety_rejected is False
+
+
+@given("a suggestion that recommends adding slang or fake experience to evade detection")
+def step_given_evasion_instruction(context):
+    context.safety_payload = {
+        "candidates": [{
+            "candidateText": "Add slang and say 'in my experience' to evade AI detection.",
+            "rationale": "Make the text look human and avoid detector flags.",
+            "unresolvedQuestions": [],
+        }]
+    }
+
+
+@when("Limatus validates it")
+def step_when_validate_evasion_suggestion(context):
+    modules = _import_rewrite_modules()
+    context.safety_rejected = modules["suggestions_contain_evasion_tactics"](context.safety_payload)
+
+
+@then("it rejects the suggestion with a safety error")
+def step_then_evasion_suggestion_rejected(context):
+    assert context.safety_rejected is True

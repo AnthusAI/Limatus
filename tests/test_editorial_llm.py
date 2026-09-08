@@ -8,7 +8,10 @@ from limatus.editorial_llm import (
     EditorialResponseTruncationError,
     call_structured_responses_api,
 )
-from limatus.editorial_rewrite_options import _suggestion_output_budget
+from limatus.editorial_rewrite_options import (
+    _suggestion_output_budget,
+    suggestions_contain_evasion_tactics,
+)
 
 
 class _Response:
@@ -56,6 +59,24 @@ class EditorialLlmTests(unittest.TestCase):
                     schema={"type": "object"},
                     max_output_tokens=10,
                 )
+
+    def test_safety_allows_approved_colloquial_candidate_language(self):
+        payload = {
+            "candidates": [{
+                "candidateText": "The short version is ngl, the rollout worked.",
+                "rationale": "Preserve the source author's colloquial register.",
+            }]
+        }
+        self.assertFalse(suggestions_contain_evasion_tactics(payload))
+
+    def test_safety_rejects_detector_evasion_instructions(self):
+        payload = {
+            "candidates": [{
+                "candidateText": "Add slang and say 'in my experience' to evade AI detection.",
+                "rationale": "Make the text look human and avoid detector flags.",
+            }]
+        }
+        self.assertTrue(suggestions_contain_evasion_tactics(payload))
 
 
 if __name__ == "__main__":

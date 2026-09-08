@@ -1,0 +1,23 @@
+{
+  "id": "LIM-20979346-929f-4f5e-b04e-586714dfbece",
+  "title": "Papyrus adapter: style profile \u2192 Limatus config + SDK calls",
+  "description": "Replace in-tree editorial core usage with SDK calls. Map Papyrus style profiles into standalone config. Keep human apply/publish gates.\n\nDependencies:\n  blocked-by: 46c0b8\n\nMigrated from PPY-2c62aa.",
+  "type": "story",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-3ff8d045-0b38-4bbe-94da-2413ab6b2f52",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-08T18:39:41.810552Z",
+  "updated_at": "2026-09-08T18:39:41.810657Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {},
+  "agent": null
+}

@@ -13,12 +13,22 @@
     "evals"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "d28655fd-53d3-4994-a40e-7a3367904781",
+      "author": "home",
+      "text": "Dogfood note — 2026-09-08\n\nRead-only diagnose passes against excerpts from current Anth.us articles using the checked-in Anth.us editorial profile:\n- Commodity receipts: who actually swapped (2026-09-05): 109 words, 0 findings.\n- Inspected by Pudicus (2026-08-31): 101 words, 0 findings.\n\nThis is the expected result for approved house voice; no false-positive fixture was added. The offline corpus also passes: 2 must-pass/must-fail cases.\n\nHolistic suggestion quality was not evaluated because this workspace has no configured OPENAI_API_KEY or OPENAI_BASE_URL. A future dogfood run needs full source drafts plus an authorized resolver; do not infer quality from the deterministic test resolver.",
+      "created_at": "2026-09-08T21:42:05.425368Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:39:30.848796Z",
-  "updated_at": "2026-09-08T18:39:30.848889Z",
+  "updated_at": "2026-09-08T21:42:05.425385Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {},
-  "agent": null
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
 }

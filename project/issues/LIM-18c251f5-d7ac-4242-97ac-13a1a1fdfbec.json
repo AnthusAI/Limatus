@@ -1,7 +1,7 @@
 {
   "id": "LIM-18c251f5-d7ac-4242-97ac-13a1a1fdfbec",
-  "title": "Luna: provide holistic rewrite suggestions",
-  "description": "Implements LIM-ee79f5. Begin with its revised Gherkin scenarios.\n\nScope:\n- Every rewrite-suggestion request returns one or more cohesive, document-level candidates; do not introduce a mode switch.\n- Pass the full draft, portable profile, diagnosis/annotations, and reference samples to the resolver.\n- Selected findings and decisions are optional focusing guidance only; they must not force a patch-only response.\n- Produce review-only candidates with rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- Reuse existing explicit apply and verifier primitives; do not alter the original draft.\n\nDefinition of done:\n- A candidate can address multiple findings coherently, even when guidance names only one.\n- Existing finding data remains accessible for callers that want it.\n- Every candidate is review-only until an explicit apply.\n- Tests cover standard and guidance-focused requests, source preservation, and forbidden detector-evasion tactics.\n\nOut of scope: mode flags, mandatory decision records, unattended rewrite/apply, publication, and telemetry.",
+  "title": "Luna: add composable rewrite suggestions",
+  "description": "Implements LIM-ee79f5. Begin with its revised Gherkin scenarios.\n\nScope:\n- Add an optional suggestion primitive that accepts the full draft, portable profile, diagnostics/annotations, and reference samples.\n- Optional findings or caller guidance may focus a request; neither may be required or impose a patch-only response.\n- Return review-only candidates with rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- Keep the source draft unchanged. Do not couple suggestion generation to apply, verification, provenance, or publish commands.\n\nDefinition of done:\n- Callers can use diagnose alone, suggestions alone, or compose suggestions with other existing tools.\n- A candidate can address multiple findings coherently.\n- Tests cover unguided and guidance-focused requests, source preservation, and forbidden detector-evasion tactics.\n\nOut of scope: workflow modes, mandatory decision records, enforced edit order, unattended rewrite/apply, publication, and telemetry.",
   "type": "task",
   "status": "open",
   "priority": 1,
@@ -14,7 +14,7 @@
   "dependencies": [],
   "comments": [],
   "created_at": "2026-09-08T19:53:20.398472Z",
-  "updated_at": "2026-09-08T19:59:24.761784Z",
+  "updated_at": "2026-09-08T20:00:26.609410Z",
   "closed_at": null,
   "agent": {
     "platform": "codex",

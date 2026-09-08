@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "79557789-25f8-4785-9e8c-3b18ecec68a6",
+  "issue_id": "LIM-87713049-2f5f-43be-9b0e-df11727b10e2",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:40:56.154Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "description": {
+        "from": "**Phase 4 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator, I want a verifier that scores the **applied** working draft, so I can see whether chosen options actually improved the copy before I approve publish.\n\n## Done when\n\n- Verifier highlights factual changes, deleted claims, duplicated ideas, residual boilerplate **after human apply**.\n- Weighted quality score (specificity, clarity, audience fit, voice match, minus redundancy / unsupported claims / factual-change risk).\n- `should_accept_revision` (or equivalent) is **advisory**: recommend accept only if net improvement ≥ threshold **and** unsupported claims do not increase. It does not auto-apply or auto-publish.\n- Detector score is not an input.\n\n## Depends on\n\nConstrained rewrite options; human apply of chosen options.\n\nMigrated from PPY-5ca22f.",
+        "to": "## Intent\n\nAs a publication operator, I want a verifier that assesses an explicitly applied working draft, so I can decide whether it improved before human approval.\n\n## Done when\n\n- It highlights factual changes, deleted claims, duplicated ideas, and residual boilerplate after an explicit human apply.\n- It computes a transparent weighted score for specificity, clarity, audience fit, and voice match, minus redundancy, unsupported claims, and factual-change risk.\n- Its recommendation is advisory: accept only when net improvement reaches the configured threshold and unsupported claims do not increase.\n- Detector scores are not an input, and verification never applies or publishes changes.\n\n## Gherkin\n\nFeature: Verify a human-steered revision\n  Scenario: Recommend an improved revision\n    Given an original draft and an explicitly applied working draft\n    When an operator runs verification with local style rules\n    Then Limatus reports quality dimensions and evidence-backed findings\n    And it recommends acceptance only when the threshold is met and unsupported claims have not increased\n    And neither draft is changed\n\n  Scenario: Reject a riskier revision\n    Given a working draft with a new unsupported claim or a factual-change risk\n    When an operator runs verification\n    Then Limatus advises against acceptance\n    And it does not publish or modify either draft\n\n## Out of scope\n\nAuto-applying a revision, auto-publishing, or any detector-score optimization.\n\nMigrated from PPY-5ca22f."
+      }
+    }
+  }
+}

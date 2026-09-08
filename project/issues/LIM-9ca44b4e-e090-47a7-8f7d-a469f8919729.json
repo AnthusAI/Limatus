@@ -3,7 +3,7 @@
   "title": "Avoid false positives when safety checks match approved voice",
   "description": "## Dogfood reproduction\n\nAfter the document-output truncation fix, a live suggestion for `https://anth.us/blog/commodity-receipts/` was rejected by `suggestions_contain_evasion_tactics`. The source article itself contains `ngl`; the current detector treats any occurrence of `ngl` anywhere in a complete candidate as detector-evasion, even if the model is preserving approved source voice.\n\n## Intent\n\nAs a caller requesting safe editorial suggestions, I want Limatus to block actual detector-evasion instructions without rejecting legitimate source or house-voice language, so safety policy does not erase the editorial register it is meant to protect.\n\n## Gherkin\n\nFeature: Contextual detector-evasion safety checks\n  Scenario: Preserve approved colloquial source language\n    Given a source draft that uses an ordinary colloquial term such as `ngl`\n    When Limatus returns a suggestion that preserves the term without instructing evasion\n    Then the suggestion is accepted for review\n\n  Scenario: Reject an evasion instruction\n    Given a suggestion that recommends adding slang or fake experience to evade detection\n    When Limatus validates it\n    Then it rejects the suggestion with a safety error\n\n## Scope\n\nMake the safety policy contextual: distinguish meta-instructions/reasons that prescribe evasion from candidate prose that legitimately contains a term. Test both paths offline.\n\n## Out of scope\n\nRemoving safety guardrails, allowing detector-score optimization, or changing the caller editorial workflow.",
   "type": "bug",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": "luna-safety",
   "creator": null,
@@ -12,10 +12,18 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "147e8d5d-b6e6-40c6-95b4-6adb7b81796a",
+      "author": "home",
+      "text": "Implemented contextual detector-evasion safety checks. Candidate prose may preserve approved colloquialisms such as ngl; instructions to add slang, fabricate experience, make text look human, or evade AI detectors remain rejected. Added Gherkin scenarios and offline unit tests. Verification: pytest 14 passed; behave 21 scenarios passed (7 features); compileall and git diff --check passed.",
+      "created_at": "2026-09-08T23:01:43.038570Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T22:59:05.327677Z",
-  "updated_at": "2026-09-08T22:59:05.327717Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T23:01:44.700998Z",
+  "closed_at": "2026-09-08T23:01:44.700975Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",
@@ -23,5 +31,8 @@
   },
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {}
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
 }

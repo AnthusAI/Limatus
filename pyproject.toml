@@ -17,6 +17,10 @@ dev = [
     "behave>=1.2.6",
 ]
 
+[project.urls]
+Homepage = "https://github.com/AnthusAI/Limatus"
+Repository = "https://github.com/AnthusAI/Limatus"
+
 [project.scripts]
 limatus = "limatus.cli:main"
 
@@ -26,3 +30,19 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+version_variables = ["src/limatus/__init__.py:__version__"]
+build_command = "python -m pip install build && python -m build"
+commit_parser = "conventional"
+major_on_zero = false
+
+[tool.semantic_release.branches.main]
+match = "main"
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = []
+
+[tool.semantic_release.remote]
+type = "github"

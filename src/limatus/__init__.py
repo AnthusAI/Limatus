@@ -1,3 +1,30 @@
 """Limatus: a diagnose-and-steer quality loop for AI-generated content."""
 
 __version__ = "0.2.0"
+
+from .sdk import (
+    AnnotationFormatError,
+    EditorialDiagnosisValidationError,
+    EditorialOptionsValidationError,
+    LoadedStyleProfile,
+    StyleProfileValidationError,
+    diagnose,
+    generate_options,
+    load_config,
+    record_decision,
+    render_annotations,
+)
+
+__all__ = [
+    "AnnotationFormatError",
+    "EditorialDiagnosisValidationError",
+    "EditorialOptionsValidationError",
+    "LoadedStyleProfile",
+    "StyleProfileValidationError",
+    "__version__",
+    "diagnose",
+    "generate_options",
+    "load_config",
+    "record_decision",
+    "render_annotations",
+]

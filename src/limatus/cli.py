@@ -13,10 +13,12 @@ import sys
 
 from . import __version__
 from .editorial_commands import editorial_diagnose, editorial_options
+from .editorial_eval import main as editorial_eval
 
 COMMANDS = {
     "diagnose": editorial_diagnose,
     "options": editorial_options,
+    "eval": editorial_eval,
 }
 
 
@@ -35,8 +37,8 @@ def main(argv: list[str] | None = None) -> int:
         print(f"limatus: unknown command '{command}'. Try one of: {', '.join(sorted(COMMANDS))}")
         return 1
 
-    handler(flags)
-    return 0
+    result = handler(flags)
+    return result if isinstance(result, int) else 0
 
 
 if __name__ == "__main__":

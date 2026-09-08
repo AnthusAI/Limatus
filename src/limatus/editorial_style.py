@@ -32,7 +32,22 @@ DEFAULT_DENSITY_THRESHOLDS = {
     "maxGzipRatio": 0.35,
 }
 
-RULES_FIELD_NAMES = frozenset({"bannedPhrases", "bannedIntensifiers", "bannedPatterns", "contrastCap"})
+RULES_FIELD_NAMES = frozenset(
+    {"bannedPhrases", "bannedIntensifiers", "bannedPatterns", "contrastCap", "noEmojis", "bySurface"}
+)
+
+STANDFIRST_FIELD_NAMES = frozenset(
+    {
+        "maxSentences",
+        "minWords",
+        "maxWords",
+        "maxSentenceWords",
+        "allowedProperNouns",
+        "insiderTerms",
+        "insiderPatterns",
+        "maxDescriptionOverlap",
+    }
+)
 
 
 class StyleProfileValidationError(ValueError):
@@ -45,6 +60,12 @@ class EditorialRules:
     banned_intensifiers: tuple[str, ...]
     banned_patterns: tuple[tuple[str, str], ...]
     contrast_cap: int | None
+    no_emojis: bool
+    # Surface name -> contrast cap override for that surface (None means "off
+    # for this surface"). A surface absent from this mapping falls back to
+    # contrast_cap. Lets one profile say "marketing copy gets a looser cap,
+    # legal pages get none" without forking the whole profile per surface.
+    by_surface: dict[str, int | None]
 
 
 @dataclass(frozen=True)
@@ -52,6 +73,18 @@ class DensityThresholds:
     min_words: int
     min_lexical_density: float
     max_gzip_ratio: float
+
+
+@dataclass(frozen=True)
+class StandfirstRules:
+    max_sentences: int
+    min_words: int
+    max_words: int
+    max_sentence_words: int
+    allowed_proper_nouns: tuple[str, ...]
+    insider_terms: tuple[str, ...]
+    insider_patterns: tuple[tuple[str, str], ...]
+    max_description_overlap: float
 
 
 @dataclass(frozen=True)
@@ -70,6 +103,7 @@ class StyleProfile:
     checks: dict[str, bool]
     rules: EditorialRules
     density: DensityThresholds
+    standfirst: StandfirstRules | None
 
 
 @dataclass(frozen=True)
@@ -172,6 +206,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     checks = _parse_checks(raw.get("checks"), profile_path)
     rules = _parse_rules(raw.get("rules"), profile_path)
     density = _parse_density(raw.get("density"), profile_path)
+    standfirst = _parse_standfirst(raw.get("standfirst"), profile_path)
 
     return StyleProfile(
         publication_key=publication_key,
@@ -188,6 +223,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         checks=checks,
         rules=rules,
         density=density,
+        standfirst=standfirst,
     )
 
 
@@ -212,6 +248,8 @@ def _empty_rules() -> EditorialRules:
         banned_intensifiers=(),
         banned_patterns=(),
         contrast_cap=None,
+        no_emojis=False,
+        by_surface={},
     )
 
 
@@ -232,13 +270,84 @@ def _parse_rules(value: Any, profile_path: Path) -> EditorialRules:
     )
     banned_patterns = _parse_banned_patterns(value.get("bannedPatterns"), profile_path)
     contrast_cap = _parse_contrast_cap(value.get("contrastCap"), profile_path)
+    no_emojis = _parse_no_emojis(value.get("noEmojis"), profile_path)
+    by_surface = _parse_by_surface(value.get("bySurface"), profile_path)
 
     return EditorialRules(
         banned_phrases=tuple(banned_phrases),
         banned_intensifiers=tuple(banned_intensifiers),
         banned_patterns=tuple(banned_patterns),
         contrast_cap=contrast_cap,
+        no_emojis=no_emojis,
+        by_surface=by_surface,
     )
+
+
+def _parse_no_emojis(value: Any, profile_path: Path) -> bool:
+    if value is None:
+        return False
+    if not isinstance(value, bool):
+        raise StyleProfileValidationError(f"rules.noEmojis must be a boolean in {profile_path}")
+    return value
+
+
+def _parse_by_surface(value: Any, profile_path: Path) -> dict[str, int | None]:
+    if value is None:
+        return {}
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"rules.bySurface must be a mapping in {profile_path}")
+    resolved: dict[str, int | None] = {}
+    for surface, override in value.items():
+        if not isinstance(override, dict) or set(override) - {"contrastCap"}:
+            raise StyleProfileValidationError(
+                f"rules.bySurface.{surface} must be a mapping with only 'contrastCap' in {profile_path}"
+            )
+        resolved[surface] = _parse_contrast_cap(override.get("contrastCap"), profile_path)
+    return resolved
+
+
+def _parse_standfirst(value: Any, profile_path: Path) -> StandfirstRules | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"standfirst must be a mapping in {profile_path}")
+
+    unknown = set(value) - STANDFIRST_FIELD_NAMES
+    if unknown:
+        joined = ", ".join(sorted(unknown))
+        raise StyleProfileValidationError(f"Unknown standfirst keys in {profile_path}: {joined}")
+
+    max_sentences = _require_positive_int(value.get("maxSentences"), "standfirst.maxSentences", profile_path)
+    min_words = _require_positive_int(value.get("minWords"), "standfirst.minWords", profile_path)
+    max_words = _require_positive_int(value.get("maxWords"), "standfirst.maxWords", profile_path)
+    max_sentence_words = _require_positive_int(
+        value.get("maxSentenceWords"), "standfirst.maxSentenceWords", profile_path
+    )
+    allowed_proper_nouns = _optional_string_list(
+        value.get("allowedProperNouns"), "standfirst.allowedProperNouns", profile_path
+    )
+    insider_terms = _optional_string_list(value.get("insiderTerms"), "standfirst.insiderTerms", profile_path)
+    insider_patterns = _parse_banned_patterns(value.get("insiderPatterns"), profile_path)
+    max_description_overlap = value.get("maxDescriptionOverlap")
+    if not isinstance(max_description_overlap, (int, float)) or isinstance(max_description_overlap, bool):
+        raise StyleProfileValidationError(f"standfirst.maxDescriptionOverlap must be a number in {profile_path}")
+
+    return StandfirstRules(
+        max_sentences=max_sentences,
+        min_words=min_words,
+        max_words=max_words,
+        max_sentence_words=max_sentence_words,
+        allowed_proper_nouns=tuple(allowed_proper_nouns),
+        insider_terms=tuple(insider_terms),
+        insider_patterns=tuple(insider_patterns),
+        max_description_overlap=float(max_description_overlap),
+    )
+
+
+def _require_positive_int(value: Any, field_name: str, profile_path: Path) -> int:
+    if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+        raise StyleProfileValidationError(f"{field_name} must be a positive integer in {profile_path}")
+    return value
 
 
 def _optional_string_list(value: Any, field_name: str, profile_path: Path) -> list[str]:

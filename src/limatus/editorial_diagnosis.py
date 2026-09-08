@@ -15,6 +15,14 @@ from .editorial_text import line_at_offset, paragraphs, sentence_spans, sentence
 
 PROFILE_RULE_PREFIX = "Profile rule:"
 
+_EMOJI_PATTERN = re.compile(
+    "["
+    "\U0001F300-\U0001FAFF"
+    "\U00002600-\U000027BF"
+    "\U0001F1E6-\U0001F1FF"
+    "]"
+)
+
 _EMPTY_LEADIN_PATTERNS = (
     r"^In today's\b",
     r"^It is important to note\b",
@@ -101,7 +109,9 @@ def _mask_yaml_frontmatter(text: str) -> str:
     return blanked + text[match.end() :]
 
 
-def diagnose_draft(draft_text: str, *, style_profile: LoadedStyleProfile) -> dict[str, Any]:
+def diagnose_draft(
+    draft_text: str, *, style_profile: LoadedStyleProfile, surface: str | None = None
+) -> dict[str, Any]:
     text = draft_text.replace("\r\n", "\n")
     text = _mask_yaml_frontmatter(text)
     profile = style_profile.profile
@@ -142,6 +152,7 @@ def diagnose_draft(draft_text: str, *, style_profile: LoadedStyleProfile) -> dic
         style_profile,
         generic_passages=generic_passages,
         voice_observations=voice_observations,
+        surface=surface,
     )
     generic_passages.extend(rules_findings["generic_passages"])
     voice_observations.extend(rules_findings["voice_observations"])
@@ -569,14 +580,20 @@ def _check_profile_rules(
     *,
     generic_passages: list[dict[str, Any]],
     voice_observations: list[dict[str, Any]],
+    surface: str | None = None,
 ) -> dict[str, list[dict[str, Any]]]:
     rules = style_profile.profile.rules
+    effective_contrast_cap = rules.contrast_cap
+    if surface is not None and surface in rules.by_surface:
+        effective_contrast_cap = rules.by_surface[surface]
+
     if not any(
         (
             rules.banned_phrases,
             rules.banned_intensifiers,
             rules.banned_patterns,
-            rules.contrast_cap is not None,
+            effective_contrast_cap is not None,
+            rules.no_emojis,
         )
     ):
         return {"generic_passages": [], "voice_observations": []}
@@ -640,9 +657,9 @@ def _check_profile_rules(
             profile_generic.append(_profile_rule_finding(text, start, end, message))
             occupied.append((start, end))
 
-    if rules.contrast_cap is not None:
+    if effective_contrast_cap is not None:
         contrast_count = len(re.findall(r",\s*not\b", text, flags=re.IGNORECASE))
-        if contrast_count > rules.contrast_cap:
+        if contrast_count > effective_contrast_cap:
             profile_voice.append(
                 _profile_rule_finding(
                     text,
@@ -650,11 +667,19 @@ def _check_profile_rules(
                     len(text),
                     (
                         f"{contrast_count} 'X, not Y' contrast constructions "
-                        f"(cap is {rules.contrast_cap})"
+                        f"(cap is {effective_contrast_cap})"
                     ),
                     kind="voice_mismatch",
                 )
             )
+
+    if rules.no_emojis:
+        for match in _EMOJI_PATTERN.finditer(text):
+            start, end = match.start(), match.end()
+            if _spans_overlap(start, end, occupied):
+                continue
+            profile_generic.append(_profile_rule_finding(text, start, end, "contains an emoji character"))
+            occupied.append((start, end))
 
     return {"generic_passages": profile_generic, "voice_observations": profile_voice}
 

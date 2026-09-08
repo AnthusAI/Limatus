@@ -22,6 +22,7 @@ from .editorial_options_schema import (
     validate_decisions,
 )
 from .editorial_rewrite_options import generate_rewrite_options, generate_rewrite_suggestions
+from .editorial_standfirst import check_standfirst as _check_standfirst
 from .editorial_style import LoadedStyleProfile, StyleProfileValidationError, load_style_profile
 from .editorial_verifier import verify_revision
 
@@ -36,14 +37,22 @@ def load_config(path: str | Path) -> LoadedStyleProfile:
     return load_style_profile(path)
 
 
-def diagnose(draft_text: str, *, config: LoadedStyleProfile) -> dict[str, Any]:
-    """Diagnose draft text with a loaded config, without changing the draft."""
+def diagnose(
+    draft_text: str, *, config: LoadedStyleProfile, surface: str | None = None
+) -> dict[str, Any]:
+    """Diagnose draft text with a loaded config, without changing the draft.
+
+    ``surface`` selects a named override from the profile's
+    ``rules.bySurface`` (for example ``"marketing"`` or ``"legal"``), letting
+    one profile apply a looser or disabled contrast cap to specific surfaces
+    without maintaining a separate profile per surface.
+    """
 
     if not isinstance(config, LoadedStyleProfile):
         raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
     if not isinstance(draft_text, str):
         raise EditorialDiagnosisValidationError("draft_text must be a string.")
-    return diagnose_draft(draft_text, style_profile=config)
+    return diagnose_draft(draft_text, style_profile=config, surface=surface)
 
 
 def verify(
@@ -144,6 +153,30 @@ def record_decision(
         raise EditorialOptionsValidationError(str(exc)) from exc
 
 
+def check_standfirst(
+    standfirst_text: str,
+    *,
+    config: LoadedStyleProfile,
+    body_text: str = "",
+    description: str = "",
+) -> dict[str, Any]:
+    """Check a candidate standfirst against the profile's ``standfirst`` rules.
+
+    Lets a copywriting agent iterate on a standfirst sentence without writing
+    it to the file first, the way an editorial gate iterates on prose before
+    it ships. Raises ``ValueError`` if the profile has no ``standfirst`` rules.
+    """
+
+    if not isinstance(config, LoadedStyleProfile):
+        raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
+    return _check_standfirst(
+        standfirst_text,
+        style_profile=config,
+        body_text=body_text,
+        description=description,
+    )
+
+
 def render_annotations(
     draft_text: str,
     diagnosis: dict[str, Any],
@@ -168,6 +201,7 @@ __all__ = [
     "StyleProfileValidationError",
     "diagnose",
     "verify",
+    "check_standfirst",
     "generate_options",
     "suggest_rewrite",
     "generate_suggestions",

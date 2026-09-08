@@ -13,6 +13,7 @@ from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
 from .editorial_apply import apply_patch, render_diff
 from .editorial_verifier import verify_revision
+from .editorial_standfirst import check_standfirst
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 
@@ -22,6 +23,11 @@ def editorial_diagnose(flags: list[str]) -> None:
     input_group.add_argument("--draft", help="Path to the draft file (read-only).")
     input_group.add_argument("--text", help="Draft text to diagnose without reading a file.")
     parser.add_argument("--profile", required=True, help="Path to the style profile YAML.")
+    parser.add_argument(
+        "--surface",
+        default="",
+        help="Named surface (e.g. marketing, legal) whose rules.bySurface override applies, if any.",
+    )
     parser.add_argument("--output", default="", help="Optional path to write diagnostic JSON.")
     parser.add_argument(
         "--markup-out",
@@ -45,7 +51,7 @@ def editorial_diagnose(flags: list[str]) -> None:
         draft_text = args.text
 
     style_profile = load_style_profile(profile_path)
-    diagnosis = diagnose_draft(draft_text, style_profile=style_profile)
+    diagnosis = diagnose_draft(draft_text, style_profile=style_profile, surface=args.surface or None)
     rendered = json.dumps(diagnosis, indent=2) + "\n"
 
     if args.markup_out:
@@ -168,6 +174,36 @@ def editorial_verify(flags: list[str]) -> None:
         working_path.read_text(encoding="utf-8"),
         style_profile=load_style_profile(Path(args.profile).resolve()),
         threshold=args.threshold,
+    )
+    rendered = json.dumps(result, indent=2) + "\n"
+    if args.output:
+        Path(args.output).resolve().write_text(rendered, encoding="utf-8")
+    else:
+        sys.stdout.write(rendered)
+
+
+def editorial_standfirst(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus standfirst")
+    parser.add_argument("--text", required=True, help="Candidate standfirst text to check.")
+    parser.add_argument("--profile", required=True, help="Path to a style profile with 'standfirst' rules.")
+    parser.add_argument("--body", default="", help="Optional path to the article body, for the proper-noun check.")
+    parser.add_argument("--description", default="", help="Optional description field, for the overlap check.")
+    parser.add_argument("--output", default="", help="Optional path to write findings JSON.")
+    args = parser.parse_args(flags)
+
+    style_profile = load_style_profile(Path(args.profile).resolve())
+    body_text = ""
+    if args.body:
+        body_path = Path(args.body).resolve()
+        if not body_path.is_file():
+            raise ValueError(f"Body file not found: {body_path}")
+        body_text = body_path.read_text(encoding="utf-8")
+
+    result = check_standfirst(
+        args.text,
+        style_profile=style_profile,
+        body_text=body_text,
+        description=args.description,
     )
     rendered = json.dumps(result, indent=2) + "\n"
     if args.output:

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "a836aebd-90e9-4616-9ac0-04753b211517",
+  "issue_id": "LIM-5750ca7d-cadc-4fff-9ea2-88e34eb80ed6",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:38:33.200Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Data-driven editorial rules and two-sided corpus",
+    "description": "**Follow-on to PPY-8f5273** under `PPY-54055d`.\n\nSteal the **gate design** from Chattic.us-web `publication-writing` (`rules.yml` + rejected/published corpus). Do **not** move the Chatticus website onto Papyrus hosting. That CMS question is later and separate.\n\n## Intent\n\nAs a publication operator, I want diagnose to load banned phrases, intensifiers, and patterns from the style profile and to regress against both house-voice excerpts that must pass and brochure slop that must fail, so new rules are added from misses instead of hardcoded Python.\n\n## Why (Chatticus lessons we are taking)\n\n- Voice prose (`style-profile.yml` tone/audience/samples) stays the source of truth for writers. The **deterministic subset** is data, updated when policy changes.\n- Grow rules from a **two-sided corpus**: a rejected draft that is not caught is a missing rule; a rule that flags a published house-voice excerpt is too aggressive.\n- Only automate what a script can decide (word lists, regex patterns, contrast counts). Do not regex \"does this say what changed for the reader.\"\n- Diagnose stays **advisory** JSON. Chatticus's fail-closed exit is a site CI gate, not this loop.\n\n## Done when\n\n- Style profile may include an optional `rules:` mapping:\n  - `bannedPhrases` (list of strings)\n  - `bannedIntensifiers` (list of strings, word-boundary match)\n  - `bannedPatterns` (list of `{pattern, message}`)\n  - `contrastCap` (integer, or `null` / omitted to disable)\n- Omitting `rules:` does not break existing profiles; heuristic checks from PPY-156189 / PPY-8f5273 still run subject to `checks:`.\n- Diagnose emits findings from those lists. Same excerpt is not flagged twice when it also matches `lexicon.avoid`.\n- Anth.us seed `rules:` includes Chatticus-quality brochure hedges and intensifiers.\n- `publications/anthus/editorial-corpus/` holds must-fail and must-pass excerpts.\n- Behave covers must-fail and must-pass.\n- `papyrus editorial diagnose` accepts `--text` **or** `--draft` (not both).\n- Diagnose remains advisory: JSON on stdout; it does not rewrite; it is not a fail-closed publish gate.\n\n## Out of scope\n\n- Hosting or migrating chattic.us onto Papyrus.\n- Replacing Chattic.us-web checks.\n- Rewrite options, steer CLI, verifier, Newsroom UI.\n\nMigrated from PPY-dc9251.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

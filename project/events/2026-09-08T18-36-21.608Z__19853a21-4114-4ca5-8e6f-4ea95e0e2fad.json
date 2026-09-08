@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "19853a21-4114-4ca5-8e6f-4ea95e0e2fad",
+  "issue_id": "LIM-66c04721-dd26-4e59-87af-bd8d292ca2f0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:36:21.608Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Limatus evaluations harness",
+    "description": "# Limatus evaluations harness\n\n## Intent\n\nRegression evaluations so Limatus diagnose findings and rewrite-option quality can improve safely.\n\n## Done when\n\n- Fixture corpus of drafts + expected finding classes / acceptable option properties.\n- Offline-friendly eval runner (deterministic where possible; LLM judges gated and versioned).\n- Metrics: precision/recall on finding types, unsupported-claim rate in options, human-accept proxies.\n- CI smoke subset without Papyrus.\n- Documented how Ryan rejects become new fixtures.\n\nMigrated from PPY-89827a.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-a482f8ff-40f6-40d7-8a9d-d8973550bdb7",
+    "labels": [
+      "editorial",
+      "evals"
+    ]
+  }
+}

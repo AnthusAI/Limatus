@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "c5d81fdf-cc96-4c00-ba9a-40be49a2f6b9",
+  "issue_id": "LIM-658c600d-67ae-492c-aeef-783a8ffaf367",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:39:35.792Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Limatus eval metrics for findings and rewrite-option quality",
+    "description": "Define and implement metrics: finding-type precision/recall proxies, unsupported-claim flags on options, acceptance/deletion rates where logged. Version LLM-as-judge if used.\n\nDependencies:\n  blocked-by: e7cc93\n\nMigrated from PPY-8d76c9.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": "LIM-66c04721-dd26-4e59-87af-bd8d292ca2f0",
+    "labels": [
+      "editorial",
+      "evals"
+    ]
+  }
+}

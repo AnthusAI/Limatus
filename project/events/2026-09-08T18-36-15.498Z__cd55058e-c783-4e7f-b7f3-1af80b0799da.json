@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "cd55058e-c783-4e7f-b7f3-1af80b0799da",
+  "issue_id": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:36:15.498Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Limatus: portable CLI + Python SDK",
+    "description": "# Limatus: portable CLI + Python SDK\n\n## Intent\n\nExtract the editorial diagnose / rewrite-options / markup tooling from `papyrus_content` into the **Limatus** package. Simple, well organized, **no Papyrus imports**.\n\n## Deliverables\n\n### CLI\n- Diagnose a draft against local style rules → structured findings JSON.\n- Propose constrained rewrite options for steered findings (redline-style suggestions).\n- Diff-oriented apply helpers for interactive use.\n\n### Python SDK / module\n- Same capabilities as importable APIs (not just subprocess wrapping).\n- Callers (Papyrus, Tactus procedures, other pubs) pass draft + style config + decisions programmatically.\n\n### Local style-rules config\n- Standalone config for voice/style rules and reference samples.\n- No Papyrus corpora paths or Amplify/GraphQL.\n\n## Done when\n\n- Limatus installs and runs with zero Papyrus checkout.\n- CLI and SDK share one core library.\n- Papyrus in-tree modules become a thin adapter or are deleted after cutover.\n- README documents config schema + CLI + SDK examples.\n\nMigrated from PPY-639fb3.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-a482f8ff-40f6-40d7-8a9d-d8973550bdb7",
+    "labels": [
+      "editorial",
+      "decoupling"
+    ]
+  }
+}

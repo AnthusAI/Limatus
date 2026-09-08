@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "cc75930e-eb9a-4129-85fa-430ea9a93bac",
+  "issue_id": "LIM-bbfbc2ec-0c8e-4799-b11b-9a062c94bb78",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:37:34.789Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Constrained rewrite options for steered findings",
+    "description": "**Phase 3 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator, I want an LLM to propose rewrite **options** for findings I selected, so I can choose, edit, or reject them instead of accepting one whole-document rewrite.\n\n## Done when\n\n- Option generation takes source draft + style profile + diagnosis JSON + **human finding decisions**.\n- Only findings marked `rewrite` produce options. Skipped/kept findings are not rewritten.\n- Each selected finding gets two or three constrained options (patches), not one committed `revised_text` for the whole document.\n- Prompt is senior copy editor, not \"humanizer\": preserve meaning; no invented anecdotes/stats/citations/first-person; revise only the selected finding; prefer deletion; style guide over generic Internet prose.\n- Each option includes reason + whether fact verification is required, plus unresolved_questions.\n- Banned detector-evasion tactics (fake typos, slang spam, manufactured imperfections) are explicitly forbidden in the skill/prompt.\n- The working draft does not change until a human choose/apply (Phase 5).\n\n## Depends on\n\nStyle profile store; diagnostic JSON pass.\n\nMigrated from PPY-73906c.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

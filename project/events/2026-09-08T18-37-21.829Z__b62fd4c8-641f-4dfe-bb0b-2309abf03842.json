@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "b62fd4c8-641f-4dfe-bb0b-2309abf03842",
+  "issue_id": "LIM-e83c37f1-7ad2-4e3a-94dd-c8e4557f1cb8",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:37:21.829Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Diagnostic JSON pass for editorial slop",
+    "description": "**Phase 2 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator **or an agent**, I want to **run** a diagnose-only slop pass on a draft and get structured findings, so I can see what needs changing and steer which problems to skip, delete, or send to an LLM for rewrite options.\n\n## Done when\n\n- There is a **runnable tool** (same `papyrus` CLI verb for humans and agents) that takes a draft + style profile and prints or writes versioned diagnostic JSON. The draft is not modified.\n- Output is **structured JSON only** (no prose rewrite): document_intent, audience, generic_passages, unsupported_claims, repetition_groups, voice_observations, required_facts.\n- Detects at least: vague claims, empty lead-ins, uniform cadence, list-shaped prose, unsupported certainty, redundancy, voice mismatch vs style profile.\n- Schema is automation-friendly and versioned.\n- Each finding has a stable id so a human or agent can record skip / rewrite / delete / keep without a whole-document rewrite.\n- This is editorial slop (quality findings), not an AI-detector score.\n\n## Out of scope\n\nRewriting the draft in this pass. Generating rewrite options (that is Phase 3, and only for findings marked rewrite). Newsroom UI can come later; the CLI is the shared agent/human surface.\n\nMigrated from PPY-156189.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

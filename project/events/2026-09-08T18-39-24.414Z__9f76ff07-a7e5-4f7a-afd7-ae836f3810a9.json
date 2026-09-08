@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "9f76ff07-a7e5-4f7a-afd7-ae836f3810a9",
+  "issue_id": "LIM-c32c24a2-3845-40a8-856c-1779bf8e1b26",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:39:24.414Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Ship Limatus Python SDK API for programmatic callers",
+    "description": "Public Python module API: load style config, diagnose(draft), propose_options(findings, decisions), apply helpers. Suitable for Papyrus and Tactus procedures. Same core as CLI — not a CLI wrapper.\n\nDependencies:\n  blocked-by: 07eda8\n\nMigrated from PPY-46c0b8.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

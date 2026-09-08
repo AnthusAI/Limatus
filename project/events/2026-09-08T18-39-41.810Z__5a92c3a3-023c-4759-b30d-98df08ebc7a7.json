@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "5a92c3a3-023c-4759-b30d-98df08ebc7a7",
+  "issue_id": "LIM-20979346-929f-4f5e-b04e-586714dfbece",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:39:41.810Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Papyrus adapter: style profile → Limatus config + SDK calls",
+    "description": "Replace in-tree editorial core usage with SDK calls. Map Papyrus style profiles into standalone config. Keep human apply/publish gates.\n\nDependencies:\n  blocked-by: 46c0b8\n\nMigrated from PPY-2c62aa.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": "LIM-3ff8d045-0b38-4bbe-94da-2413ab6b2f52",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

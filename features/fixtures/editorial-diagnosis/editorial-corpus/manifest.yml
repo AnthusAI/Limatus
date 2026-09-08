@@ -1,0 +1,10 @@
+mustFail:
+  - id: brochure-hedges
+    path: ../must-fail/brochure-hedges.md
+    expectTerms:
+      - revolutionary
+      - coming soon
+mustPass:
+  - id: latency-and-repo
+    path: ../engineering-vocab-draft.md
+    sourceSample: synthetic-fixture

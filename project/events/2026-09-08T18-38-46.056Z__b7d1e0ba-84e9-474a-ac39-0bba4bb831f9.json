@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "b7d1e0ba-84e9-474a-ac39-0bba4bb831f9",
+  "issue_id": "LIM-87713049-2f5f-43be-9b0e-df11727b10e2",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:38:46.056Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Verifier + acceptance gate",
+    "description": "**Phase 4 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator, I want a verifier that scores the **applied** working draft, so I can see whether chosen options actually improved the copy before I approve publish.\n\n## Done when\n\n- Verifier highlights factual changes, deleted claims, duplicated ideas, residual boilerplate **after human apply**.\n- Weighted quality score (specificity, clarity, audience fit, voice match, minus redundancy / unsupported claims / factual-change risk).\n- `should_accept_revision` (or equivalent) is **advisory**: recommend accept only if net improvement ≥ threshold **and** unsupported claims do not increase. It does not auto-apply or auto-publish.\n- Detector score is not an input.\n\n## Depends on\n\nConstrained rewrite options; human apply of chosen options.\n\nMigrated from PPY-5ca22f.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "labels": [
+      "editorial"
+    ]
+  }
+}

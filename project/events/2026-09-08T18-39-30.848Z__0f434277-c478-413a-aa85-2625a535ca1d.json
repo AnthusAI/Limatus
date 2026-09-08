@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "0f434277-c478-413a-aa85-2625a535ca1d",
+  "issue_id": "LIM-81ecb145-f63b-4435-95e6-71d2485d1af0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:39:30.848Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Limatus eval fixture corpus + runner smoke",
+    "description": "Seed fixtures (drafts + expected finding classes / option constraints) and a smoke eval runner that can run without Papyrus. Document how Ryan rejects become new fixtures.\n\nDependencies:\n  blocked-by: 0b74e8\n\nMigrated from PPY-e7cc93.",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": "LIM-66c04721-dd26-4e59-87af-bd8d292ca2f0",
+    "labels": [
+      "editorial",
+      "evals"
+    ]
+  }
+}

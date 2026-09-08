@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "event_id": "8339a892-ff7c-4c2a-af6a-c0880e1cf4ac",
+  "issue_id": "LIM-a482f8ff-40f6-40d7-8a9d-d8973550bdb7",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:35:37.756Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Limatus",
+    "description": "Standalone editorial quality tool: diagnose slop-like weakness, propose constrained rewrite options (markup / redline-style suggestions), human-steered apply with diffs. Quality-first — **not** detector-score evasion.\n\n## Intent\n\nSpin the automated editorial loop out of Papyrus into **Limatus**, a clean isolated package (CLI + Python SDK) with its own local style-rules config. Planning and early milestones live on the Papyrus board until the Limatus repo/package is cut.\n\n## Guardrail\n\nQuality outcomes, not detector-score gaming. North-star: human acceptance after factual review.\n\n## What already exists\n\nEpic `PPY-54055d` — interactive editorial rewrite loop (diagnose → options → steer/apply/provenance), currently in-tree under `papyrus_content`. Style profile + diagnostic JSON closed; rewrite options / verifier / steer-apply remain open.\n\n## Milestones\n\n1. **In-Papyrus MVP loop** (`PPY-54055d`) — finish interactive loop while still in-tree.\n2. **Decouple into Limatus** (`PPY-639fb3`) — portable CLI + Python SDK; local style-rules config; no Papyrus imports.\n3. **Evaluations** (`PPY-89827a`) — harness for diagnose + rewrite-option quality.\n4. **Papyrus consumes Limatus via SDK** (`PPY-b536c2`) — newsroom / Tactus procedures call Limatus; in-tree core removed or shimmed.\n\n## Non-goals\n\n- Detector-gaming \"humanizer\" products.\n- Auto-publishing externally attributable copy without a human gate.\n\nMigrated from PPY-809091.",
+    "issue_type": "initiative",
+    "status": "open",
+    "priority": 1,
+    "assignee": null,
+    "parent": null,
+    "labels": [
+      "limatus",
+      "decoupling",
+      "editorial"
+    ]
+  }
+}

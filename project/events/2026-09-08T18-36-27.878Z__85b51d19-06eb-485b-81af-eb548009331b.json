@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "85b51d19-06eb-485b-81af-eb548009331b",
+  "issue_id": "LIM-3ff8d045-0b38-4bbe-94da-2413ab6b2f52",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T18:36:27.878Z",
+  "actor_id": "home",
+  "payload": {
+    "title": "Papyrus integration via Limatus SDK",
+    "description": "# Papyrus integration via Limatus SDK\n\n## Intent\n\nPapyrus (and Tactus procedures) invoke **Limatus** through the SDK, injecting publication style profiles and drafts from Papyrus config — not owning the editorial core.\n\n## Done when\n\n- Newsroom / publication workflows call the Limatus SDK, not in-tree `papyrus_content.editorial_*` cores.\n- Papyrus style profiles map into Limatus config.\n- Automated procedures can diagnose + propose options; human gates for apply/publish remain.\n- In-tree editorial core is removed or reduced to a deprecated shim.\n\nDependencies:\n  blocked-by: 639fb3\n\nMigrated from PPY-b536c2.",
+    "issue_type": "epic",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": "LIM-a482f8ff-40f6-40d7-8a9d-d8973550bdb7",
+    "labels": [
+      "editorial",
+      "papyrus"
+    ]
+  }
+}

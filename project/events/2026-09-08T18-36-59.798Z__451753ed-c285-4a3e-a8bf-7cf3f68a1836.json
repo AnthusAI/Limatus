@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "451753ed-c285-4a3e-a8bf-7cf3f68a1836",
+  "issue_id": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T18:36:59.798Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "assignee": {
+        "from": null,
+        "to": "home"
+      }
+    }
+  }
+}

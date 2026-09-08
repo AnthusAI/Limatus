@@ -1,0 +1,27 @@
+{
+  "id": "LIM-18c251f5-d7ac-4242-97ac-13a1a1fdfbec",
+  "title": "Luna: add holistic rewrite suggestion mode",
+  "description": "Implements LIM-ee79f5. Begin with its Gherkin scenarios.\n\nScope:\n- Add a document-level suggestion mode alongside existing targeted rewrite options.\n- Pass the full draft, portable profile, diagnosis/annotations, and reference samples to the suggestion resolver.\n- Produce one or more non-destructive candidates with rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- Accept finding decisions as optional guidance only.\n- Reuse existing explicit apply and verifier primitives; do not alter the original draft.\n\nDefinition of done:\n- A holistic candidate can address multiple findings coherently.\n- Targeted options retain their current behavior.\n- Every candidate is review-only until an explicit apply.\n- Tests cover holistic and targeted paths, source preservation, and forbidden detector-evasion tactics.\n\nOut of scope: mandatory decision records, unattended rewrite/apply, publication, and telemetry.",
+  "type": "task",
+  "status": "open",
+  "priority": 1,
+  "assignee": "luna-holistic",
+  "creator": null,
+  "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-08T19:53:20.398472Z",
+  "updated_at": "2026-09-08T19:53:20.398505Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "codex",
+    "model": "gpt-5.6-luna",
+    "name": "luna-holistic"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

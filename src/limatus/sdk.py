@@ -11,7 +11,7 @@ from pathlib import Path
 from typing import Any, Callable
 
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
-from .editorial_diagnosis import diagnose_draft, record_finding_decision
+from .editorial_diagnosis import check_rules_only, diagnose_draft, record_finding_decision
 from .editorial_diagnosis_schema import (
     EditorialDiagnosisValidationError,
     validate_diagnosis,
@@ -53,6 +53,23 @@ def diagnose(
     if not isinstance(draft_text, str):
         raise EditorialDiagnosisValidationError("draft_text must be a string.")
     return diagnose_draft(draft_text, style_profile=config, surface=surface)
+
+
+def check_rules(
+    text: str, *, config: LoadedStyleProfile, surface: str | None = None
+) -> list[dict[str, Any]]:
+    """Check only the explicit ``rules`` (banned phrases/intensifiers/
+    patterns, no-emoji, contrast cap) against arbitrary text, skipping the
+    prose-heuristic checks. Use this for text that isn't real prose -- a
+    component source file, a page-content.ts copy string -- where cadence or
+    redundancy checks meant for articles would just misfire on code shape.
+    """
+
+    if not isinstance(config, LoadedStyleProfile):
+        raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
+    if not isinstance(text, str):
+        raise EditorialDiagnosisValidationError("text must be a string.")
+    return check_rules_only(text, style_profile=config, surface=surface)
 
 
 def verify(
@@ -201,6 +218,7 @@ __all__ = [
     "StyleProfileValidationError",
     "diagnose",
     "verify",
+    "check_rules",
     "check_standfirst",
     "generate_options",
     "suggest_rewrite",

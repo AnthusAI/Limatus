@@ -24,3 +24,8 @@ Feature: Surface-aware rules and a no-emoji ban
     Given a draft with two "X, not Y" contrast constructions
     When I diagnose it with the surface-rules profile for the "legal" surface
     Then diagnosis reports no contrast cap finding
+
+  Scenario: Rules-only checking skips the prose-heuristic checks
+    Given raw source text that is not real prose and contains an emoji
+    When I check only the rules against the surface-rules profile
+    Then the rules-only findings report the emoji and nothing else

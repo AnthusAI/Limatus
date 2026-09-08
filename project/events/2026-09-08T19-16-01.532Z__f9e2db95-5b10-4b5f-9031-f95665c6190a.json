@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "f9e2db95-5b10-4b5f-9031-f95665c6190a",
+  "issue_id": "LIM-c5e9b1b1-5745-4217-a1af-ed940bf5100a",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:16:01.532Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "assignee": {
+        "from": "luna-config",
+        "to": "home"
+      }
+    }
+  }
+}

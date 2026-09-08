@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import sys
 
+from . import __version__
 from .editorial_commands import editorial_diagnose, editorial_options
 
 COMMANDS = {
@@ -23,6 +24,9 @@ def main(argv: list[str] | None = None) -> int:
     args = list(sys.argv[1:] if argv is None else argv)
     if not args or args[0] in {"-h", "--help"}:
         print(__doc__)
+        return 0
+    if args[0] in {"-V", "--version"}:
+        print(f"limatus {__version__}")
         return 0
 
     command, flags = args[0], args[1:]

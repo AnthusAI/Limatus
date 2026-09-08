@@ -48,18 +48,25 @@ def _contraction_voice_warning(excerpt: str, replacement: str) -> str | None:
     )
 
 
-EVASION_TERMS = (
-    "lol",
-    "tbh",
-    "ngl",
-    "gonna",
-    "wanna",
-    "kinda",
-    "sorta",
-    "as an ai",
-    "in my experience",
-    "i remember",
-    "i once",
+# These checks intentionally look for instructions or rationales, rather than
+# banning words from candidate prose.  An approved article may quite properly
+# contain a colloquialism (for example, ``ngl``); the safety boundary is the
+# recommendation to add such language, fabricate experience, or optimize for
+# an AI detector.
+_EVASION_INSTRUCTION_PATTERNS = tuple(
+    re.compile(pattern, re.IGNORECASE | re.DOTALL)
+    for pattern in (
+        r"\b(?:add|use|include|insert|inject|sprinkle|introduce)\b.{0,80}\b"
+        r"(?:slang|colloquialisms?|informal language|fake typos?|mistakes?|imperfections?)\b",
+        r"\b(?:add|use|invent|fabricate|claim|say|pretend|make up|manufacture)\b.{0,100}\b"
+        r"(?:fake\s+)?(?:experience|anecdote|story|personal detail|memory)\b",
+        r"\b(?:to|in order to|so (?:it|the text|this))\b.{0,30}\b"
+        r"(?:evade|avoid|bypass|beat|game|fool|lower)\b.{0,80}\b"
+        r"(?:ai\s*)?detect(?:or|ion|ability)\b",
+        r"\b(?:optimize|target|get below|beat|game|evade|bypass)\b.{0,50}\b"
+        r"(?:ai\s*)?detector(?: score|s)?\b",
+        r"\bmake\b.{0,50}\b(?:look|sound)\b.{0,30}\b(?:human|less ai)\b",
+    )
 )
 
 _LLM_OPTION_SCHEMA: dict[str, Any] = {
@@ -537,8 +544,7 @@ def options_contain_evasion_tactics(options_payload: dict[str, Any]) -> bool:
         for option in finding_entry.get("options", []):
             replacement = str(option.get("patch", {}).get("replacement", "")).lower()
             reason = str(option.get("reason", "")).lower()
-            combined = f"{replacement} {reason}"
-            if any(term in combined for term in EVASION_TERMS):
+            if _contains_evasion_instruction(replacement, reason):
                 return True
     return False
 
@@ -552,6 +558,18 @@ def suggestions_contain_evasion_tactics(payload: dict[str, Any]) -> bool:
                 *[str(item) for item in candidate.get("unresolvedQuestions", [])],
             ]
         ).lower()
-        if any(term in combined for term in EVASION_TERMS):
+        if _contains_evasion_instruction(combined):
             return True
     return False
+
+
+def _contains_evasion_instruction(*parts: str) -> bool:
+    """Return whether text prescribes detector evasion tactics.
+
+    Safety applies to model instructions and rationales, not to incidental
+    terms in a candidate draft.  Keeping this distinction here prevents an
+    approved colloquial register from being rejected merely because it uses a
+    word that is sometimes associated with evasion.
+    """
+    combined = " ".join(str(part) for part in parts)
+    return any(pattern.search(combined) for pattern in _EVASION_INSTRUCTION_PATTERNS)

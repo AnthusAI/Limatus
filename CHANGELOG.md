@@ -1,6 +1,55 @@
 # CHANGELOG
 
 
+## v0.3.1 (2026-09-08)
+
+### Bug Fixes
+
+- **kanbus**: Record holistic suggestion truncation
+  ([`1f29906`](https://github.com/AnthusAI/Limatus/commit/1f299061d2c5841779e70af783ae541e5c0bab6b))
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`dceb53d`](https://github.com/AnthusAI/Limatus/commit/dceb53df6b561e4456d1023b3feb16d78e7252dd))
+
+- **kanbus**: Commit board state (issues)
+  ([`8b3475f`](https://github.com/AnthusAI/Limatus/commit/8b3475fa9616d75ec99cd3380ea9f1d27849fb51))
+
+- **kanbus**: Commit board state (issues)
+  ([`7a09a83`](https://github.com/AnthusAI/Limatus/commit/7a09a83e20e6f37f3a9c8de438c0b22ef1636369))
+
+- **kanbus**: Commit board state (issues)
+  ([`a9088c6`](https://github.com/AnthusAI/Limatus/commit/a9088c63eb4d2f71ad38941a51a0a7b1a07db361))
+
+- **kanbus**: Commit board state (issues)
+  ([`138fb15`](https://github.com/AnthusAI/Limatus/commit/138fb155e904c9eb326cc475ffced3585aef2458))
+
+- **kanbus**: Commit board state (issues)
+  ([`b2d3624`](https://github.com/AnthusAI/Limatus/commit/b2d3624fae13b9e87691c2cd9092fcd3d6ddfbc3))
+
+- **kanbus**: Commit board state (issues)
+  ([`96b7b9b`](https://github.com/AnthusAI/Limatus/commit/96b7b9b50dd03828e0cb2afb8b4a3e83374b393a))
+
+- **kanbus**: Complete composable suggestions
+  ([`c1f2837`](https://github.com/AnthusAI/Limatus/commit/c1f28378932f8bf1db2efe3e11cedc2212da6813))
+
+- **kanbus**: Complete revision verifier
+  ([`e9044a3`](https://github.com/AnthusAI/Limatus/commit/e9044a36f3c035fc99eabc8fbd52cd36aac78a80))
+
+- **kanbus**: Make editorial suggestions composable
+  ([`19bbe6f`](https://github.com/AnthusAI/Limatus/commit/19bbe6f35f0f2943ed88a255338357162a38a5f5))
+
+- **kanbus**: Make holistic suggestions standard
+  ([`e70227c`](https://github.com/AnthusAI/Limatus/commit/e70227cae119711347688d8441a5d1b94ce375fb))
+
+- **kanbus**: Record initial live-content dogfood
+  ([`42405cb`](https://github.com/AnthusAI/Limatus/commit/42405cbaf25b05581ec4f2b85646ed17fe692889))
+
+- **kanbus**: Reframe holistic suggestions
+  ([`d343acc`](https://github.com/AnthusAI/Limatus/commit/d343acc3aa3e0630421da8873b0614c7bc64f9a5))
+
+
 ## v0.3.0 (2026-09-08)
 
 ### Chores

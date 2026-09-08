@@ -3,19 +3,34 @@
   "title": "Luna: contract-test portable style configuration",
   "description": "Implements LIM-2a1ca5. Write acceptance scenarios first, then make the loader satisfy them.\n\nScope:\n- Accept portable YAML and JSON profiles with relative reference samples.\n- Validate required fields, check names, rules, density thresholds, and forbidden detector-score keys with actionable errors.\n- Keep the existing profile shape backward compatible.\n\nDefinition of done:\n- Behave covers valid YAML, valid JSON, malformed config, and a forbidden detector-score key.\n- No Papyrus imports or paths.\n- Existing editorial scenarios remain green.\n\nOut of scope: new finding types or CLI apply behavior.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
-  "assignee": "luna-config",
+  "assignee": "home",
   "creator": null,
   "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
   "labels": [
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "4d74d53a-a456-4bf7-a32e-7ef2455fd5c0",
+      "author": "home",
+      "text": "Started implementation: inspecting existing profile loader and adding Behave acceptance coverage first for JSON, malformed profiles, field validation, relative samples, and forbidden detector-score keys.",
+      "created_at": "2026-09-08T19:16:03.184755Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "a2001f0c-282f-4a32-9b73-577d301ffec2",
+      "author": "home",
+      "text": "Acceptance-first coverage is now green: added portable JSON with relative samples, malformed configuration, invalid check/rule/density controls, and fixtures. Loader now parses JSON explicitly with actionable StyleProfileValidationError, rejects unknown density keys and bool thresholds while preserving YAML/backward compatibility. Full Behave: 3 features, 11 scenarios, 45 steps passing.",
+      "created_at": "2026-09-08T19:18:10.359558Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T19:10:49.443920Z",
-  "updated_at": "2026-09-08T19:10:49.443946Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T19:18:21.013473Z",
+  "closed_at": "2026-09-08T19:18:21.013443Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",

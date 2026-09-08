@@ -3,7 +3,7 @@
   "title": "Luna: build an offline editorial-evaluation smoke harness",
   "description": "Implements LIM-81ecb1. Create the first deterministic evaluation slice for Limatus.\n\nScope:\n- Define fixture manifest format for draft, portable profile, expected finding kinds, and option safety constraints.\n- Implement a local runner with concise pass or fail output and nonzero status on expectation failures.\n- Seed must-pass house voice and must-fail brochure fixtures from the existing corpus.\n\nGherkin outcome:\nGiven the checked-in eval corpus\nWhen I run the offline eval command\nThen it reports expected finding coverage and fails on a regression without network or an LLM.\n\nOut of scope: LLM judges, acceptance telemetry, and CI publishing.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": "luna-evals",
   "creator": null,
@@ -17,10 +17,25 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "bd9d4b42-a66f-4226-8c9d-1c3bdc1aacc6",
+      "author": "home",
+      "text": "Started acceptance-first implementation. Building deterministic offline runner over checked-in corpus; no network/LLM dependencies.",
+      "created_at": "2026-09-08T19:19:09.173254Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "d7aab9bf-febe-4fcc-ae68-18e85244b7f6",
+      "author": "home",
+      "text": "Implemented in shared commit 97681bc: manifest profile/expected-kind/max-findings/option-safety fields, deterministic limatus eval runner, concise PASS/FAIL summary with nonzero regressions, checked-in corpus fixtures, and Behave acceptance coverage. Verified: offline eval 2 passed/0 failed; Behave 4 features/13 scenarios/52 steps passed; unittest SDK 4 passed. No network or LLM calls.",
+      "created_at": "2026-09-08T19:22:03.022366Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T19:10:49.457706Z",
-  "updated_at": "2026-09-08T19:11:10.099631Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T19:22:04.670293Z",
+  "closed_at": "2026-09-08T19:22:04.670271Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",

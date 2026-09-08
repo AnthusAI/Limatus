@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "d2067968-69ac-4cbc-83c5-2c5fe44f303f",
+  "issue_id": "LIM-0129cf2f-810e-4a5a-b129-c6c858fa9f8c",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:11:33.672Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "description": {
+        "from": "Human-facing CLI for diagnose → marked findings → rewrite options / redline-style suggestions → show diff. Config via local style-rules file. No Papyrus required.\n\nDependencies:\n  blocked-by: 07eda8\n\nMigrated from PPY-0f7fc1.",
+        "to": "Human-facing CLI for diagnose to marked findings to rewrite options or redline-style suggestions to an explicit diff. Config comes from a local style-rules file. No Papyrus required.\n\nDependencies:\n- blocked-by: LIM-dca47857-e14f-4c66-aa4a-37200a524880\n\nFeature: Human-steered CLI editing\n  Scenario: Apply one chosen finding option\n    Given a diagnosis and a human-selected option for one finding\n    When the operator applies it to an explicit working-copy path\n    Then only that anchored patch changes the working copy\n    And Limatus presents a diff while preserving the original draft\n\nMigrated from PPY-0f7fc1."
+      }
+    }
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "5fee0fde-6486-4e27-83a4-93719567c421",
+  "issue_id": "LIM-c1a0140e-519b-4536-b156-4ba8afa92dc0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:10:49.457Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-evals",
+      "platform": "codex"
+    },
+    "assignee": "luna-evals",
+    "description": "Implements LIM-81ecb1. Create the first deterministic evaluation slice for Limatus.\n\nScope:\n- Define fixture manifest format for draft, portable profile, expected finding kinds, and option safety constraints.\n- Implement a local runner with concise pass or fail output and nonzero status on expectation failures.\n- Seed must-pass house voice and must-fail brochure fixtures from the existing corpus.\n\nGherkin outcome:\nGiven the checked-in eval corpus\nWhen I run the offline eval command\nThen it reports expected finding coverage and fails on a regression without network or an LLM.\n\nOut of scope: LLM judges, acceptance telemetry, and CI publishing.",
+    "issue_type": "task",
+    "labels": [
+      "evaluations"
+    ],
+    "parent": "LIM-66c04721-dd26-4e59-87af-bd8d292ca2f0",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: build an offline editorial-evaluation smoke harness"
+  }
+}

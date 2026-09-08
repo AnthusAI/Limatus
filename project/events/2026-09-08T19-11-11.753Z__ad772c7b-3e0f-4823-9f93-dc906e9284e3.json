@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "event_id": "ad772c7b-3e0f-4823-9f93-dc906e9284e3",
+  "issue_id": "LIM-89d9cafa-cf49-41cc-b5c4-f32d269d5b63",
+  "event_type": "dependency_added",
+  "occurred_at": "2026-09-08T19:11:11.753Z",
+  "actor_id": "home",
+  "payload": {
+    "dependency_type": "blocked-by",
+    "target_id": "LIM-04ce0831-1d92-4d1a-9e09-71687a318b50"
+  }
+}

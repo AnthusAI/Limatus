@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "3d00a6a3-3d0d-4c34-b1e8-9863b204b535",
+  "issue_id": "LIM-89d9cafa-cf49-41cc-b5c4-f32d269d5b63",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:10:49.472Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-cli",
+      "platform": "codex"
+    },
+    "assignee": "luna-cli",
+    "description": "Implements the missing apply portion of LIM-0129cf. Start with Gherkin; do not implement a whole-document rewrite.\n\nScope:\n- Add a command contract for rendering marked findings, recording selected option or deletion, applying one anchored patch to an explicit working-copy path, and showing original-versus-working diff.\n- Require an explicit user choice per finding.\n- Preserve original draft and record a machine-readable change log.\n\nDefinition of done:\n- Executable scenario proves only the selected patch changes the working copy.\n- Conflicting or stale anchors fail safely.\n- Diagnose and options remain read-only.\n\nOut of scope: publish and unattended multi-finding apply.",
+    "issue_type": "task",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: specify the human-steered apply and diff workflow"
+  }
+}

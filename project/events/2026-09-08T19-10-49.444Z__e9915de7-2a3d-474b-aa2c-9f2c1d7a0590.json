@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "e9915de7-2a3d-474b-aa2c-9f2c1d7a0590",
+  "issue_id": "LIM-04ce0831-1d92-4d1a-9e09-71687a318b50",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:10:49.444Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-sdk",
+      "platform": "codex"
+    },
+    "assignee": "luna-sdk",
+    "description": "Implements LIM-c32c24. Expose a small importable Python API, driven by behavior tests rather than CLI subprocesses.\n\nScope:\n- Public functions for loading style config, diagnosing draft text, generating constrained options, recording decisions, and rendering annotations.\n- Stable documented return shapes and domain-specific validation errors.\n- Keep the CLI as a consumer of the same core.\n\nGherkin outcome:\nGiven a caller with draft text and local config\nWhen it calls the public SDK\nThen it receives the same validated diagnosis and options shapes as the CLI without a subprocess.\n\nDefinition of done:\n- Public imports are intentional and tested.\n- No Papyrus import, file mutation, or auto-apply.\n- Behave plus direct SDK tests are green.",
+    "issue_type": "task",
+    "labels": [
+      "sdk"
+    ],
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: define public SDK contracts from the shared core"
+  }
+}

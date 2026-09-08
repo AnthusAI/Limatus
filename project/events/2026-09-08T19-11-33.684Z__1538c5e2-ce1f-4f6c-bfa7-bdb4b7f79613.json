@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "1538c5e2-ce1f-4f6c-bfa7-bdb4b7f79613",
+  "issue_id": "LIM-2a1ca5c3-eb03-4a28-8420-f1a88b4600f5",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:11:33.684Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "description": {
+        "from": "Define a simple, portable YAML/JSON config for voice/style rules + reference samples. Map from existing Papyrus editorial style profile without requiring Papyrus paths. Document schema and validation.\n\nDependencies:\n  blocked-by: 0b74e8\n\nMigrated from PPY-1b700a.",
+        "to": "Define a simple, portable YAML/JSON config for voice/style rules and reference samples. Map existing editorial profiles without requiring Papyrus paths. Document schema and validation.\n\nDependencies:\n- blocked-by: LIM-37145b77-54c3-478a-ba60-cf6756823663\n\nFeature: Load portable local style rules\n  Scenario: Validate a local profile\n    Given a portable YAML or JSON style profile with local reference samples\n    When Limatus loads the profile\n    Then it returns validated style rules without any Papyrus dependency\n    And a detector-score field is rejected with an actionable validation error\n\nMigrated from PPY-1b700a."
+      }
+    }
+  }
+}

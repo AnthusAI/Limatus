@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "3381b533-6e95-4212-a24a-4001eba27d3a",
+  "issue_id": "LIM-c5e9b1b1-5745-4217-a1af-ed940bf5100a",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:10:49.443Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-config",
+      "platform": "codex"
+    },
+    "assignee": "luna-config",
+    "description": "Implements LIM-2a1ca5. Write acceptance scenarios first, then make the loader satisfy them.\n\nScope:\n- Accept portable YAML and JSON profiles with relative reference samples.\n- Validate required fields, check names, rules, density thresholds, and forbidden detector-score keys with actionable errors.\n- Keep the existing profile shape backward compatible.\n\nDefinition of done:\n- Behave covers valid YAML, valid JSON, malformed config, and a forbidden detector-score key.\n- No Papyrus imports or paths.\n- Existing editorial scenarios remain green.\n\nOut of scope: new finding types or CLI apply behavior.",
+    "issue_type": "task",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: contract-test portable style configuration"
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "1e793962-f8b1-42b1-b133-eb9a6e4336ce",
+  "issue_id": "LIM-c32c24a2-3845-40a8-856c-1779bf8e1b26",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:11:33.685Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "description": {
+        "from": "Public Python module API: load style config, diagnose(draft), propose_options(findings, decisions), apply helpers. Suitable for Papyrus and Tactus procedures. Same core as CLI — not a CLI wrapper.\n\nDependencies:\n  blocked-by: 07eda8\n\nMigrated from PPY-46c0b8.",
+        "to": "Public Python module API: load style config, diagnose draft text, propose options for human decisions, and render/apply helpers. Suitable for Papyrus and Tactus procedures. It uses the same core as the CLI, never a CLI wrapper.\n\nDependencies:\n- blocked-by: LIM-dca47857-e14f-4c66-aa4a-37200a524880\n\nFeature: Programmatic Limatus access\n  Scenario: Diagnose without a subprocess\n    Given a caller with draft text and local style configuration\n    When it calls the public Limatus SDK\n    Then it receives the same validated diagnosis shape as the CLI\n    And no draft file is modified\n\nMigrated from PPY-46c0b8."
+      }
+    }
+  }
+}

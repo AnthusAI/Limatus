@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "2d85e820-9116-4ac0-a177-cca763cef18f",
+  "issue_id": "LIM-ebd0c669-c268-470d-9048-74c42b72ce22",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:10:49.451Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-docs",
+      "platform": "codex"
+    },
+    "assignee": "luna-docs",
+    "description": "Implements LIM-2a1ca5 after its configuration tests are stable.\n\nScope:\n- Add a concise README section with a complete portable profile example and command examples.\n- Explain reference sample paths, optional rules and checks, density settings, validation behavior, and the detector-score prohibition.\n- Ensure every documented command runs against checked-in fixtures.\n\nDefinition of done:\n- A fresh user can create a profile and run diagnose using only this repository.\n- Documentation names no Papyrus dependency.\n- Examples are exercised by an automated test or a documented verification command.\n\nOut of scope: SDK and apply workflow documentation.",
+    "issue_type": "task",
+    "labels": [
+      "documentation"
+    ],
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: document the portable style-profile contract"
+  }
+}

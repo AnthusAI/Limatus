@@ -59,7 +59,7 @@ Run `limatus --help` for the full command reference.
 
 ## Testing
 
-Limatus uses [Behave](https://behave.readthedocs.io/) (Gherkin/BDD), not pytest:
+Limatus's test suite is written in Gherkin and run with [Behave](https://behave.readthedocs.io/):
 
 ```bash
 behave

@@ -22,6 +22,9 @@ from .editorial_options_schema import (
 from .editorial_style import LoadedStyleProfile
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
+DEFAULT_SUGGESTION_OUTPUT_TOKENS = 8000
+MAX_SUGGESTION_OUTPUT_TOKENS = 32000
+
 _CONTRACTION_RE = re.compile(r"\b\w+['’](?:t|s|re|ve|ll|d|m)\b", re.IGNORECASE)
 
 
@@ -169,6 +172,7 @@ def generate_rewrite_suggestions(
     guidance: list[dict[str, Any]] | None = None,
     decisions: list[dict[str, Any]] | None = None,
     model: str = DEFAULT_EDITORIAL_REWRITE_MODEL,
+    max_output_tokens: int | None = None,
     llm_resolver: OptionsResolver | None = None,
 ) -> dict[str, Any]:
     """Return cohesive document candidates without changing ``draft_text``.
@@ -183,7 +187,7 @@ def generate_rewrite_suggestions(
     validated_guidance = validate_decisions(decisions) if decisions is not None else (guidance or [])
     skill = load_rewrite_skill(skill_path)
     resolver = llm_resolver or _generate_suggestions_with_llm
-    raw_candidates = resolver(
+    resolver_kwargs = dict(
         draft_text=draft_text,
         style_profile=style_profile,
         diagnosis=validated_diagnosis,
@@ -193,6 +197,11 @@ def generate_rewrite_suggestions(
         skill=skill,
         model=model,
     )
+    if llm_resolver is None:
+        resolver_kwargs["max_output_tokens"] = _suggestion_output_budget(
+            draft_text, max_output_tokens
+        )
+    raw_candidates = resolver(**resolver_kwargs)
     candidates: list[dict[str, Any]] = []
     for entry in raw_candidates:
         if not isinstance(entry, dict):
@@ -223,6 +232,20 @@ def generate_rewrite_suggestions(
 generate_suggestions = generate_rewrite_suggestions
 
 
+def _suggestion_output_budget(draft_text: str, requested: int | None = None) -> int:
+    """Choose a bounded budget large enough for a complete document candidate."""
+    if requested is not None:
+        if not isinstance(requested, int) or isinstance(requested, bool) or requested < 1:
+            raise ValueError("max_output_tokens must be a positive integer.")
+        if requested > MAX_SUGGESTION_OUTPUT_TOKENS:
+            raise ValueError(
+                f"max_output_tokens cannot exceed {MAX_SUGGESTION_OUTPUT_TOKENS}."
+            )
+        return requested
+    estimated_draft_tokens = max(1, (len(draft_text) + 3) // 4)
+    return min(MAX_SUGGESTION_OUTPUT_TOKENS, max(DEFAULT_SUGGESTION_OUTPUT_TOKENS, estimated_draft_tokens * 2))
+
+
 def _document_diff(original: str, candidate: str) -> str:
     return "".join(difflib.unified_diff(
         original.splitlines(keepends=True), candidate.splitlines(keepends=True),
@@ -236,6 +259,7 @@ def _generate_suggestions_with_llm(**kwargs: Any) -> list[dict[str, Any]]:
     diagnosis = kwargs["diagnosis"]
     skill = kwargs["skill"]
     model = kwargs["model"]
+    max_output_tokens = kwargs.get("max_output_tokens", DEFAULT_SUGGESTION_OUTPUT_TOKENS)
     guidance = kwargs.get("guidance") or []
     profile = style_profile.profile
     references = "\n\n".join(
@@ -287,6 +311,7 @@ def _generate_suggestions_with_llm(**kwargs: Any) -> list[dict[str, Any]]:
         user_prompt=prompt,
         schema_name="editorial_rewrite_suggestions",
         schema=schema,
+        max_output_tokens=max_output_tokens,
     )
     return list(result.get("candidates") or [])
 

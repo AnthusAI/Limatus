@@ -103,6 +103,7 @@ def suggest_rewrite(
     guidance: list[dict[str, Any]] | None = None,
     decisions: list[dict[str, Any]] | None = None,
     model: str = DEFAULT_EDITORIAL_REWRITE_MODEL,
+    max_output_tokens: int | None = None,
     resolver: Callable[..., list[dict[str, Any]]] | None = None,
 ) -> dict[str, Any]:
     """Return optional, cohesive document-level rewrite candidates, read-only."""
@@ -117,6 +118,7 @@ def suggest_rewrite(
         guidance=guidance,
         decisions=decisions,
         model=model,
+        max_output_tokens=max_output_tokens,
         llm_resolver=resolver,
     )
 

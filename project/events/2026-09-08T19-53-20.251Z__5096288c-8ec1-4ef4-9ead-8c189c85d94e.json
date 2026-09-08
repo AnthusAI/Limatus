@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "5096288c-8ec1-4ef4-9ead-8c189c85d94e",
+  "issue_id": "LIM-ee79f540-351c-45a1-bdae-c7b423cb57e5",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-08T19:53:20.251Z",
+  "actor_id": "home",
+  "payload": {
+    "changes": {
+      "description": {
+        "from": "**Phase 5 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator, I want to record finding-level steering, choose among rewrite options, apply patches myself, and see a diff — so the loop stays interactive and externally attributable copy is never auto-published.\n\n## Done when\n\n- Operator can record per-finding decisions: skip, rewrite, delete, keep, add.\n- Operator sees options for rewrite findings and records choose / edit / reject / regenerate-with-guidance.\n- Operator sees a **diff** (original vs working draft) after apply, not an auto-published rewrite.\n- Working draft changes only when a human apply is recorded.\n- Provenance retained: original draft, findings, finding decisions, options, chosen option ids, model/version, retrieved sources, change log, human apply/approve/reject.\n- External publish requires human approval.\n- Quality metrics logged over time: accepted revisions, deletions, unsupported-claim rate, reader edits, post-publication corrections.\n\n## Depends on\n\nVerifier + acceptance gate.\n\nMigrated from PPY-9edba1.",
+        "to": "## Intent\n\nAs a publication operator or AI-assisted editor, I want Limatus to provide reviewable rewrite suggestions for either selected findings or the entire marked-up draft, so a capable model can improve the whole document coherently without being forced through a finding-by-finding ritual.\n\n## Done when\n\n- The suggestion surface supports both targeted options and a holistic, document-level candidate mode.\n- A holistic candidate receives the complete draft, style profile, findings or annotations, and reference samples; individual finding decisions are optional guidance, not a prerequisite.\n- Results are suggestions only: candidate text, rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- The source draft is never changed. Applying a candidate remains an explicit user action.\n- The verifier can compare an original with a selected candidate or working copy.\n- Optional provenance may retain inputs, model/version, selected candidate, and approvals for teams that need it; it is not required to obtain suggestions.\n- External publish always requires human approval.\n\n## Gherkin\n\nFeature: Holistic rewrite suggestions\n  Scenario: Suggest a cohesive document revision\n    Given a draft, portable style profile, and diagnostic annotations\n    When an editor requests a holistic rewrite suggestion\n    Then Limatus returns one or more non-destructive candidate revisions with a diff\n    And each candidate identifies factual-verification risks and unresolved questions\n    And the original draft remains unchanged\n\n  Scenario: Use targeted suggestions when they are appropriate\n    Given selected findings from a diagnosis\n    When an editor requests targeted rewrite options\n    Then Limatus returns options limited to those findings\n    And a finding-level decision record is optional\n\n## Out of scope\n\nUnattended rewriting, auto-apply, auto-publish, and detector-score optimization.\n\nReframed from PPY-9edba1."
+      },
+      "title": {
+        "from": "Steer, choose, apply, and provenance",
+        "to": "Holistic rewrite suggestions and diff review"
+      }
+    }
+  }
+}

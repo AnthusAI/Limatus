@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import re
+import difflib
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Callable
@@ -13,8 +14,10 @@ from .editorial_llm import call_structured_responses_api
 from .editorial_options_schema import (
     SCHEMA_VERSION,
     stable_option_id,
+    stable_candidate_id,
     validate_decisions,
     validate_options,
+    validate_suggestions,
 )
 from .editorial_style import LoadedStyleProfile
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
@@ -155,6 +158,137 @@ def generate_rewrite_options(
         findings_payload.append({"findingId": finding["id"], "options": options})
 
     return validate_options({"schemaVersion": SCHEMA_VERSION, "findings": findings_payload})
+
+
+def generate_rewrite_suggestions(
+    draft_text: str,
+    *,
+    style_profile: LoadedStyleProfile,
+    diagnosis: dict[str, Any],
+    skill_path: str | Path,
+    guidance: list[dict[str, Any]] | None = None,
+    decisions: list[dict[str, Any]] | None = None,
+    model: str = DEFAULT_EDITORIAL_REWRITE_MODEL,
+    llm_resolver: OptionsResolver | None = None,
+) -> dict[str, Any]:
+    """Return cohesive document candidates without changing ``draft_text``.
+
+    Guidance and decisions are optional context only. The resolver always receives
+    the complete draft, profile, diagnosis, and reference samples, so it can make a
+    document-level revision instead of mechanically applying finding patches.
+    """
+    validated_diagnosis = validate_diagnosis(diagnosis)
+    # Guidance may be finding annotations, prose, or decision records. Only the
+    # explicit decisions input has a required schema; focusing context is free-form.
+    validated_guidance = validate_decisions(decisions) if decisions is not None else (guidance or [])
+    skill = load_rewrite_skill(skill_path)
+    resolver = llm_resolver or _generate_suggestions_with_llm
+    raw_candidates = resolver(
+        draft_text=draft_text,
+        style_profile=style_profile,
+        diagnosis=validated_diagnosis,
+        reference_samples=style_profile.samples,
+        guidance=validated_guidance,
+        decisions=validated_guidance,
+        skill=skill,
+        model=model,
+    )
+    candidates: list[dict[str, Any]] = []
+    for entry in raw_candidates:
+        if not isinstance(entry, dict):
+            continue
+        candidate_text = str(entry.get("candidateText", entry.get("replacement", entry.get("text", ""))))
+        rationale = str(entry.get("rationale", entry.get("reason", ""))).strip()
+        if not candidate_text or not rationale:
+            continue
+        warnings = [str(item) for item in (entry.get("factualVerificationWarnings") or []) if str(item).strip()]
+        fact_required = bool(entry.get("factVerificationRequired", warnings))
+        candidates.append({
+            "id": str(entry.get("id") or stable_candidate_id(candidate_text, rationale)),
+            "candidateText": candidate_text,
+            "patch": {"span": {"start": 0, "end": len(draft_text)}, "replacement": candidate_text},
+            "diff": _document_diff(draft_text, candidate_text),
+            "rationale": rationale,
+            "unresolvedQuestions": [str(item) for item in (entry.get("unresolvedQuestions") or []) if str(item).strip()],
+            "factualVerificationWarnings": warnings,
+            "factVerificationRequired": fact_required,
+        })
+    payload = validate_suggestions({"schemaVersion": SCHEMA_VERSION, "candidates": candidates})
+    if suggestions_contain_evasion_tactics(payload):
+        raise ValueError("Rewrite suggestions contain detector-evasion tactics.")
+    return payload
+
+
+# Short alias for callers that treat suggestions as a composable primitive.
+generate_suggestions = generate_rewrite_suggestions
+
+
+def _document_diff(original: str, candidate: str) -> str:
+    return "".join(difflib.unified_diff(
+        original.splitlines(keepends=True), candidate.splitlines(keepends=True),
+        fromfile="original", tofile="candidate",
+    ))
+
+
+def _generate_suggestions_with_llm(**kwargs: Any) -> list[dict[str, Any]]:
+    draft_text = kwargs["draft_text"]
+    style_profile = kwargs["style_profile"]
+    diagnosis = kwargs["diagnosis"]
+    skill = kwargs["skill"]
+    model = kwargs["model"]
+    guidance = kwargs.get("guidance") or []
+    profile = style_profile.profile
+    references = "\n\n".join(
+        f'From "{sample.title}": {sample.body[:700]}' for sample in style_profile.samples
+    )
+    prompt = "\n".join(
+        [
+            "Create cohesive, document-level rewrite candidates for editorial review.",
+            "Rewrite the whole draft when useful; do not return finding-sized patches.",
+            f"Skill constraints: {'; '.join(skill.constraints)}",
+            f"Audience: {profile.audience}",
+            f"Tone: {'; '.join(profile.tone)}",
+            f"Sentence style: {'; '.join(profile.sentence_style)}",
+            f"Preferred lexicon: {', '.join(profile.lexicon_prefer)}",
+            f"Avoided lexicon: {', '.join(profile.lexicon_avoid)}",
+            "Diagnostic annotations (guidance, not a mandatory edit sequence):",
+            str(diagnosis),
+            f"Selected guidance: {guidance}",
+            "Reference samples (voice/register only; do not copy verbatim):",
+            references,
+            "Full draft:",
+            draft_text,
+            "Return 1 to 3 complete candidate texts. Preserve factual meaning, flag claims needing verification, and never optimize for detector scores or add fake imperfections.",
+        ]
+    )
+    schema = {
+        "type": "object",
+        "additionalProperties": False,
+        "required": ["candidates"],
+        "properties": {
+            "candidates": {
+                "type": "array", "minItems": 1, "maxItems": 3,
+                "items": {
+                    "type": "object", "additionalProperties": False,
+                    "required": ["candidateText", "rationale", "unresolvedQuestions", "factualVerificationWarnings"],
+                    "properties": {
+                        "candidateText": {"type": "string"},
+                        "rationale": {"type": "string"},
+                        "unresolvedQuestions": {"type": "array", "items": {"type": "string"}},
+                        "factualVerificationWarnings": {"type": "array", "items": {"type": "string"}},
+                    },
+                },
+            }
+        },
+    }
+    result = call_structured_responses_api(
+        model=model,
+        system_prompt=f"You are a {skill.role}. Return strict JSON only.",
+        user_prompt=prompt,
+        schema_name="editorial_rewrite_suggestions",
+        schema=schema,
+    )
+    return list(result.get("candidates") or [])
 
 
 def _generate_options_with_llm(
@@ -381,4 +515,18 @@ def options_contain_evasion_tactics(options_payload: dict[str, Any]) -> bool:
             combined = f"{replacement} {reason}"
             if any(term in combined for term in EVASION_TERMS):
                 return True
+    return False
+
+
+def suggestions_contain_evasion_tactics(payload: dict[str, Any]) -> bool:
+    for candidate in payload.get("candidates", []):
+        combined = " ".join(
+            [
+                str(candidate.get("candidateText", "")),
+                str(candidate.get("rationale", "")),
+                *[str(item) for item in candidate.get("unresolvedQuestions", [])],
+            ]
+        ).lower()
+        if any(term in combined for term in EVASION_TERMS):
+            return True
     return False

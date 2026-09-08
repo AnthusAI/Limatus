@@ -12,6 +12,7 @@ from .editorial_options_schema import validate_decisions
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
 from .editorial_apply import apply_patch, render_diff
+from .editorial_verifier import verify_revision
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 
@@ -144,6 +145,31 @@ def editorial_diff(flags: list[str]) -> None:
     parser.add_argument("--output", default="", help="Optional path for the unified diff.")
     args = parser.parse_args(flags)
     rendered = render_diff(args.original, args.working_copy)
+    if args.output:
+        Path(args.output).resolve().write_text(rendered, encoding="utf-8")
+    else:
+        sys.stdout.write(rendered)
+
+
+def editorial_verify(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus verify")
+    parser.add_argument("--original", required=True, help="Original draft path; read-only.")
+    parser.add_argument("--working-copy", required=True, help="Explicitly applied working draft path; read-only.")
+    parser.add_argument("--profile", required=True, help="Path to the style profile YAML or JSON.")
+    parser.add_argument("--threshold", type=float, default=0.05, help="Required normalized net improvement (default: 0.05).")
+    parser.add_argument("--output", default="", help="Optional path for verification JSON.")
+    args = parser.parse_args(flags)
+    original_path = Path(args.original).resolve()
+    working_path = Path(args.working_copy).resolve()
+    if not original_path.is_file() or not working_path.is_file():
+        raise ValueError("Both --original and --working-copy must point to files.")
+    result = verify_revision(
+        original_path.read_text(encoding="utf-8"),
+        working_path.read_text(encoding="utf-8"),
+        style_profile=load_style_profile(Path(args.profile).resolve()),
+        threshold=args.threshold,
+    )
+    rendered = json.dumps(result, indent=2) + "\n"
     if args.output:
         Path(args.output).resolve().write_text(rendered, encoding="utf-8")
     else:

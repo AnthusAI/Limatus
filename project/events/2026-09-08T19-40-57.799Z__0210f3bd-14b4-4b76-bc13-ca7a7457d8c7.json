@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "0210f3bd-14b4-4b76-bc13-ca7a7457d8c7",
+  "issue_id": "LIM-29036d98-c72d-4089-bacc-520f88752ed1",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T19:40:57.799Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-verifier",
+      "platform": "codex"
+    },
+    "assignee": "luna-verifier",
+    "description": "Implements LIM-877130. Begin with the two Gherkin scenarios on the parent story.\n\nScope:\n- Compare immutable original and explicitly applied working draft using the local style profile.\n- Report transparent quality dimensions and evidence-backed findings for factual-change risk, deleted claims, duplication, residual boilerplate, and unsupported claims.\n- Calculate an advisory recommendation that requires configured net improvement and no increase in unsupported claims.\n- Keep detector scores out of every input and output.\n\nDefinition of done:\n- Both accept and reject behavior paths are executable and green.\n- Verification never mutates drafts, applies edits, or publishes.\n- The score weights and threshold are inspectable and documented.\n\nOut of scope: provenance UI, telemetry, publishing, and automated patch generation.",
+    "issue_type": "task",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "priority": 1,
+    "status": "open",
+    "title": "Luna: implement advisory revision verifier"
+  }
+}

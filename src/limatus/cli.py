@@ -12,7 +12,14 @@ from __future__ import annotations
 import sys
 
 from . import __version__
-from .editorial_commands import editorial_apply, editorial_diagnose, editorial_diff, editorial_options, editorial_verify
+from .editorial_commands import (
+    editorial_apply,
+    editorial_diagnose,
+    editorial_diff,
+    editorial_options,
+    editorial_standfirst,
+    editorial_verify,
+)
 from .editorial_eval import main as editorial_eval
 
 COMMANDS = {
@@ -21,6 +28,7 @@ COMMANDS = {
     "apply": editorial_apply,
     "diff": editorial_diff,
     "verify": editorial_verify,
+    "standfirst": editorial_standfirst,
     "eval": editorial_eval,
 }
 

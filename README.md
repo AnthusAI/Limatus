@@ -53,9 +53,28 @@ limatus diagnose --draft path/to/draft.md --profile path/to/style-profile.yml
 limatus options --draft path/to/draft.md --profile path/to/style-profile.yml \
   --diagnosis path/to/diagnosis.json --decisions path/to/decisions.json \
   --skill path/to/rewrite-skill.yml
+limatus verify --original path/to/original.md --working-copy path/to/working.md \
+  --profile path/to/style-profile.yml
 ```
 
 Run `limatus --help` for the full command reference.
+
+### Advisory revision verification
+
+After a human explicitly applies a selected option to a separate working copy,
+`limatus verify` compares the original and working drafts without changing,
+publishing, or automatically applying either one. It reports four quality
+dimensions (specificity, clarity, audience fit, and voice match), penalties for
+redundancy, unsupported claims, and factual-change risk, plus evidence-backed
+findings for deleted claims, duplicated ideas, residual boilerplate, and new
+unsupported or factual claims.
+
+The result includes inspectable weights: each positive quality dimension is
+weighted `0.25`; redundancy is `-0.10`; unsupported claims and factual-change
+risk are each `-0.20`. The default acceptance threshold is `0.05` normalized
+net improvement. The recommendation is advisory and is `accept` only when
+the threshold is met and the working draft has no more unsupported claims than
+the original. No detector score is accepted as input or emitted in output.
 
 ## Portable style profiles
 

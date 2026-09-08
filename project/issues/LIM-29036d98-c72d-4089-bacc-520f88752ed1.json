@@ -1,0 +1,45 @@
+{
+  "id": "LIM-29036d98-c72d-4089-bacc-520f88752ed1",
+  "title": "Luna: implement advisory revision verifier",
+  "description": "Implements LIM-877130. Begin with the two Gherkin scenarios on the parent story.\n\nScope:\n- Compare immutable original and explicitly applied working draft using the local style profile.\n- Report transparent quality dimensions and evidence-backed findings for factual-change risk, deleted claims, duplication, residual boilerplate, and unsupported claims.\n- Calculate an advisory recommendation that requires configured net improvement and no increase in unsupported claims.\n- Keep detector scores out of every input and output.\n\nDefinition of done:\n- Both accept and reject behavior paths are executable and green.\n- Verification never mutates drafts, applies edits, or publishes.\n- The score weights and threshold are inspectable and documented.\n\nOut of scope: provenance UI, telemetry, publishing, and automated patch generation.",
+  "type": "task",
+  "status": "closed",
+  "priority": 1,
+  "assignee": "home",
+  "creator": null,
+  "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "16527329-c49d-4d9f-82c3-cf4b33509f33",
+      "author": "home",
+      "text": "Starting with parent Gherkin coverage; will inspect existing diagnose/apply APIs and implement immutable advisory verification.",
+      "created_at": "2026-09-08T19:41:42.385776Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "4fdcb600-b589-4d76-a5ae-40a0baf30f2a",
+      "author": "home",
+      "text": "Implemented read-only advisory verifier. Added features/editorial-verifier.feature and executable steps, editorial_verifier.py, SDK verify(), CLI limatus verify, README score/threshold documentation, and unit coverage. Verification: 9 pytest tests, 17 Behave scenarios, compileall, git diff --check. No detector scores, auto-apply, publish, provenance, UI, or telemetry.",
+      "created_at": "2026-09-08T19:45:03.474855Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-08T19:40:57.799371Z",
+  "updated_at": "2026-09-08T19:45:05.141569Z",
+  "closed_at": "2026-09-08T19:45:05.141519Z",
+  "agent": {
+    "platform": "codex",
+    "model": "gpt-5.6-luna",
+    "name": "luna-verifier"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
+}

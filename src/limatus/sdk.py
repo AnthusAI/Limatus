@@ -23,6 +23,7 @@ from .editorial_options_schema import (
 )
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import LoadedStyleProfile, StyleProfileValidationError, load_style_profile
+from .editorial_verifier import verify_revision
 
 
 class AnnotationFormatError(ValueError):
@@ -43,6 +44,23 @@ def diagnose(draft_text: str, *, config: LoadedStyleProfile) -> dict[str, Any]:
     if not isinstance(draft_text, str):
         raise EditorialDiagnosisValidationError("draft_text must be a string.")
     return diagnose_draft(draft_text, style_profile=config)
+
+
+def verify(
+    original_text: str,
+    working_text: str,
+    *,
+    config: LoadedStyleProfile,
+    threshold: float = 0.05,
+) -> dict[str, Any]:
+    """Return an advisory, read-only comparison of an applied working draft."""
+
+    return verify_revision(
+        original_text,
+        working_text,
+        style_profile=config,
+        threshold=threshold,
+    )
 
 
 def generate_options(
@@ -117,6 +135,7 @@ __all__ = [
     "LoadedStyleProfile",
     "StyleProfileValidationError",
     "diagnose",
+    "verify",
     "generate_options",
     "load_config",
     "record_decision",

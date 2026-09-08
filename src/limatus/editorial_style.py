@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
@@ -88,7 +89,16 @@ class LoadedStyleProfile:
 
 def load_style_profile(path: str | Path) -> LoadedStyleProfile:
     profile_path = Path(path).resolve()
-    raw = yaml.safe_load(profile_path.read_text(encoding="utf-8"))
+    try:
+        source = profile_path.read_text(encoding="utf-8")
+        if profile_path.suffix.lower() == ".json":
+            raw = json.loads(source)
+        else:
+            raw = yaml.safe_load(source)
+    except (json.JSONDecodeError, yaml.YAMLError, UnicodeDecodeError) as exc:
+        raise StyleProfileValidationError(
+            f"Could not parse style profile configuration {profile_path}: {exc}"
+        ) from exc
     if not isinstance(raw, dict):
         raise StyleProfileValidationError(f"Style profile must be a mapping: {profile_path}")
 
@@ -290,17 +300,22 @@ def _parse_density(value: Any, profile_path: Path) -> DensityThresholds:
     if not isinstance(value, dict):
         raise StyleProfileValidationError(f"density must be a mapping in {profile_path}")
 
+    unknown = set(value) - {"minWords", "minLexicalDensity", "maxGzipRatio"}
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise StyleProfileValidationError(f"Unknown density keys in {profile_path}: {joined}")
+
     min_words = value.get("minWords", defaults.min_words)
     min_lexical_density = value.get("minLexicalDensity", defaults.min_lexical_density)
     max_gzip_ratio = value.get("maxGzipRatio", defaults.max_gzip_ratio)
 
-    if not isinstance(min_words, int) or min_words < 1:
+    if isinstance(min_words, bool) or not isinstance(min_words, int) or min_words < 1:
         raise StyleProfileValidationError(f"density.minWords must be a positive integer in {profile_path}")
-    if not isinstance(min_lexical_density, (int, float)) or not 0 < min_lexical_density < 1:
+    if isinstance(min_lexical_density, bool) or not isinstance(min_lexical_density, (int, float)) or not 0 < min_lexical_density < 1:
         raise StyleProfileValidationError(
             f"density.minLexicalDensity must be between 0 and 1 in {profile_path}"
         )
-    if not isinstance(max_gzip_ratio, (int, float)) or not 0 < max_gzip_ratio < 1:
+    if isinstance(max_gzip_ratio, bool) or not isinstance(max_gzip_ratio, (int, float)) or not 0 < max_gzip_ratio < 1:
         raise StyleProfileValidationError(f"density.maxGzipRatio must be between 0 and 1 in {profile_path}")
 
     return DensityThresholds(

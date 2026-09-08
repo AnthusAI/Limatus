@@ -16,3 +16,26 @@ Feature: Style profile store for a publication voice
     Given a style profile that includes a detector score
     When an editorial pass tries to load the profile
     Then loading fails with a validation error
+
+  Scenario: Load a portable JSON profile with relative samples
+    Given a publication has a portable JSON style profile on disk
+    When an editorial pass loads the profile
+    Then the loader returns the profile and the linked samples
+    And all linked samples resolve relative to the profile
+
+  Scenario: Reject malformed profile configuration with an actionable error
+    Given a malformed style profile configuration
+    When an editorial pass tries to load the profile
+    Then loading fails with a validation error
+    And the validation error identifies the profile configuration
+
+  Scenario Outline: Reject invalid profile controls
+    Given a style profile with an invalid <control>
+    When an editorial pass tries to load the profile
+    Then loading fails with a validation error
+
+    Examples:
+      | control          |
+      | check name       |
+      | density threshold|
+      | rule name        |

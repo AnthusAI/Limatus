@@ -1,6 +1,25 @@
 # CHANGELOG
 
 
+## v0.3.2 (2026-09-08)
+
+### Bug Fixes
+
+- Handle whole-document suggestion truncation
+  ([`6d8b330`](https://github.com/AnthusAI/Limatus/commit/6d8b3301251d58095403531564cef9cd981674c9))
+
+- **kanbus**: Record safety filter false positive
+  ([`936fda1`](https://github.com/AnthusAI/Limatus/commit/936fda1bd6dfac230b839989016e284d0611e653))
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`ff121d4`](https://github.com/AnthusAI/Limatus/commit/ff121d4dcfe63d00b87d1458a4ba1c0a41cef2a8))
+
+- **kanbus**: Commit board state (issues)
+  ([`dcc03a5`](https://github.com/AnthusAI/Limatus/commit/dcc03a5111a061ea7b760d50182531d4b7f31382))
+
+
 ## v0.3.1 (2026-09-08)
 
 ### Bug Fixes

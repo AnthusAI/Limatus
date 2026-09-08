@@ -1,0 +1,25 @@
+{
+  "schema_version": 1,
+  "event_id": "d9834eb9-1ff3-46be-a2aa-298a463b8246",
+  "issue_id": "LIM-9ca44b4e-e090-47a7-8f7d-a469f8919729",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-08T22:59:05.327Z",
+  "actor_id": "home",
+  "payload": {
+    "agent": {
+      "model": "gpt-5.6-luna",
+      "name": "luna-safety",
+      "platform": "codex"
+    },
+    "assignee": "luna-safety",
+    "description": "## Dogfood reproduction\n\nAfter the document-output truncation fix, a live suggestion for `https://anth.us/blog/commodity-receipts/` was rejected by `suggestions_contain_evasion_tactics`. The source article itself contains `ngl`; the current detector treats any occurrence of `ngl` anywhere in a complete candidate as detector-evasion, even if the model is preserving approved source voice.\n\n## Intent\n\nAs a caller requesting safe editorial suggestions, I want Limatus to block actual detector-evasion instructions without rejecting legitimate source or house-voice language, so safety policy does not erase the editorial register it is meant to protect.\n\n## Gherkin\n\nFeature: Contextual detector-evasion safety checks\n  Scenario: Preserve approved colloquial source language\n    Given a source draft that uses an ordinary colloquial term such as `ngl`\n    When Limatus returns a suggestion that preserves the term without instructing evasion\n    Then the suggestion is accepted for review\n\n  Scenario: Reject an evasion instruction\n    Given a suggestion that recommends adding slang or fake experience to evade detection\n    When Limatus validates it\n    Then it rejects the suggestion with a safety error\n\n## Scope\n\nMake the safety policy contextual: distinguish meta-instructions/reasons that prescribe evasion from candidate prose that legitimately contains a term. Test both paths offline.\n\n## Out of scope\n\nRemoving safety guardrails, allowing detector-score optimization, or changing the caller editorial workflow.",
+    "issue_type": "bug",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "priority": 1,
+    "status": "open",
+    "title": "Avoid false positives when safety checks match approved voice"
+  }
+}

@@ -11,6 +11,7 @@ from .editorial_markup import render_annotated_markus, render_annotated_xml
 from .editorial_options_schema import validate_decisions
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
+from .editorial_apply import apply_patch, render_diff
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 
@@ -109,3 +110,41 @@ def editorial_options(flags: list[str]) -> None:
         return
 
     sys.stdout.write(rendered)
+
+
+def editorial_apply(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus apply")
+    parser.add_argument("--original", required=True, help="Original draft path; never modified.")
+    parser.add_argument("--working-copy", required=True, help="Explicit working-copy path to modify.")
+    parser.add_argument("--options", required=True, help="Validated options JSON path.")
+    parser.add_argument("--finding-id", required=True)
+    parser.add_argument("--option-id", required=True, help="Explicit selected option id.")
+    parser.add_argument("--anchor", required=True, help="Exact text expected at the patch span.")
+    parser.add_argument("--delete", action="store_true", help="Confirm the selected option is a deletion.")
+    parser.add_argument("--change-log", default="", help="Path for machine-readable change log JSON.")
+    args = parser.parse_args(flags)
+    options = json.loads(Path(args.options).read_text(encoding="utf-8"))
+    log = apply_patch(
+        original_path=args.original,
+        working_copy_path=args.working_copy,
+        options=options,
+        finding_id=args.finding_id,
+        option_id=args.option_id,
+        anchor=args.anchor,
+        delete=args.delete,
+        change_log_path=args.change_log or None,
+    )
+    sys.stdout.write(json.dumps(log, indent=2) + "\n")
+
+
+def editorial_diff(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus diff")
+    parser.add_argument("--original", required=True)
+    parser.add_argument("--working-copy", required=True)
+    parser.add_argument("--output", default="", help="Optional path for the unified diff.")
+    args = parser.parse_args(flags)
+    rendered = render_diff(args.original, args.working_copy)
+    if args.output:
+        Path(args.output).resolve().write_text(rendered, encoding="utf-8")
+    else:
+        sys.stdout.write(rendered)

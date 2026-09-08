@@ -1,7 +1,7 @@
 {
   "id": "LIM-18c251f5-d7ac-4242-97ac-13a1a1fdfbec",
-  "title": "Luna: add holistic rewrite suggestion mode",
-  "description": "Implements LIM-ee79f5. Begin with its Gherkin scenarios.\n\nScope:\n- Add a document-level suggestion mode alongside existing targeted rewrite options.\n- Pass the full draft, portable profile, diagnosis/annotations, and reference samples to the suggestion resolver.\n- Produce one or more non-destructive candidates with rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- Accept finding decisions as optional guidance only.\n- Reuse existing explicit apply and verifier primitives; do not alter the original draft.\n\nDefinition of done:\n- A holistic candidate can address multiple findings coherently.\n- Targeted options retain their current behavior.\n- Every candidate is review-only until an explicit apply.\n- Tests cover holistic and targeted paths, source preservation, and forbidden detector-evasion tactics.\n\nOut of scope: mandatory decision records, unattended rewrite/apply, publication, and telemetry.",
+  "title": "Luna: provide holistic rewrite suggestions",
+  "description": "Implements LIM-ee79f5. Begin with its revised Gherkin scenarios.\n\nScope:\n- Every rewrite-suggestion request returns one or more cohesive, document-level candidates; do not introduce a mode switch.\n- Pass the full draft, portable profile, diagnosis/annotations, and reference samples to the resolver.\n- Selected findings and decisions are optional focusing guidance only; they must not force a patch-only response.\n- Produce review-only candidates with rationale, unresolved questions, factual-verification warnings, and a reviewable diff.\n- Reuse existing explicit apply and verifier primitives; do not alter the original draft.\n\nDefinition of done:\n- A candidate can address multiple findings coherently, even when guidance names only one.\n- Existing finding data remains accessible for callers that want it.\n- Every candidate is review-only until an explicit apply.\n- Tests cover standard and guidance-focused requests, source preservation, and forbidden detector-evasion tactics.\n\nOut of scope: mode flags, mandatory decision records, unattended rewrite/apply, publication, and telemetry.",
   "type": "task",
   "status": "open",
   "priority": 1,
@@ -14,7 +14,7 @@
   "dependencies": [],
   "comments": [],
   "created_at": "2026-09-08T19:53:20.398472Z",
-  "updated_at": "2026-09-08T19:53:20.398505Z",
+  "updated_at": "2026-09-08T19:59:24.761784Z",
   "closed_at": null,
   "agent": {
     "platform": "codex",
@@ -23,5 +23,8 @@
   },
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {}
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
 }

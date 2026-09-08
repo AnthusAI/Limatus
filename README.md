@@ -57,6 +57,98 @@ limatus options --draft path/to/draft.md --profile path/to/style-profile.yml \
 
 Run `limatus --help` for the full command reference.
 
+## Portable style profiles
+
+A profile is a versioned YAML or JSON document. The profile below is complete:
+required fields describe the publication voice and evidence policy, while
+`checks`, `rules`, and `density` make the optional controls explicit.
+
+```yaml
+schemaVersion: 1
+publicationKey: example-publication
+voice:
+  name: Practical engineering voice
+audience: Engineers evaluating tools and operational risk.
+tone:
+  - Conversational but precise.
+sentenceStyle:
+  - Prefer active voice and concrete nouns.
+voicePatterns:
+  - Lead with the practical stake.
+structure:
+  - State the claim, then its evidence and limits.
+lexicon:
+  prefer: [inspect, verify, latency]
+  avoid: [game-changing, leverage synergies]
+evidenceRules:
+  - Cite primary sources and label uncertainty.
+referenceSamples:
+  - id: sample-one
+    title: Approved sample one
+    url: https://example.com/articles/one
+    path: reference-samples/sample-one.md
+  - id: sample-two
+    title: Approved sample two
+    url: https://example.com/articles/two
+    path: reference-samples/sample-two.md
+  - id: sample-three
+    title: Approved sample three
+    url: https://example.com/articles/three
+    path: reference-samples/sample-three.md
+  - id: sample-four
+    title: Approved sample four
+    url: https://example.com/articles/four
+    path: reference-samples/sample-four.md
+  - id: sample-five
+    title: Approved sample five
+    url: https://example.com/articles/five
+    path: reference-samples/sample-five.md
+checks:
+  informationDensity: true
+  uniformCadence: false
+rules:
+  bannedPhrases: [at the end of the day]
+  bannedIntensifiers: [very]
+  bannedPatterns:
+    - pattern: "\\bseamless\\b"
+      message: Prefer a concrete description of the integration.
+  contrastCap: 2
+density:
+  minWords: 400
+  minLexicalDensity: 0.45
+  maxGzipRatio: 0.35
+```
+
+Reference `path` values are resolved relative to the profile file, not the
+shell's current directory. Keep five to ten approved samples beside the
+profile (or use paths such as `../samples/approved.md`). YAML and JSON use the
+same field names; `features/fixtures/editorial-style-profile/portable-profile.json`
+is a checked-in JSON example.
+
+The `checks` mapping can enable or disable individual diagnose checks. If it is
+omitted, every check is enabled. `rules` is optional and defaults to no custom
+rules. `density` is optional and defaults to `minWords: 400`,
+`minLexicalDensity: 0.45`, and `maxGzipRatio: 0.35`. Unknown control names and
+invalid values fail profile validation before a draft is analyzed.
+
+Limatus is style-focused, not an AI detector. Profile documents must not
+contain detector scores or detector-related fields; the loader rejects those
+keys, including nested keys.
+
+From the repository root, run the portable fixture against a checked-in draft:
+
+```bash
+limatus diagnose \
+  --draft features/fixtures/editorial-diagnosis/sloppy-draft.md \
+  --profile features/fixtures/editorial-style-profile/portable-profile.json \
+  --output /tmp/limatus-diagnosis.json
+cat /tmp/limatus-diagnosis.json
+```
+
+The command leaves the draft unchanged and writes validated diagnostic JSON.
+The same command works with a YAML profile by changing only the `--profile`
+path, for example `features/fixtures/editorial-diagnosis/style-profile.yml`.
+
 ## Testing
 
 Limatus's test suite is written in Gherkin and run with [Behave](https://behave.readthedocs.io/):

@@ -1,9 +1,37 @@
-"""Limatus CLI entry point (placeholder -- real diagnose/options commands land in a follow-up)."""
+"""Limatus CLI entry point.
+
+    limatus diagnose --draft <file> --profile <style-profile.yml> [...]
+    limatus options  --draft <file> --profile <style-profile.yml> \\
+                      --diagnosis <diagnosis.json> --decisions <decisions.json> \\
+                      --skill <editorial-rewrite-skill.yml> [...]
+
+See editorial_commands.py for each subcommand's full flag set.
+"""
+from __future__ import annotations
+
 import sys
 
+from .editorial_commands import editorial_diagnose, editorial_options
 
-def main() -> int:
-    print("limatus: no subcommands implemented yet.")
+COMMANDS = {
+    "diagnose": editorial_diagnose,
+    "options": editorial_options,
+}
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = list(sys.argv[1:] if argv is None else argv)
+    if not args or args[0] in {"-h", "--help"}:
+        print(__doc__)
+        return 0
+
+    command, flags = args[0], args[1:]
+    handler = COMMANDS.get(command)
+    if handler is None:
+        print(f"limatus: unknown command '{command}'. Try one of: {', '.join(sorted(COMMANDS))}")
+        return 1
+
+    handler(flags)
     return 0
 
 

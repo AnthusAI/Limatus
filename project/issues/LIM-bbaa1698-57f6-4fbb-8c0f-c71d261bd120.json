@@ -1,0 +1,23 @@
+{
+  "id": "LIM-bbaa1698-57f6-4fbb-8c0f-c71d261bd120",
+  "title": "Catalog and fuse established editorial signals",
+  "description": "**Follow-on under `PPY-54055d`.** Catalog **established** editorial/NLP signals and fuse the ones we can compute into diagnose as independent red flags. Do not invent new NLP methods in this slice.\n\n## Intent\n\nAs a publication operator, I want a named list of signals other people already use, each able to raise a steer-able finding, so diagnose is a fusion of known techniques rather than a homemade detector.\n\n## Catalog (v1)\n\nEach row is a known technique. **Ship** = already in diagnose or add now. **Later** = known but not this PR.\n\n| Signal | Established as | Finding (if flagged) | v1 |\n|---|---|---|---|\n| Banned hedges / intensifiers | House style lists; Chatticus `rules.yml` | `vague_claim` | ship (have) |\n| Empty lead-ins | Common slop/style lists | `empty_leadin` | ship (have) |\n| List-shaped prose | Common LLM-slop pattern lists | `list_shaped_prose` | ship (have) |\n| Unsupported certainty | Journalism / hedge-vs-boost (Hyland) | `unsupported_certainty` | ship (have) |\n| Repeated n-grams | Self-repetition / ROUGE-style n-gram overlap | `redundancy` | ship (have, 4-gram) |\n| Passive voice | Classic style checkers | `voice_mismatch` | ship (have, partial) |\n| Numeric claim without attribution | Newsroom attribution norms | `missing_attribution` | ship (have) |\n| Contrast-stack cap | House style (Chatticus) | `voice_mismatch` | ship (have, optional) |\n| **Lexical density** | Ure (1971); Halliday \u2014 content words / total words | `low_lexical_density` | **add** |\n| **gzip ratio** | Compression as Kolmogorov-complexity proxy | `high_compressibility` | **add** |\n| Type-token ratio / MTLD | McCarthy; McCarthy & Jarvis \u2014 lexical diversity | `low_lexical_diversity` | later |\n| Flesch\u2013Kincaid / readability | Flesch (1948) | `readability` | later |\n\nFusion: each enabled signal may emit its own finding. No single weighted \"quality score.\" Thresholds live on the style profile. Detector-score keys stay forbidden.\n\n## Done when\n\n- A checked-in catalog lists signal id, literature/practice name, finding kind, and whether diagnose implements it.\n- Diagnose still runs existing signals.\n- v1 **adds** lexical density and gzip ratio as independent findings.\n- Profile `checks.informationDensity` (or per-signal checks) can disable the new pair. Short drafts below `minWords` do not get document-level density findings.\n- Behave covers: summary present; long padded fluff flags; Anth.us reference excerpt does not; short draft skips; JSON has no embedder field.\n\n## Gherkin\n\nFeature: Fuse established density signals into diagnose\n  As a publication operator\n  I want lexical density and compression as named red flags\n  So diagnose uses known techniques before any custom NLP\n\nMigrated from PPY-da4bf3.",
+  "type": "story",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-08T18:38:14.539663Z",
+  "updated_at": "2026-09-08T18:38:18.385745Z",
+  "closed_at": "2026-09-08T18:38:18.385647Z",
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {},
+  "agent": null
+}

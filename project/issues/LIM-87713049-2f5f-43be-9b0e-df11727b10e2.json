@@ -1,0 +1,23 @@
+{
+  "id": "LIM-87713049-2f5f-43be-9b0e-df11727b10e2",
+  "title": "Verifier + acceptance gate",
+  "description": "**Phase 4 of MVP** under `PPY-54055d`.\n\n## Intent\n\nAs a publication operator, I want a verifier that scores the **applied** working draft, so I can see whether chosen options actually improved the copy before I approve publish.\n\n## Done when\n\n- Verifier highlights factual changes, deleted claims, duplicated ideas, residual boilerplate **after human apply**.\n- Weighted quality score (specificity, clarity, audience fit, voice match, minus redundancy / unsupported claims / factual-change risk).\n- `should_accept_revision` (or equivalent) is **advisory**: recommend accept only if net improvement \u2265 threshold **and** unsupported claims do not increase. It does not auto-apply or auto-publish.\n- Detector score is not an input.\n\n## Depends on\n\nConstrained rewrite options; human apply of chosen options.\n\nMigrated from PPY-5ca22f.",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-08T18:38:46.056583Z",
+  "updated_at": "2026-09-08T18:38:46.056672Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {},
+  "agent": null
+}

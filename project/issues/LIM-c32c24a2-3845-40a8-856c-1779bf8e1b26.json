@@ -1,7 +1,7 @@
 {
   "id": "LIM-c32c24a2-3845-40a8-856c-1779bf8e1b26",
   "title": "Ship Limatus Python SDK API for programmatic callers",
-  "description": "Public Python module API: load style config, diagnose(draft), propose_options(findings, decisions), apply helpers. Suitable for Papyrus and Tactus procedures. Same core as CLI \u2014 not a CLI wrapper.\n\nDependencies:\n  blocked-by: 07eda8\n\nMigrated from PPY-46c0b8.",
+  "description": "Public Python module API: load style config, diagnose draft text, propose options for human decisions, and render/apply helpers. Suitable for Papyrus and Tactus procedures. It uses the same core as the CLI, never a CLI wrapper.\n\nDependencies:\n- blocked-by: LIM-dca47857-e14f-4c66-aa4a-37200a524880\n\nFeature: Programmatic Limatus access\n  Scenario: Diagnose without a subprocess\n    Given a caller with draft text and local style configuration\n    When it calls the public Limatus SDK\n    Then it receives the same validated diagnosis shape as the CLI\n    And no draft file is modified\n\nMigrated from PPY-46c0b8.",
   "type": "story",
   "status": "open",
   "priority": 1,
@@ -11,13 +11,20 @@
   "labels": [
     "editorial"
   ],
-  "dependencies": [],
+  "dependencies": [
+    {
+      "target": "LIM-dca47857-e14f-4c66-aa4a-37200a524880",
+      "type": "blocked-by"
+    }
+  ],
   "comments": [],
   "created_at": "2026-09-08T18:39:24.413974Z",
-  "updated_at": "2026-09-08T18:39:24.414058Z",
+  "updated_at": "2026-09-08T19:11:55.204598Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {},
-  "agent": null
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
 }

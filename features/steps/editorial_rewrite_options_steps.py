@@ -77,6 +77,21 @@ class FakeOptionsResolver:
         ]
 
 
+class FakeSuggestionResolver:
+    def __init__(self):
+        self.calls = []
+
+    def __call__(self, **kwargs):
+        self.calls.append(kwargs)
+        return [{
+            "candidateText": kwargs["draft_text"].replace("very", "especially"),
+            "rationale": "Improve the document's cadence while preserving its claims.",
+            "factVerificationRequired": True,
+            "factualVerificationWarnings": ["Confirm the revised claim against its source."],
+            "unresolvedQuestions": ["Which source should support the key claim?"],
+        }]
+
+
 def _import_rewrite_modules():
     if str(SRC_ROOT) not in sys.path:
         sys.path.insert(0, str(SRC_ROOT))
@@ -84,6 +99,7 @@ def _import_rewrite_modules():
     from limatus.editorial_options_schema import stable_option_id
     from limatus.editorial_rewrite_options import (
         generate_rewrite_options,
+        generate_rewrite_suggestions,
         load_rewrite_skill,
         options_contain_evasion_tactics,
     )
@@ -94,6 +110,7 @@ def _import_rewrite_modules():
         "record_finding_decision": record_finding_decision,
         "stable_option_id": stable_option_id,
         "generate_rewrite_options": generate_rewrite_options,
+        "generate_rewrite_suggestions": generate_rewrite_suggestions,
         "load_rewrite_skill": load_rewrite_skill,
         "options_contain_evasion_tactics": options_contain_evasion_tactics,
         "load_style_profile": load_style_profile,
@@ -183,3 +200,69 @@ def step_then_has_deletion_option(context):
     finding_entry = context.options_payload["findings"][0]
     replacements = [option["patch"]["replacement"] for option in finding_entry["options"]]
     assert any(not replacement.strip() for replacement in replacements)
+
+
+@given("a draft, portable style profile, and diagnostic annotations")
+def step_given_suggestion_inputs(context):
+    context.draft_path = FIXTURE_ROOT / "article.md"
+    context.draft_snapshot = context.draft_path.read_bytes()
+    context.draft_text = context.draft_path.read_text(encoding="utf-8")
+    context.style_profile_path = STYLE_PROFILE_PATH
+    context.diagnosis = json.loads((FIXTURE_ROOT / "diagnosis.json").read_text(encoding="utf-8"))
+    context.skill = _import_rewrite_modules()["load_rewrite_skill"](SKILL_PATH)
+    context.suggestion_resolver = FakeSuggestionResolver()
+
+
+@given("a draft and optional finding guidance")
+def step_given_optional_guidance(context):
+    step_given_suggestion_inputs(context)
+    context.guidance = [
+        {
+            "schemaVersion": 1,
+            "finding_id": context.diagnosis["generic_passages"][0]["id"],
+            "decision": "rewrite",
+            "note": "Keep the whole-document voice coherent.",
+        }
+    ]
+
+
+@when("a caller invokes the suggestion tool")
+def step_when_invoke_suggestion_tool(context):
+    modules = _import_rewrite_modules()
+    style_profile = modules["load_style_profile"](context.style_profile_path)
+    context.suggestions = modules["generate_rewrite_suggestions"](
+        context.draft_text,
+        style_profile=style_profile,
+        diagnosis=context.diagnosis,
+        guidance=getattr(context, "guidance", None),
+        skill_path=SKILL_PATH,
+        llm_resolver=context.suggestion_resolver,
+    )
+
+
+@then("Limatus returns reviewable candidates with rationale and a diff")
+def step_then_reviewable_suggestions(context):
+    assert context.suggestions["candidates"]
+    candidate = context.suggestions["candidates"][0]
+    assert candidate["candidateText"]
+    assert candidate["rationale"]
+    assert candidate["diff"]
+    assert candidate["factualVerificationWarnings"]
+    assert candidate["unresolvedQuestions"]
+
+
+@then("the source draft remains unchanged")
+def step_then_source_unchanged(context):
+    assert context.draft_path.read_bytes() == context.draft_snapshot
+
+
+@then("the guidance informs the candidates without requiring a decision record")
+def step_then_guidance_is_optional(context):
+    assert context.suggestions["candidates"]
+    assert context.suggestion_resolver.calls[0]["guidance"] == context.guidance
+    assert context.suggestion_resolver.calls[0]["diagnosis"] == context.diagnosis
+
+
+@then("the caller may use the candidate with or without other Limatus tools")
+def step_then_composable_suggestion(context):
+    assert context.suggestions["candidates"][0]["patch"]["span"]["start"] == 0

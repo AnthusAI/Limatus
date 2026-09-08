@@ -21,7 +21,7 @@ from .editorial_options_schema import (
     EditorialOptionsValidationError,
     validate_decisions,
 )
-from .editorial_rewrite_options import generate_rewrite_options
+from .editorial_rewrite_options import generate_rewrite_options, generate_rewrite_suggestions
 from .editorial_style import LoadedStyleProfile, StyleProfileValidationError, load_style_profile
 from .editorial_verifier import verify_revision
 
@@ -94,6 +94,36 @@ def generate_options(
     )
 
 
+def suggest_rewrite(
+    draft_text: str,
+    *,
+    config: LoadedStyleProfile,
+    diagnosis: dict[str, Any],
+    skill_path: str | Path,
+    guidance: list[dict[str, Any]] | None = None,
+    decisions: list[dict[str, Any]] | None = None,
+    model: str = DEFAULT_EDITORIAL_REWRITE_MODEL,
+    resolver: Callable[..., list[dict[str, Any]]] | None = None,
+) -> dict[str, Any]:
+    """Return optional, cohesive document-level rewrite candidates, read-only."""
+    if not isinstance(config, LoadedStyleProfile):
+        raise EditorialOptionsValidationError("config must be a loaded style profile.")
+    validate_diagnosis(diagnosis)
+    return generate_rewrite_suggestions(
+        draft_text,
+        style_profile=config,
+        diagnosis=diagnosis,
+        skill_path=skill_path,
+        guidance=guidance,
+        decisions=decisions,
+        model=model,
+        llm_resolver=resolver,
+    )
+
+
+generate_suggestions = suggest_rewrite
+
+
 def record_decision(
     decisions: list[dict[str, Any]],
     finding_id: str,
@@ -137,6 +167,8 @@ __all__ = [
     "diagnose",
     "verify",
     "generate_options",
+    "suggest_rewrite",
+    "generate_suggestions",
     "load_config",
     "record_decision",
     "render_annotations",

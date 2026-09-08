@@ -11,7 +11,7 @@ FIXTURE_ROOT = REPO_ROOT / "features" / "fixtures" / "editorial-surface-rules"
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
 
-from limatus.editorial_diagnosis import diagnose_draft  # noqa: E402
+from limatus.editorial_diagnosis import check_rules_only, diagnose_draft  # noqa: E402
 from limatus.editorial_style import load_style_profile  # noqa: E402
 
 PROFILE_PATH = FIXTURE_ROOT / "style-profile.yml"
@@ -28,6 +28,21 @@ def step_given_draft_with_two_contrasts(context):
         "This is about specifics, not hype. It is about evidence, not vibes. "
         "Every claim here is checkable against a real system."
     )
+
+
+@given("raw source text that is not real prose and contains an emoji")
+def step_given_raw_source_with_emoji(context):
+    context.draft_text = (
+        "In today's world, function ship() { return true; } \U0001F680 "
+        "In today's world, function launch() { return true; } "
+        "In today's world, function deploy() { return true; }"
+    )
+
+
+@when("I check only the rules against the surface-rules profile")
+def step_when_check_rules_only(context):
+    style_profile = load_style_profile(PROFILE_PATH)
+    context.rules_only_findings = check_rules_only(context.draft_text, style_profile=style_profile)
 
 
 @when("I diagnose it with the surface-rules profile")
@@ -66,3 +81,10 @@ def step_then_reports_contrast_cap_finding(context):
 def step_then_reports_no_contrast_cap_finding(context):
     findings = _all_findings(context.diagnosis)
     assert not any("contrast construction" in finding["rationale"].lower() for finding in findings), findings
+
+
+@then("the rules-only findings report the emoji and nothing else")
+def step_then_rules_only_reports_only_emoji(context):
+    findings = context.rules_only_findings
+    assert findings, "expected at least the emoji finding"
+    assert all("emoji" in finding["rationale"].lower() for finding in findings), findings

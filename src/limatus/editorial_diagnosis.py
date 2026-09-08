@@ -109,6 +109,29 @@ def _mask_yaml_frontmatter(text: str) -> str:
     return blanked + text[match.end() :]
 
 
+def check_rules_only(
+    draft_text: str, *, style_profile: LoadedStyleProfile, surface: str | None = None
+) -> list[dict[str, Any]]:
+    """Run only the explicit ``rules`` checks (banned phrases/intensifiers/
+    patterns, no-emoji, contrast cap), skipping the prose-heuristic checks
+    (cadence, redundancy, vague claims, density, ...).
+
+    Meant for text that isn't real prose -- raw component source, a
+    page-content.ts copy string -- where the heuristic checks would misfire
+    on code shape rather than saying anything about the copy's voice.
+    """
+    text = draft_text.replace("\r\n", "\n")
+    text = _mask_yaml_frontmatter(text)
+    rules_findings = _check_profile_rules(
+        text,
+        style_profile,
+        generic_passages=[],
+        voice_observations=[],
+        surface=surface,
+    )
+    return rules_findings["generic_passages"] + rules_findings["voice_observations"]
+
+
 def diagnose_draft(
     draft_text: str, *, style_profile: LoadedStyleProfile, surface: str | None = None
 ) -> dict[str, Any]:

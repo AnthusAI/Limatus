@@ -3,7 +3,7 @@
   "title": "Handle output truncation in whole-document suggestions",
   "description": "## Dogfood reproduction\n\nA live `suggest_rewrite` call against the current Anth.us article `https://anth.us/blog/commodity-receipts/` succeeded at the OpenAI API boundary but failed while parsing the model response. The source is 1,075 words / 6,097 characters. The shared Responses client hard-codes `max_output_tokens=1200`; the complete candidate JSON was truncated mid-string and raised `RuntimeError: OpenAI editorial rewrite request did not return JSON.`\n\n## Intent\n\nAs a caller requesting a reviewable whole-document suggestion, I want Limatus to obtain a complete structured response or fail with a specific actionable truncation error, so ordinary articles do not silently turn into malformed JSON.\n\n## Gherkin\n\nFeature: Complete whole-document suggestion responses\n  Scenario: Generate a complete candidate for a normal-length article\n    Given a roughly 1,000-word draft\n    When Limatus requests a document-level suggestion\n    Then it provides enough response budget for the complete structured candidate\n    And the result validates as JSON with candidate text and review metadata\n\n  Scenario: Handle an incomplete model response safely\n    Given an incomplete structured model response\n    When Limatus receives it\n    Then it retries with a safe bounded strategy or raises a specific truncation error\n    And it never returns malformed or partial candidate data\n\n## Scope\n\nUse a configurable, bounded output budget appropriate to full-document candidates and test the incomplete-response path without relying on a live API call.\n\n## Out of scope\n\nChanging the user editorial workflow or auto-applying a candidate.",
   "type": "bug",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": "luna-suggestions",
   "creator": null,
@@ -14,8 +14,8 @@
   "dependencies": [],
   "comments": [],
   "created_at": "2026-09-08T22:28:46.711786Z",
-  "updated_at": "2026-09-08T22:28:46.712006Z",
-  "closed_at": null,
+  "updated_at": "2026-09-08T22:57:19.266847Z",
+  "closed_at": "2026-09-08T22:57:19.266748Z",
   "agent": {
     "platform": "codex",
     "model": "gpt-5.6-luna",
@@ -23,5 +23,8 @@
   },
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {}
+  "custom": {
+    "project_label": "LIM",
+    "source": "shared"
+  }
 }

@@ -1,6 +1,28 @@
 # CHANGELOG
 
 
+## v0.6.0 (2026-09-09)
+
+### Features
+
+- Add overusedWords check for crutch-word repetition
+  ([`b604708`](https://github.com/AnthusAI/Limatus/commit/b60470869473e9479d399bc8f933b57e59f31a1c))
+
+Caught dogfooding: the Anth.us article this session wrote about Limatus itself used "actually" seven
+  times in under a thousand words, and diagnose didn't flag it, because "actually" isn't on anyone's
+  bannedIntensifiers list -- it's ordinary English, just not in that quantity. The gap is
+  structural: every existing rule-based check requires a publication to name the exact word in
+  advance.
+
+checks.overusedWords (on by default) checks a small built-in list of common hedges and crutch words
+  (actually, really, very, basically, essentially, literally, simply, clearly, obviously) against
+  their own frequency in the document, scaled to length, rather than a fixed per-profile ban list. A
+  couple of uses is normal English; seven in a thousand words is a tell no publication should have
+  to enumerate by hand.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+
 ## v0.5.1 (2026-09-09)
 
 ### Bug Fixes

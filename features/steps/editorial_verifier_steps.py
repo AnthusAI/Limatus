@@ -39,6 +39,20 @@ def step_given_riskier_revision(context):
     context.working_snapshot = context.working
 
 
+@given("an original and working draft that differ only in frontmatter")
+def step_given_frontmatter_only_change(context):
+    context.original = (
+        "---\ntitle: Old Title\ndate: '2026-01-01'\ndescription: An old description.\n---\n\n"
+        "Inspect latency and cost before choosing a model."
+    )
+    context.working = (
+        "---\ntitle: New Title\ndate: '2026-09-08'\ndescription: A new description entirely.\n---\n\n"
+        "Inspect latency and cost before choosing a model."
+    )
+    context.original_snapshot = context.original
+    context.working_snapshot = context.working
+
+
 @when("an operator runs verification with local style rules")
 def step_when_verify_with_profile(context):
     context.verification = _verify(context)
@@ -81,3 +95,9 @@ def step_then_no_publish_or_modify(context):
     assert context.working == context.working_snapshot
     assert "published" not in context.verification
     assert "revised_text" not in context.verification
+
+
+@then("Limatus reports no deleted-claim or factual-change findings")
+def step_then_no_frontmatter_findings(context):
+    kinds = {finding["kind"] for finding in context.verification["findings"]}
+    assert not kinds & {"deleted_claim", "factual_change_risk"}, context.verification["findings"]

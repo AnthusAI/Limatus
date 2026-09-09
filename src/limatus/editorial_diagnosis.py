@@ -152,6 +152,8 @@ def diagnose_draft(
     if checks["vagueClaim"]:
         generic_passages.extend(_check_vague_claims(text, profile.lexicon_avoid))
         generic_passages.extend(_check_intensifier_vague_claims(text))
+    if checks["overusedWords"]:
+        generic_passages.extend(_check_overused_words(text))
 
     if checks["unsupportedCertainty"]:
         unsupported_claims.extend(_check_unsupported_certainty(text))
@@ -348,6 +350,50 @@ def _check_intensifier_vague_claims(text: str) -> list[dict[str, Any]]:
                     "Sentence pairs empty intensifiers with vague transformation language.",
                 )
             )
+    return findings
+
+
+# Hedges and crutch words: not banned outright by any profile (they're
+# ordinary English, useful in moderation), but a tell of AI-generated prose
+# when a piece leans on the same one repeatedly instead of varying emphasis
+# or, more often, just not needing the emphasis at all.
+_CRUTCH_WORDS = (
+    "actually",
+    "really",
+    "very",
+    "basically",
+    "essentially",
+    "literally",
+    "simply",
+    "clearly",
+    "obviously",
+)
+
+
+def _check_overused_words(text: str) -> list[dict[str, Any]]:
+    word_total = max(len(text.split()), 1)
+    findings: list[dict[str, Any]] = []
+    for word in _CRUTCH_WORDS:
+        matches = list(re.finditer(rf"\b{re.escape(word)}\b", text, re.IGNORECASE))
+        if not matches:
+            continue
+        # Scales with length so a short piece isn't held to the same raw
+        # count as a long one, but never drops below 3: a couple of uses of
+        # an ordinary word like "really" is just English, not a tell.
+        threshold = max(3, round(word_total / 250))
+        if len(matches) <= threshold:
+            continue
+        first = matches[0]
+        findings.append(
+            _make_finding(
+                "overused_word",
+                text,
+                first.start(),
+                first.end(),
+                f"'{word}' appears {len(matches)} times across {word_total} words -- "
+                "a crutch word, not a banned one, but still worth cutting most instances.",
+            )
+        )
     return findings
 
 

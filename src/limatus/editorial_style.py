@@ -24,6 +24,7 @@ DEFAULT_DIAGNOSE_CHECKS: dict[str, bool] = {
     "voiceMismatch": True,
     "missingAttribution": True,
     "informationDensity": True,
+    "overusedWords": True,
 }
 
 DEFAULT_DENSITY_THRESHOLDS = {

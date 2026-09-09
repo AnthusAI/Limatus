@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.5.1 (2026-09-09)
+
+### Bug Fixes
+
+- Verify() no longer treats frontmatter edits as factual changes
+  ([`ae2dc07`](https://github.com/AnthusAI/Limatus/commit/ae2dc07f3379dbe72e883ce9dee883ed4bd95f30))
+
+diagnose_draft masks a leading YAML frontmatter block before checking prose, but verify_revision
+  never did the same for its own text-scanning helpers (_findings, _factual_change_risk,
+  _score_draft). Editing a draft's title, date, or description -- normal copyediting -- showed up as
+  a "deleted_claim" (the old frontmatter block read as prose that disappeared) and inflated
+  factual_change_risk, even when the body was untouched. Found dogfooding verify() on a real
+  copy-edit.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+
 ## v0.5.0 (2026-09-09)
 
 ### Features

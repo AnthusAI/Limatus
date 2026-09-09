@@ -1,6 +1,28 @@
 # CHANGELOG
 
 
+## v0.5.0 (2026-09-09)
+
+### Features
+
+- Add check_rules for pattern-only checks on non-prose text
+  ([`6f7f407`](https://github.com/AnthusAI/Limatus/commit/6f7f407fc0c2a65f140e25d919f7485c1221293b))
+
+diagnose() runs the full heuristic suite -- cadence, redundancy, vague claims, density -- which is
+  right for articles but wrong for text that isn't prose at all: a raw .tsx component source, a
+  page-content.ts copy string. Those need only the explicit rules (banned phrases/intensifiers/
+  patterns, no-emoji, contrast cap), not heuristics tuned for real sentences misfiring on code
+  shape.
+
+check_rules_only()/check_rules() run just the rules portion of the pipeline. This is the last piece
+  needed to let Chattic.us-web's bespoke check_editorial_rules.py -- the script that inspired
+  Limatus in the first place -- call Limatus directly across all three of its surfaces (articles,
+  page-content.ts, component sources) instead of maintaining its own duplicate implementation of the
+  same rules.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+
 ## v0.4.0 (2026-09-08)
 
 ### Chores

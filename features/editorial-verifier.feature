@@ -16,3 +16,8 @@ Feature: Verify a human-steered revision
     When an operator runs verification
     Then Limatus advises against acceptance
     And it does not publish or modify either draft
+
+  Scenario: Editing frontmatter alone is not a factual change
+    Given an original and working draft that differ only in frontmatter
+    When an operator runs verification
+    Then Limatus reports no deleted-claim or factual-change findings

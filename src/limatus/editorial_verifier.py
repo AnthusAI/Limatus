@@ -9,7 +9,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from .editorial_diagnosis import diagnose_draft
+from .editorial_diagnosis import _mask_yaml_frontmatter, diagnose_draft
 from .editorial_style import LoadedStyleProfile
 from .editorial_text import sentences, tokenize
 
@@ -52,12 +52,19 @@ def verify_revision(
     if not isinstance(threshold, (int, float)) or not 0 <= threshold <= 1:
         raise ValueError("threshold must be between 0 and 1")
 
+    # A leading YAML frontmatter block is metadata, not prose -- an edited
+    # title or date should never register as a deleted claim or a factual
+    # change. Masked once here so every text-scanning helper below sees the
+    # same prose-only view diagnose_draft already uses internally.
+    masked_original = _mask_yaml_frontmatter(original_text)
+    masked_working = _mask_yaml_frontmatter(working_text)
+
     original_diagnosis = diagnose_draft(original_text, style_profile=style_profile)
     working_diagnosis = diagnose_draft(working_text, style_profile=style_profile)
-    original_scores = _score_draft(original_text, original_diagnosis, style_profile)
-    working_scores = _score_draft(working_text, working_diagnosis, style_profile)
-    findings = _findings(original_text, working_text, original_diagnosis, working_diagnosis)
-    factual_risk = _factual_change_risk(original_text, working_text)
+    original_scores = _score_draft(masked_original, original_diagnosis, style_profile)
+    working_scores = _score_draft(masked_working, working_diagnosis, style_profile)
+    findings = _findings(masked_original, masked_working, original_diagnosis, working_diagnosis)
+    factual_risk = _factual_change_risk(masked_original, masked_working)
     working_scores["factual_change_risk"] = factual_risk
     working_scores["total"] = _total_score(
         working_scores["specificity"],

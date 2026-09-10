@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "event_id": "bf036701-9d9f-4d23-8a03-67d8757a069b",
+  "issue_id": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81",
+  "event_type": "state_transition",
+  "occurred_at": "2026-09-10T20:38:51.717Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "from_status": "open",
+    "to_status": "in_progress"
+  }
+}

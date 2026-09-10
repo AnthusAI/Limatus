@@ -1,0 +1,31 @@
+{
+  "id": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+  "title": "HITL packets for published Pilobolus",
+  "description": "# HITL packets for published Pilobolus\n\n## Done when\n\n- Each published article has a read-only scan packet (JSON + finding list) from latest origin/main.\n- A decisions template lists finding ids with no pre-filled skip/rewrite.\n- A Pilobolus rewrite skill exists (VOICE constraints: no house name, no not-A-it's-B stacks, no invented facts).\n- After Ryan records decisions, options + compare can run without touching published files until apply.\n- Provenance can be composed (scan, decisions, options, compare, models).",
+  "type": "epic",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81",
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "3b5d12dd-da98-4d15-af3d-c1cd0ebb347c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Waiting on Ryan HITL: skip/rewrite/delete/keep/add per finding. Options will not run until rewrite decisions exist. Pilobolus rewrite skill still missing (only Anth.us skill in Papyrus).",
+      "created_at": "2026-09-10T20:39:31.865641Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-10T20:38:38.356742Z",
+  "updated_at": "2026-09-10T20:39:31.865652Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

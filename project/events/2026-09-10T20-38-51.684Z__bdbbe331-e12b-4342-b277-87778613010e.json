@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "bdbbe331-e12b-4342-b277-87778613010e",
+  "issue_id": "LIM-30ca2a45-e10e-4fcc-81bd-82216a60a8c0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T20:38:51.684Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nHuman chooses; nothing applies until then.\n\n## Gherkin\n\n```gherkin\nFeature: Human apply gate\n  As the Pilobolus editor\n  I want to pick among ranked options\n  So published copy changes only when I apply\n\n  Scenario: No auto-apply\n    Given rewrite decisions and generated options for one article\n    When I run limatus compare on those option texts\n    Then I obtain a ranking of all options\n    And the published article is unchanged\n    And apply happens only after I record a chosen option id\n```",
+    "issue_type": "story",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+    "priority": 1,
+    "status": "open",
+    "title": "Human choose-and-apply gate for rewrite options"
+  }
+}

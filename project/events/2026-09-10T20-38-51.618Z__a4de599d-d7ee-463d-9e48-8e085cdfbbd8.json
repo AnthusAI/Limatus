@@ -1,0 +1,16 @@
+{
+  "schema_version": 1,
+  "event_id": "a4de599d-d7ee-463d-9e48-8e085cdfbbd8",
+  "issue_id": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+  "event_type": "field_updated",
+  "occurred_at": "2026-09-10T20:38:51.618Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "changes": {
+      "parent": {
+        "from": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+        "to": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81"
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "364610dd-98be-43fb-aed3-592eedb2d22d",
+  "issue_id": "LIM-4479367e-6572-4994-874d-ba07cf96fa3a",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T20:38:51.649Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nAs an operator, I want scan packets for every published Pilobolus article so I can steer findings myself.\n\n## Gherkin\n\n```gherkin\nFeature: Published article scan packets\n  As the Pilobolus editor\n  I want a scan of each live article against the house profile\n  So I can mark skip or rewrite myself\n\n  Scenario: Scan does not steer\n    Given the latest published articles on Pilobol.us origin/main\n    And the Papyrus pilobolus style profile\n    When I run limatus scan on each article\n    Then I get findings with ids and sources\n    And the scan JSON contains no skip or rewrite decisions\n    And the article files are unchanged\n```",
+    "issue_type": "story",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+    "priority": 1,
+    "status": "open",
+    "title": "Scan packets for published Pilobolus articles"
+  }
+}

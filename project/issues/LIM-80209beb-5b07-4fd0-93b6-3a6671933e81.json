@@ -1,0 +1,31 @@
+{
+  "id": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81",
+  "title": "HITL dogfood: Limatus on published Pilobolus",
+  "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan (publication operator), I want to scan every published Pilobolus article with current Limatus, record my own skip/rewrite/delete/keep/add decisions, review ranked rewrite options, and apply only what I chose — so we dogfood Limatus on live copy without a silent editor or auto-publish.\n\n## Guardrails\n\n- Source of published copy: latest `origin/main` of Pilobol.us (`web/content/articles/*.md`, not `index.md`).\n- Style profile: Papyrus `publications/pilobolus/style-profile.yml`.\n- Limatus must not invent decisions. Options run only after recorded `rewrite`.\n- Working copies change only after an explicit human apply. Site publish stays a separate human gate.\n- Do not merge dirty local Pilobol.us; dogfood from an isolated checkout of origin.\n\n## Loop\n\nscan → human decisions → options (rewrite only) → compare shortlist → human choose → apply to working copy → human publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
+  "type": "initiative",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": null,
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "8e2d6f25-4f06-4c84-b44b-68c4a411e68e",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Dogfood checkout: /tmp/pilobol-dogfood-origin at origin/main c5e1bfc (8 published articles). Local Pilobol.us left dirty and unmerged. Scan packets next; no apply until Ryan records decisions.",
+      "created_at": "2026-09-10T20:38:51.765582Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-10T20:38:43.634156Z",
+  "updated_at": "2026-09-10T20:38:51.765596Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

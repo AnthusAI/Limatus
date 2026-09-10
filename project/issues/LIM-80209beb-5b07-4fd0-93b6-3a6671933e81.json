@@ -1,7 +1,7 @@
 {
   "id": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81",
   "title": "HITL dogfood: Limatus on published Pilobolus",
-  "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan (publication operator), I want to scan every published Pilobolus article with current Limatus, record my own skip/rewrite/delete/keep/add decisions, review ranked rewrite options, and apply only what I chose — so we dogfood Limatus on live copy without a silent editor or auto-publish.\n\n## Guardrails\n\n- Source of published copy: latest `origin/main` of Pilobol.us (`web/content/articles/*.md`, not `index.md`).\n- Style profile: Papyrus `publications/pilobolus/style-profile.yml`.\n- Limatus must not invent decisions. Options run only after recorded `rewrite`.\n- Working copies change only after an explicit human apply. Site publish stays a separate human gate.\n- Do not merge dirty local Pilobol.us; dogfood from an isolated checkout of origin.\n\n## Loop\n\nscan → human decisions → options (rewrite only) → compare shortlist → human choose → apply to working copy → human publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
+  "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan, I want Limatus (scan + OpenAI judge + options + compare) to copy-edit every published Pilobolus article. The **agent** handles finding-level skip/rewrite from the house voice profile and VOICE.md. I steer by picking among ranked options and commenting on the *feel* of the piece. I do not micro-manage rubric heuristics.\n\n## Loop\n\nscan (always-lane ∪ OpenAI Terra judge) → **agent** records skip/rewrite/delete/keep/add from voice → options for rewrite only → compare shortlist → **human** chooses option and/or comments → apply to working copy → human publish.\n\n## Guardrails\n\n- Source: latest Pilobol.us `origin/main` `web/content/articles/*.md` (not index).\n- Profile: Papyrus `publications/pilobolus/style-profile.yml` with `judge.provider: openai` (Terra default).\n- Scan does not invent decisions. The copy-editing agent does. The human does not sit on every finding id.\n- Working copies change only after an explicit human-chosen apply. No auto-publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
   "type": "initiative",
   "status": "in_progress",
   "priority": 1,
@@ -20,10 +20,17 @@
       "text": "Dogfood checkout: /tmp/pilobol-dogfood-origin at origin/main c5e1bfc (8 published articles). Local Pilobol.us left dirty and unmerged. Scan packets next; no apply until Ryan records decisions.",
       "created_at": "2026-09-10T20:38:51.765582Z",
       "comment_type": "default"
+    },
+    {
+      "id": "ed3911f0-f66e-4cdc-abfb-f4e44ae92d3c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Ryan: humans will not micro-manage finding skip/rewrite. Agent steers from voice; human selects options and comments on feel. Enable OpenAI judge on the pilobolus profile (it was never configured; this environment also had no OPENAI_API_KEY until Papyrus .env is used for dogfood).",
+      "created_at": "2026-09-10T21:03:29.855940Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-10T20:38:51.765596Z",
+  "updated_at": "2026-09-10T21:03:29.855955Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

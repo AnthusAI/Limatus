@@ -1,0 +1,31 @@
+{
+  "id": "LIM-6a6da3e6-90f1-4f72-989a-f3321df0a4c1",
+  "title": "Enable OpenAI judge on the Pilobolus style profile",
+  "description": "## Intent\n\nAs a copy-editing agent, I want the house profile to turn on the OpenAI judge so scan can add voice-aware findings the always-lane misses.\n\n## Gherkin\n\n```gherkin\nFeature: Pilobolus judge enabled\n  As a copy-editing agent\n  I want judge.provider openai on the Pilobolus profile\n  So scan can use Terra against house voice\n\n  Scenario: Judge configured\n    Given publications/pilobolus/style-profile.yml\n    When I load the profile\n    Then judge.provider is openai\n    And the default model is the documented Terra id\n```",
+  "type": "story",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "c67d01bc-7613-4d4d-835c-f631702596c2",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Planner dispatched. Product change is in Papyrus publications/pilobolus/style-profile.yml (isolated worktree off origin/develop; Papyrus primary clone is dirty). PR to develop. Also add publications/pilobolus/editorial-rewrite-skill.yml from the Anth.us skill with Pilobolus VOICE constraints.",
+      "created_at": "2026-09-10T21:03:55.316411Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-10T21:03:29.882971Z",
+  "updated_at": "2026-09-10T21:03:55.316428Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

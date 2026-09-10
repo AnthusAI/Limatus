@@ -118,7 +118,7 @@ class EditorialScanTests(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "limatus.cli",
+                "limatus",
                 "scan",
                 "--text",
                 text,
@@ -135,7 +135,7 @@ class EditorialScanTests(unittest.TestCase):
             [
                 sys.executable,
                 "-m",
-                "limatus.cli",
+                "limatus",
                 "diagnose",
                 "--text",
                 text,

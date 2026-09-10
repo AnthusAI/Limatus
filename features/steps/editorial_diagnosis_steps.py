@@ -53,7 +53,7 @@ def _run_diagnose_cli(
     command = [
         sys.executable,
         "-m",
-        "limatus.cli",
+        "limatus",
         "diagnose",
         "--profile",
         str(profile_path),

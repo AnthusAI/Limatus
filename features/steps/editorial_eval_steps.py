@@ -42,7 +42,7 @@ def step_when_run_eval(context):
     environment = os.environ.copy()
     environment["PYTHONPATH"] = f"{SRC_ROOT}:{REPO_ROOT}"
     context.eval_result = subprocess.run(
-        [sys.executable, "-m", "limatus.cli", "eval", "--manifest", str(context.eval_manifest)],
+        [sys.executable, "-m", "limatus", "eval", "--manifest", str(context.eval_manifest)],
         cwd=REPO_ROOT,
         env=environment,
         text=True,

@@ -19,6 +19,7 @@ from .editorial_options_schema import (
     validate_options,
     validate_suggestions,
 )
+from .editorial_apply import _replacement_skips_span_prefix
 from .editorial_style import LoadedStyleProfile
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
@@ -489,6 +490,8 @@ def _normalize_options_for_finding(
         replacement = str(entry.get("patch", {}).get("replacement", entry.get("replacement", "")))
         reason = str(entry.get("reason") or "").strip()
         if not reason:
+            continue
+        if _replacement_skips_span_prefix(finding["excerpt"], replacement):
             continue
         option_id = str(entry.get("id") or stable_option_id(finding["id"], replacement, reason))
         if option_id in seen_ids:

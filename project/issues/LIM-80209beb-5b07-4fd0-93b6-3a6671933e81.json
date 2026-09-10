@@ -3,7 +3,7 @@
   "title": "HITL dogfood: Limatus on published Pilobolus",
   "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan, I want Limatus (scan + OpenAI judge + options + compare) to copy-edit every published Pilobolus article. The **agent** handles finding-level skip/rewrite from the house voice profile and VOICE.md. I steer by picking among ranked options and commenting on the *feel* of the piece. I do not micro-manage rubric heuristics.\n\n## Loop\n\nscan (always-lane ∪ OpenAI Terra judge) → **agent** records skip/rewrite/delete/keep/add from voice → options for rewrite only → compare shortlist → **human** chooses option and/or comments → apply to working copy → human publish.\n\n## Guardrails\n\n- Source: latest Pilobol.us `origin/main` `web/content/articles/*.md` (not index).\n- Profile: Papyrus `publications/pilobolus/style-profile.yml` with `judge.provider: openai` (Terra default).\n- Scan does not invent decisions. The copy-editing agent does. The human does not sit on every finding id.\n- Working copies change only after an explicit human-chosen apply. No auto-publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
   "type": "initiative",
-  "status": "in_progress",
+  "status": "blocked",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -27,10 +27,17 @@
       "text": "Ryan: humans will not micro-manage finding skip/rewrite. Agent steers from voice; human selects options and comments on feel. Enable OpenAI judge on the pilobolus profile (it was never configured; this environment also had no OPENAI_API_KEY until Papyrus .env is used for dogfood).",
       "created_at": "2026-09-10T21:03:29.855940Z",
       "comment_type": "default"
+    },
+    {
+      "id": "091d33e2-4b18-4980-a6e1-e85c86397b3d",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Parked. Ryan will test after the product loop works. Do not use published Pilobolus or Ryan as the test harness. Next: LIM-0129cf — CLI scan → decide → options → compare → apply on fixtures/working copies.\n",
+      "created_at": "2026-09-10T23:18:18.020051Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-10T21:03:29.855955Z",
+  "updated_at": "2026-09-10T23:18:18.049857Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

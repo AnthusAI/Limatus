@@ -24,10 +24,17 @@
       "text": "Planner dispatched. Gaps: no `python -m limatus` (`__main__` missing; tests use `python -m limatus.cli`); no `limatus decide`; apply Behave calls Python `apply_patch` not `limatus apply`. Isolated worktree off origin/main. Plan only until authorized.\n",
       "created_at": "2026-09-10T23:18:18.193871Z",
       "comment_type": "default"
+    },
+    {
+      "id": "a5a19f94-5426-4152-99c2-0609428ab452",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan (Grok): Composer 2.5 implements. Worktree `/tmp/limatus-LIM-0129cf-cli-loop` branch `cursor/feature/LIM-0129cf-cli-loop` off origin/main.\n\n1. `__main__.py` so `python -m limatus` equals `limatus.cli:main`. CLI Behave helpers use `-m limatus`.\n2. `limatus decide --finding-id --decision skip|rewrite|delete|keep|add [--note] --decisions FILE` — append via `record_decision`; create `[]` if missing; does not touch drafts.\n3. `editorial-apply.feature` must shell `python -m limatus apply` / `diff`, not import `apply_patch`.\n4. Behave: scan (no key) + decide on a fixture finding id; draft unchanged.\n5. Help/docstring lists decide, apply, diff, compare. No live OpenAI, no LIMATUS_TEST_*, no project/.\n",
+      "created_at": "2026-09-10T23:22:59.005866Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:39:19.470819Z",
-  "updated_at": "2026-09-10T23:18:18.193884Z",
+  "updated_at": "2026-09-10T23:22:59.005883Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

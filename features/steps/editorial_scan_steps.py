@@ -51,7 +51,7 @@ def _run_scan_cli(
     command = [
         sys.executable,
         "-m",
-        "limatus.cli",
+        "limatus",
         "scan",
         "--profile",
         str(profile_path),

@@ -1,6 +1,10 @@
 from __future__ import annotations
 
 import json
+import os
+import subprocess
+import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -18,6 +22,7 @@ from limatus.editorial_loop import assert_scan_has_no_steering_decisions
 from limatus.editorial_scan import scan_draft
 
 ROOT = Path(__file__).resolve().parents[1]
+SRC = ROOT / "src"
 OPTIONS_ROOT = ROOT / "features/fixtures/editorial-options"
 PROFILE = ROOT / "features/fixtures/editorial-diagnosis/style-profile.yml"
 LOOP_FIXTURE = ROOT / "features/fixtures/editorial-loop"
@@ -123,6 +128,61 @@ class EditorialLoopTests(unittest.TestCase):
         self.assertEqual(record["schemaVersion"], 1)
         self.assertIn("compareReport", record)
         self.assertEqual(len(record["compareReport"]["candidates"]), len(candidates))
+
+
+class DecideCliTests(unittest.TestCase):
+    def test_decide_creates_and_appends_decisions_file(self):
+        env = os.environ.copy()
+        env["PYTHONPATH"] = f"{SRC}:{ROOT}"
+        with tempfile.TemporaryDirectory() as tmp:
+            decisions_path = Path(tmp) / "decisions.json"
+            finding_id = "finding-0123456789abcdef"
+            first = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "limatus",
+                    "decide",
+                    "--finding-id",
+                    finding_id,
+                    "--decision",
+                    "rewrite",
+                    "--note",
+                    "needs options",
+                    "--decisions",
+                    str(decisions_path),
+                ],
+                cwd=ROOT,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            payload = json.loads(first.stdout)
+            self.assertEqual(len(payload), 1)
+            self.assertEqual(payload[0]["finding_id"], finding_id)
+            second = subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "limatus",
+                    "decide",
+                    "--finding-id",
+                    "finding-fedcba9876543210",
+                    "--decision",
+                    "skip",
+                    "--decisions",
+                    str(decisions_path),
+                ],
+                cwd=ROOT,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            updated = json.loads(second.stdout)
+            self.assertEqual(len(updated), 2)
+            self.assertEqual(json.loads(decisions_path.read_text(encoding="utf-8")), updated)
 
 
 if __name__ == "__main__":

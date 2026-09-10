@@ -50,6 +50,8 @@ pip install -e ".[dev]"
 
 ```bash
 limatus scan --draft path/to/draft.md --profile path/to/style-profile.yml
+limatus decide --finding-id finding-0123456789abcdef --decision rewrite \
+  --note "needs concrete options" --decisions path/to/decisions.json
 limatus options --draft path/to/draft.md --profile path/to/style-profile.yml \
   --diagnosis path/to/diagnosis.json --decisions path/to/decisions.json \
   --skill path/to/rewrite-skill.yml
@@ -184,7 +186,7 @@ behave
 Judge calibration canary (fixture judge, no API key):
 
 ```bash
-PYTHONPATH=src python -m limatus.cli canary --manifest features/fixtures/editorial-canary/manifest.yml
+PYTHONPATH=src python -m limatus canary --manifest features/fixtures/editorial-canary/manifest.yml
 ```
 
 ## License

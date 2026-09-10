@@ -102,7 +102,7 @@ def step_when_scan_without_require_judge(context):
     command = [
         sys.executable,
         "-m",
-        "limatus.cli",
+        "limatus",
         "scan",
         "--profile",
         str(context.profile_path),

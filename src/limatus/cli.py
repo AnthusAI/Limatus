@@ -1,11 +1,16 @@
 """Limatus CLI entry point.
 
     limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
-    limatus compare --profile <style-profile.yml> --baseline <file> --candidate <file> [...]
-    limatus diagnose  (alias for scan)
+    limatus decide --finding-id finding-<hex> --decision skip|rewrite|delete|keep|add \\
+                   [--note TEXT] --decisions <decisions.json>
     limatus options  --draft <file> --profile <style-profile.yml> \\
                       --diagnosis <diagnosis.json> --decisions <decisions.json> \\
                       --skill <editorial-rewrite-skill.yml> [...]
+    limatus compare --profile <style-profile.yml> --baseline <file> --candidate <file> [...]
+    limatus apply --original <file> --working-copy <file> --options <options.json> [...]
+    limatus diff --original <file> --working-copy <file> [...]
+    limatus verify --original <file> --working-copy <file> --profile <style-profile.yml> [...]
+    limatus diagnose  (alias for scan)
 
 See editorial_commands.py for each subcommand's full flag set.
 """
@@ -18,6 +23,7 @@ from .editorial_judge import JudgeUnavailableError
 from .editorial_style import StyleProfileValidationError
 from .editorial_commands import (
     editorial_apply,
+    editorial_decide,
     editorial_diagnose,
     editorial_diff,
     editorial_options,
@@ -32,6 +38,7 @@ from .editorial_eval import main as editorial_eval
 COMMANDS = {
     "scan": editorial_scan,
     "diagnose": editorial_diagnose,
+    "decide": editorial_decide,
     "options": editorial_options,
     "apply": editorial_apply,
     "diff": editorial_diff,

@@ -1,6 +1,32 @@
 # CHANGELOG
 
 
+## v0.14.2 (2026-09-10)
+
+### Bug Fixes
+
+- **cli**: Reject replacements that skip the span prefix (LIM-073443)
+  ([#12](https://github.com/AnthusAI/Limatus/pull/12),
+  [`546480c`](https://github.com/AnthusAI/Limatus/commit/546480c37b4a8b30ff4410f32b6006ecd07b0048))
+
+Fail closed on apply when a replacement aligns with a suffix of the span excerpt, and drop such
+  options during rewrite normalization.
+
+### Chores
+
+- **kanbus**: Close LIM-073443 after PR #12
+  ([`1cb68ad`](https://github.com/AnthusAI/Limatus/commit/1cb68ad03e2e1416a33c96b1bcc85a4ce5da8380))
+
+- **kanbus**: File apply span-prefix drop after wiki-janitor dogfood
+  ([`1d1a9df`](https://github.com/AnthusAI/Limatus/commit/1d1a9dfa66a7da361a3bbeee3a36f355ac562b7c))
+
+- **kanbus**: File options retry after prefix-skip filter
+  ([`6111fff`](https://github.com/AnthusAI/Limatus/commit/6111fffc4170e384812faa1ef5476175802a4c8e))
+
+- **kanbus**: Start LIM-073443 span-prefix apply fail-closed
+  ([`e9b5bad`](https://github.com/AnthusAI/Limatus/commit/e9b5bad0f1061a87309e0303e844b15f6b8aef7c))
+
+
 ## v0.14.1 (2026-09-10)
 
 ### Bug Fixes

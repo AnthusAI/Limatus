@@ -3,7 +3,7 @@
   "title": "Unsupported providers are out of scope and rejected",
   "description": "## Intent\n\nDocument and enforce this-stage provider scope.\n\n## Gherkin\n\n```gherkin\nFeature: OpenAI-only judge this stage\n  As an operator\n  I want a clear error if I name Bedrock or Anthropic\n  So we do not pretend multi-provider support exists\n\n  Scenario: Unknown provider\n    Given a profile that sets judge provider to anthropic\n    When I run limatus scan\n    Then the command fails with an unsupported-provider error\n```\n",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "d3e37832-2e44-4225-a15a-eae8db487adb",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Shipped in PR #3.",
+      "created_at": "2026-09-10T19:11:51.904625Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T18:29:10.388198Z",
-  "updated_at": "2026-09-10T19:05:15.733371Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:11:52.011865Z",
+  "closed_at": "2026-09-10T19:11:52.011845Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

@@ -1,6 +1,44 @@
 # CHANGELOG
 
 
+## v0.12.1 (2026-09-10)
+
+### Bug Fixes
+
+- **judge**: Include rubric in OpenAI structured output required fields
+  ([#7](https://github.com/AnthusAI/Limatus/pull/7),
+  [`57c5f6e`](https://github.com/AnthusAI/Limatus/commit/57c5f6ecfd8123fb72ad714e56c7b182ccfe6209))
+
+OpenAI Responses rejects schemas when properties keys are missing from required. Align root required
+  with findings and rubric; add unit test.
+
+### Chores
+
+- **kanbus**: Agent steers findings; human steers options and feel
+  ([`14b37d6`](https://github.com/AnthusAI/Limatus/commit/14b37d64af8e25d966435c9043544f03add2d7eb))
+
+- **kanbus**: Authorize judge schema fix and voice prompt
+  ([`7c3956c`](https://github.com/AnthusAI/Limatus/commit/7c3956c79acabf255efe7832d1581a0202e453b5))
+
+- **kanbus**: Authorize Pilobolus judge profile implementation
+  ([`4763c2e`](https://github.com/AnthusAI/Limatus/commit/4763c2eac38cd517d8f0f73fa0036ec80e74272a))
+
+- **kanbus**: Close LIM-c31ac3 after PR #7 merge
+  ([`45291a1`](https://github.com/AnthusAI/Limatus/commit/45291a18bc68c39cdbd99dd0cceda856c047351c))
+
+- **kanbus**: File HITL dogfood for published Pilobolus
+  ([`b991354`](https://github.com/AnthusAI/Limatus/commit/b9913548c190406d65a1f82dbdc17b5fda6d5e3c))
+
+- **kanbus**: Fill LIM-ed02c3 redundancy dogfood story
+  ([`2050998`](https://github.com/AnthusAI/Limatus/commit/20509986ed6335cca98882098be84b31096a5c11))
+
+- **kanbus**: Lim-6a6da3 Papyrus PR #75 opened
+  ([`cdfb5a1`](https://github.com/AnthusAI/Limatus/commit/cdfb5a119964d37ab289e938a9ec1a6610987088))
+
+- **kanbus**: Live OpenAI judge schema 400 on rubric
+  ([`d2b4295`](https://github.com/AnthusAI/Limatus/commit/d2b42954b816dc2a8e930fd57282b9a7e7fa8faa))
+
+
 ## v0.12.0 (2026-09-10)
 
 ### Chores

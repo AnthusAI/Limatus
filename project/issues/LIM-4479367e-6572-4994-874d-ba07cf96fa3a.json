@@ -20,10 +20,17 @@
       "text": "Read-only scan packets for 8 origin/main articles in /tmp/limatus-pilobol-hitl. No decisions invented. No apply. Always-lane only (profile has no judge). believe-the-rainbow is clean. Redundancy is noisy on image alts and liturgical refrain.",
       "created_at": "2026-09-10T20:39:31.831106Z",
       "comment_type": "default"
+    },
+    {
+      "id": "f496c3f0-eed8-49f8-854a-c3c27d1e340c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Judge re-scan starting on published Pilobolus: Limatus main has prompt v2 (PR #8); Papyrus develop has judge.provider openai (PR #75). Packets go under /tmp/limatus-pilobol-hitl/<slug>/; no apply.\n",
+      "created_at": "2026-09-10T21:14:13.756957Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.649005Z",
-  "updated_at": "2026-09-10T20:39:31.831119Z",
+  "updated_at": "2026-09-10T21:14:13.756976Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

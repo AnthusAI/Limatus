@@ -3,7 +3,7 @@
   "title": "Judge output budget completes live Pilobolus scans",
   "description": "## Intent\n\nAs a copy-editing agent, I want the OpenAI judge to finish structured output on published-length articles so `--require-judge` scan packets exist for HITL.\n\n## Context\n\nLive HITL scan of published Pilobolus (`wiki-janitor`, `you-confessed-to-a-bag-of-numbers`) failed after ~35s:\n\n`JudgeUnavailableError` / `OpenAI editorial rewrite response was incomplete (reason: max_output_tokens)`\n\n`_call_openai_judge` hard-codes `max_output_tokens=2400`. Prompt v2 plus a required rubric (five dimensions with evidence spans) plus findings exceeds that on real articles. Truncation is correctly treated as failure (no partial JSON). Always-lane packets were unchanged; no `scan-judge.json` was written.\n\n## Gherkin\n\n```gherkin\nFeature: Judge output budget\n  As a copy-editing agent\n  I want the OpenAI judge token budget to fit findings plus rubric\n  So live --require-judge scans complete instead of truncating\n\n  Scenario: Judge call uses a named budget large enough for rubric plus findings\n    Given the default OpenAI judge lane\n    When it calls the structured Responses API\n    Then max_output_tokens is a named judge budget, not an unexplained 2400\n    And truncation still raises without returning partial JSON\n\n  Scenario: Unit tests pin the budget without live OpenAI\n    Given mocked Responses API\n    When the default judge lane runs\n    Then the request uses the documented judge output budget\n```\n\n## DoD\n\n- Named constant (and budget helper if draft length should scale); no magic 2400.\n- Truncation still fails closed; do not accept incomplete payloads.\n- Tests without live OpenAI.\n- No `project/` in the product PR. PR to Limatus `main`.\n- Do not drop required `rubric` from the schema (that 400 is already fixed).\n- Do not bump `JUDGE_PROMPT_VERSION` unless the prompt text changes.\n\n## Out of scope\n\n- LIM-ed02c3 image-alt 4-gram detector.\n- Newsroom UI. Detector evasion. Applying patches.",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -48,11 +48,18 @@
       "text": "PR #9 revised: DEFAULT 16384 / MAX 32768. Re-acceptance starting on you-confessed-to-a-bag-of-numbers first (prior reject), then the rest if that completes.\n",
       "created_at": "2026-09-10T21:27:47.413198Z",
       "comment_type": "default"
+    },
+    {
+      "id": "11b8234b-8acf-4d2a-9ab1-3e63399626b7",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "PR #9 squash-merged to main (`68130ed`). Live `--require-judge` completed on all eight published articles (16k floor). DoD met.\n",
+      "created_at": "2026-09-10T21:40:36.732463Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T21:18:30.306710Z",
-  "updated_at": "2026-09-10T21:27:47.413220Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T21:40:36.767856Z",
+  "closed_at": "2026-09-10T21:40:36.767831Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

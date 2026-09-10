@@ -3,7 +3,7 @@
   "title": "Scan packets for published Pilobolus articles",
   "description": "## Intent\n\nAs an operator, I want scan packets for every published Pilobolus article so I can steer findings myself.\n\n## Gherkin\n\n```gherkin\nFeature: Published article scan packets\n  As the Pilobolus editor\n  I want a scan of each live article against the house profile\n  So I can mark skip or rewrite myself\n\n  Scenario: Scan does not steer\n    Given the latest published articles on Pilobol.us origin/main\n    And the Papyrus pilobolus style profile\n    When I run limatus scan on each article\n    Then I get findings with ids and sources\n    And the scan JSON contains no skip or rewrite decisions\n    And the article files are unchanged\n```",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -34,11 +34,18 @@
       "text": "Judge re-scan blocked: LIM-79c9b2. Two live `--require-judge` calls truncated at 2400 output tokens. Always-lane `scan.json` unchanged; no `scan-judge.json`.\n",
       "created_at": "2026-09-10T21:18:37.929257Z",
       "comment_type": "default"
+    },
+    {
+      "id": "efc99797-dcf2-4c66-9e0d-6895cc08d44c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Judge-enabled packets exist for all eight published articles at `/tmp/limatus-pilobol-hitl/<slug>/scan-judge.json` (prompt v2, Terra). Scans contain no skip/rewrite decisions. Articles unchanged. DoD met.\n",
+      "created_at": "2026-09-10T21:40:59.951320Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.649005Z",
-  "updated_at": "2026-09-10T21:18:37.929277Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T21:40:59.987093Z",
+  "closed_at": "2026-09-10T21:40:59.987071Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

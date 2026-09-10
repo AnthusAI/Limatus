@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "event_id": "6607423a-49ae-4615-8998-a74c1169682e",
+  "issue_id": "LIM-30ca2a45-e10e-4fcc-81bd-82216a60a8c0",
+  "event_type": "comment_added",
+  "occurred_at": "2026-09-10T21:41:00.056Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "comment_author": "8458c498-f041-7092-e4e3-6418236765a7",
+    "comment_id": "ae40689d-38a8-4a9e-a605-9206b9d15c5f"
+  }
+}

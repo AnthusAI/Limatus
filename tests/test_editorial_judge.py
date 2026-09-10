@@ -46,7 +46,7 @@ class EditorialJudgeTests(unittest.TestCase):
         mid_budget = _judge_output_budget(mid)
         self.assertGreater(mid_budget, DEFAULT_JUDGE_OUTPUT_TOKENS)
         self.assertLessEqual(mid_budget, MAX_JUDGE_OUTPUT_TOKENS)
-        long_draft = "y" * 200_000
+        long_draft = "y" * 300_000
         self.assertEqual(_judge_output_budget(long_draft), MAX_JUDGE_OUTPUT_TOKENS)
 
     def test_judge_output_schema_root_required_matches_properties(self):

@@ -154,6 +154,8 @@ def diagnose_draft(
         generic_passages.extend(_check_intensifier_vague_claims(text))
     if checks["overusedWords"]:
         generic_passages.extend(_check_overused_words(text))
+    if checks["uncontractedForms"]:
+        voice_observations.extend(_check_uncontracted_forms(text))
 
     if checks["unsupportedCertainty"]:
         unsupported_claims.extend(_check_unsupported_certainty(text))
@@ -394,6 +396,69 @@ def _check_overused_words(text: str) -> list[dict[str, Any]]:
                 "a crutch word, not a banned one, but still worth cutting most instances.",
             )
         )
+    return findings
+
+
+# Formal two-word constructions and their contraction, for profiles whose
+# sentenceStyle says to use contractions. A style rule stated in prose
+# ("use contractions") is easy to state and easy to violate by default,
+# since uncontracted phrasing is exactly what a careful, formal draft
+# reaches for without anyone noticing.
+_CONTRACTION_PAIRS = (
+    ("that is", "that's"),
+    ("it is", "it's"),
+    ("there is", "there's"),
+    ("who is", "who's"),
+    ("what is", "what's"),
+    ("do not", "don't"),
+    ("does not", "doesn't"),
+    ("did not", "didn't"),
+    ("cannot", "can't"),
+    ("can not", "can't"),
+    ("will not", "won't"),
+    ("would not", "wouldn't"),
+    ("should not", "shouldn't"),
+    ("could not", "couldn't"),
+    ("is not", "isn't"),
+    ("are not", "aren't"),
+    ("was not", "wasn't"),
+    ("were not", "weren't"),
+    ("have not", "haven't"),
+    ("has not", "hasn't"),
+    ("had not", "hadn't"),
+    ("they are", "they're"),
+    ("we are", "we're"),
+    ("you are", "you're"),
+    ("i am", "I'm"),
+    ("let us", "let's"),
+)
+
+
+def _check_uncontracted_forms(text: str) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    occupied: list[tuple[int, int]] = []
+    for formal, contracted in _CONTRACTION_PAIRS:
+        pattern = re.compile(rf"\b{re.escape(formal)}\b", re.IGNORECASE)
+        for match in pattern.finditer(text):
+            start, end = match.start(), match.end()
+            if _spans_overlap(start, end, occupied):
+                continue
+            # Skip the appositive/clarifying use of "that is," (the "i.e."
+            # sense) -- contracting that one changes what the sentence means.
+            if formal == "that is" and text[end : end + 1] == ",":
+                continue
+            matched_text = text[start:end]
+            suggestion = contracted[0].upper() + contracted[1:] if matched_text[0].isupper() else contracted
+            findings.append(
+                _make_finding(
+                    "uncontracted_form",
+                    text,
+                    start,
+                    end,
+                    f"'{matched_text}' could contract to '{suggestion}' -- the profile favors contractions.",
+                )
+            )
+            occupied.append((start, end))
     return findings
 
 

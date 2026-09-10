@@ -25,6 +25,7 @@ DEFAULT_DIAGNOSE_CHECKS: dict[str, bool] = {
     "missingAttribution": True,
     "informationDensity": True,
     "overusedWords": True,
+    "uncontractedForms": True,
 }
 
 DEFAULT_DENSITY_THRESHOLDS = {

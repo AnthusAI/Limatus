@@ -3,7 +3,7 @@
   "title": "Human choose-and-apply gate for rewrite options",
   "description": "## Intent\n\nHuman chooses; nothing applies until then.\n\n## Gherkin\n\n```gherkin\nFeature: Human apply gate\n  As the Pilobolus editor\n  I want to pick among ranked options\n  So published copy changes only when I apply\n\n  Scenario: No auto-apply\n    Given rewrite decisions and generated options for one article\n    When I run limatus compare on those option texts\n    Then I obtain a ranking of all options\n    And the published article is unchanged\n    And apply happens only after I record a chosen option id\n```",
   "type": "story",
-  "status": "in_progress",
+  "status": "blocked",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,10 +20,17 @@
       "text": "Scan packets ready. Copy-editing agent will record skip/rewrite from house voice (skip image-alt/liturgy 4-grams and broken spans), generate options, compare/rank. Ryan picks; no apply.\n",
       "created_at": "2026-09-10T21:41:00.056318Z",
       "comment_type": "default"
+    },
+    {
+      "id": "bceecf7a-1783-4054-af54-c86a10d90395",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Agent decisions for all eight articles; options+compare for wiki-janitor and you-confessed. Packet: `/tmp/limatus-pilobol-hitl/HITL-OPTIONS.md`. Published copy unchanged. Blocked on Ryan choosing option ids before any apply.\n",
+      "created_at": "2026-09-10T21:50:15.798517Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.684739Z",
-  "updated_at": "2026-09-10T21:41:00.056330Z",
+  "updated_at": "2026-09-10T21:50:15.798538Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

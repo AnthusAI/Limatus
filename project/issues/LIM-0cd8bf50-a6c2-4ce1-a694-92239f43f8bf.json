@@ -3,7 +3,7 @@
   "title": "Judge prompt includes voicePatterns, structure, and sample feel",
   "description": "## Intent\n\nThe judge should think from house voice, not only tone/lexicon snippets.\n\n## Gherkin\n\n```gherkin\nFeature: Judge sees house voice\n  As a copy-editing agent\n  I want the OpenAI judge to receive voicePatterns, sentenceStyle, structure, and reference-sample feel\n  So skip/rewrite judgment matches the publication, not generic editorial taste\n\n  Scenario: Prompt carries voice\n    Given a style profile with voicePatterns and reference samples\n    When the OpenAI judge runs\n    Then the judge request includes those fields (or excerpts)\n    And it still does not rewrite the draft\n```",
   "type": "story",
-  "status": "open",
+  "status": "in_progress",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -12,9 +12,17 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "65e579ee-742a-4c76-b43b-c10216e68ebb",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan approved. Worktree /tmp/limatus-judge-voice-prompt. Implementation authorized. 500-char sample cap. Bump JUDGE_PROMPT_VERSION to 2 and canary pin. No live OpenAI in CI. No project/.",
+      "created_at": "2026-09-10T21:06:30.285046Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T21:03:55.365950Z",
-  "updated_at": "2026-09-10T21:03:55.365972Z",
+  "updated_at": "2026-09-10T21:06:30.285060Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

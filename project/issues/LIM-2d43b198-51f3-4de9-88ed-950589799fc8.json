@@ -13,9 +13,17 @@
     "decoupling"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "05d54c9c-e950-46f7-b466-0c177d97db38",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "LIM-0129cf landed (PR #10). Remaining children: LIM-2a1ca5 (style-rules schema), LIM-c32c24 (SDK API).\n",
+      "created_at": "2026-09-10T23:26:39.903224Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:36:15.498353Z",
-  "updated_at": "2026-09-10T23:18:18.162164Z",
+  "updated_at": "2026-09-10T23:26:39.903235Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

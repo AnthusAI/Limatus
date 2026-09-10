@@ -1,6 +1,6 @@
 """Limatus CLI entry point.
 
-    limatus scan --draft <file> --profile <style-profile.yml> [...]
+    limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
     limatus diagnose  (alias for scan)
     limatus options  --draft <file> --profile <style-profile.yml> \\
                       --diagnosis <diagnosis.json> --decisions <decisions.json> \\
@@ -13,6 +13,8 @@ from __future__ import annotations
 import sys
 
 from . import __version__
+from .editorial_judge import JudgeUnavailableError
+from .editorial_style import StyleProfileValidationError
 from .editorial_commands import (
     editorial_apply,
     editorial_diagnose,
@@ -51,7 +53,11 @@ def main(argv: list[str] | None = None) -> int:
         print(f"limatus: unknown command '{command}'. Try one of: {', '.join(sorted(COMMANDS))}")
         return 1
 
-    result = handler(flags)
+    try:
+        result = handler(flags)
+    except (StyleProfileValidationError, JudgeUnavailableError, ValueError) as exc:
+        print(f"limatus: {exc}", file=sys.stderr)
+        return 1
     return result if isinstance(result, int) else 0
 
 

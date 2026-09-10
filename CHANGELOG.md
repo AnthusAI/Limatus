@@ -1,5 +1,10 @@
 # CHANGELOG
 
+## Unreleased
+
+### Features
+
+- Configured OpenAI judge lane for `limatus scan`: Terra default model, optional dimension rubric (scores 1–5), union with profile findings, and `--require-judge` for hard-fail when the judge cannot run.
 
 ## v0.8.0 (2026-09-10)
 

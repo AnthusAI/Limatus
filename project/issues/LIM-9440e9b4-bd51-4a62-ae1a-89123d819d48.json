@@ -33,10 +33,17 @@
       "text": "Worktree verified at /tmp/limatus-LIM-9440e9-always-lane. Plan approved. Implementation authorized. Rebase onto origin/main first. No project/ in PR.",
       "created_at": "2026-09-10T19:04:42.014472Z",
       "comment_type": "default"
+    },
+    {
+      "id": "481c1005-be9c-41c5-acdf-ad313daf5812",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Acceptance passed. PR #2 blocked until project/ is removed from the product PR.",
+      "created_at": "2026-09-10T19:06:33.254296Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.844268Z",
-  "updated_at": "2026-09-10T19:04:42.014490Z",
+  "updated_at": "2026-09-10T19:06:33.254312Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

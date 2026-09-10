@@ -1,0 +1,27 @@
+{
+  "id": "LIM-d895df5b-292d-4b8e-ac55-ef62d5bcfa2f",
+  "title": "Gold-set canary and calibration",
+  "description": "# Gold-set canary and calibration\n\n## Intent\n\nAs a publication operator, I want a versioned canary of drafts with human (or agreed fixture) judgments, so we can see when a judge prompt or model change disagrees with the voice we care about.\n\n## Done when\n\n- A small fixture canary exists (excellent house voice, fluff, over-polished AI, factual-drift pair, short draft).\n- Runner records scan/compare outputs keyed by promptVersion + model.\n- Changing judge prompt or default model without updating the canary is visible in eval (fail or report drift).\n- Complements `LIM-66c047` (eval harness); does not replace it.\n\n## Out of scope\n\n500-item production gold set in this stage. Fine-tuning on preference pairs.\n",
+  "type": "epic",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [
+    {
+      "target": "LIM-f233fb",
+      "type": "blocked-by"
+    }
+  ],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:09.951877Z",
+  "updated_at": "2026-09-10T18:29:10.093859Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

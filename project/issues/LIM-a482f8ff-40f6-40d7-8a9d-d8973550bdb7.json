@@ -21,10 +21,17 @@
       "text": "Session recap (2026-09-09/10), shipped and released, not previously tracked\nas individual issues -- recording here for continuity:\n\n- check_rules / check_standfirst / component-source contrast-cap exemption:\n  migrated Chattic.us-web's bespoke check_editorial_rules.py (the tool that\n  originally inspired Limatus) onto real Limatus, behavior-preserving,\n  verified against all existing content before/after.\n- rules.noEmojis, rules.bySurface (per-surface contrast-cap override),\n  standfirst schema + limatus standfirst / check_standfirst: new profile\n  capabilities, all shipped.\n- overusedWords check: crutch-word frequency (actually/really/very/...)\n  scaled to document length -- caught 7x 'actually' in one Anth.us post.\n- uncontractedForms check: flags stated-but-unenforced 'use contractions'\n  rules (that is -> that's, does not -> doesn't); per-profile toggle since\n  Pilobolus's narrator deliberately stays uncontracted (VOICE.md) --\n  confirmed OFF is correct against all 5 of its published pieces.\n- editorial_verifier.py frontmatter-masking bug fix: verify() was treating\n  a changed title/date as a 'deleted claim', found dogfooding a real\n  copy-edit.\n- Coverage-audit methodology: read a publication's VOICE.md end to end\n  against its style-profile.yml line by line, looking for rules stated in\n  prose with no matching mechanical check. Found real gaps this way twice\n  (Pilobolus: noEmojis never set, brand-self-naming bans incomplete, 5\n  missing jargon words, trailing-Sources-list pattern missing -- one of\n  which had already shipped a real violation to a published article\n  before the audit caught it). Worth doing for Anth.us and Chattic.us too;\n  not yet done.\n- Style-profile.yml coverage in production: Anth.us, Pilobolus, and\n  Chattic.us profiles all now materially richer than at session start.\n\nAll released to PyPI incrementally (0.1.0 -> 0.6.0+) as each check landed,\neach with a real dogfooded catch as the reason it was built rather than\nspeculative coverage.",
       "created_at": "2026-09-10T11:49:32.623083Z",
       "comment_type": "default"
+    },
+    {
+      "id": "11f7155b-8207-46b2-b282-4b73c7d25a2b",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "New child-domain initiative LIM-df9d58 reimagines the copy-edit loop for agents. Product work stays in Limatus; Papyrus consumes via SDK.",
+      "created_at": "2026-09-10T18:29:19.286123Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:35:37.756767Z",
-  "updated_at": "2026-09-10T11:49:32.623100Z",
+  "updated_at": "2026-09-10T18:29:19.286135Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

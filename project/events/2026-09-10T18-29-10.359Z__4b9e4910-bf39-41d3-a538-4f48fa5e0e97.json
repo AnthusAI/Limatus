@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "4b9e4910-bf39-41d3-a538-4f48fa5e0e97",
+  "issue_id": "LIM-52898f1a-5b03-4a15-9199-0efeba78040d",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.359Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nAs CI, I want scan green without secrets.\n\n## Gherkin\n\n```gherkin\nFeature: Judge optional at runtime\n  As a copy-editing agent in CI\n  I want scan to succeed without OPENAI_API_KEY\n  So always-lane regressions still run\n\n  Scenario: No key\n    Given a profile with the OpenAI judge enabled\n    And OPENAI_API_KEY is unset\n    When I run limatus scan without require-judge\n    Then always-lane findings are present\n    And judge findings are absent\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-f233fb12-43c3-4b9c-829e-f9f8ac0843fa",
+    "priority": 1,
+    "status": "open",
+    "title": "Missing API key omits judge lane instead of failing scan"
+  }
+}

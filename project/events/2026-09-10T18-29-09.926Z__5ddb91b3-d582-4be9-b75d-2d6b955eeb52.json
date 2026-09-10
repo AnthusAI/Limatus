@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "5ddb91b3-d582-4be9-b75d-2d6b955eeb52",
+  "issue_id": "LIM-e9176aa9-59ee-402c-aaa8-0023b7610e24",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:09.926Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "# Agent copy-edit loop\n\n## Intent\n\nAs a copy-editing agent, I want to scan, record explicit finding decisions, generate patch options, rank those options with compare, and present a shortlist to a human — so I improve text without becoming a silent editor or an auto-publisher.\n\n## Done when\n\n- Agent (or human) records `skip` / `rewrite` / `delete` / `keep` / `add` against finding ids. Scan does not invent those decisions.\n- `limatus options` still generates 2–3 patches only for `rewrite` findings; no whole-document `revised_text`.\n- Agent may run compare on those option texts (or on original vs a trial apply) before consulting a human.\n- Working draft changes only when an apply is recorded. External publish is out of this tool.\n- Provenance retains scan output, decisions, options, compare ranking, model/prompt versions.\n\n## Out of scope\n\nNewsroom UI. Fine-tuned preference model. Non-OpenAI option generation (existing OpenAI options path stays).\n",
+    "issue_type": "epic",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+    "priority": 1,
+    "status": "open",
+    "title": "Agent copy-edit loop"
+  }
+}

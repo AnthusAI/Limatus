@@ -13,12 +13,19 @@
     "evals"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "af553681-8663-4d51-876c-f4232b211c8f",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "LIM-d895df (gold-set canary) complements this harness; do not duplicate runners.",
+      "created_at": "2026-09-10T18:29:19.259132Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:36:21.608712Z",
-  "updated_at": "2026-09-08T18:36:21.608810Z",
+  "updated_at": "2026-09-10T18:29:19.259143Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {},
-  "agent": null
+  "custom": {}
 }

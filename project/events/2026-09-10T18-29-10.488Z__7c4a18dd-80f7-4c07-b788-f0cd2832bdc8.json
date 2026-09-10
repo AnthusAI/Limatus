@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "7c4a18dd-80f7-4c07-b788-f0cd2832bdc8",
+  "issue_id": "LIM-d6f42019-e600-49ea-9d0c-ffd104dac936",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.488Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nReplace weighted verify as the regression tool.\n\n## Gherkin\n\n```gherkin\nFeature: Regression compare\n  As a copy-editing agent\n  I want to compare the original to a tweaked working copy\n  So I know whether my edit got worse\n\n  Scenario: Working copy\n    Given an original draft and a working copy after a trial edit\n    When I run limatus compare\n    Then the report includes always-lane deltas\n    And optional rubric deltas if a judge is configured\n    And both files are unchanged\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-0e3f4e03-cdb1-44f0-9ca0-f8fb47648667",
+    "priority": 1,
+    "status": "open",
+    "title": "Compare original to working copy for regression"
+  }
+}

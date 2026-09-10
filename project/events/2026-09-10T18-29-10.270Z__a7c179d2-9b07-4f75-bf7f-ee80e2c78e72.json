@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "a7c179d2-9b07-4f75-bf7f-ee80e2c78e72",
+  "issue_id": "LIM-0fa50cbc-5891-48b9-a7db-a39afc0da5c0",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.270Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nAs a publication operator, I want always-lane suggestions to be voice-local.\n\n## Gherkin\n\n```gherkin\nFeature: Voice-local always lane\n  As a publication operator\n  I want scan to honor this publication's profile\n  So Anth.us and another voice do not share one generic slop list\n\n  Scenario: Two profiles\n    Given one draft and two loadable style profiles with different banned phrases\n    When I run limatus scan with each profile and no judge\n    Then the finding sets differ\n    And each banned-phrase hit matches the profile that was loaded\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-9440e9b4-bd51-4a62-ae1a-89123d819d48",
+    "priority": 1,
+    "status": "open",
+    "title": "The same draft yields different always-lane findings per profile"
+  }
+}

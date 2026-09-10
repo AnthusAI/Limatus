@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "da0aebeb-1440-4bfd-b888-25f779fe554b",
+  "issue_id": "LIM-9053d3eb-a017-4095-b909-4efa44130cb4",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.456Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nHard constraints beat generic preference.\n\n## Gherkin\n\n```gherkin\nFeature: Hard constraints on compare\n  As a copy-editing agent\n  I want factual/unsupported-claim regressions to lose\n  Even if the prose sounds smoother\n\n  Scenario: New unsupported claim\n    Given an original draft and a candidate that adds an unsupported claim\n    When I run limatus compare\n    Then the candidate is not rank 1\n    And the report names the unsupported-claim increase\n    And detector score is not an input\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-0e3f4e03-cdb1-44f0-9ca0-f8fb47648667",
+    "priority": 1,
+    "status": "open",
+    "title": "A candidate that adds unsupported claims cannot be rank one"
+  }
+}

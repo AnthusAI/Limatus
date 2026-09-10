@@ -1,0 +1,22 @@
+{
+  "id": "LIM-4ab3f062-4f10-40c0-829c-2dcac82581c3",
+  "title": "Scan findings carry source provenance",
+  "description": "## Intent\n\nAs an agent, I want labeled sources so I do not treat Terra opinions as measured profile rules.\n\n## Gherkin\n\n```gherkin\nFeature: Finding provenance\n  As a later compare or options step\n  I want to know which lane produced each finding\n  So I can treat profile hits as hard and judge hits as stochastic\n\n  Scenario: Source field is required\n    Given a completed scan JSON\n    Then every finding has source equal to profile or judge\n    And judge findings have model and promptVersion\n    And profile findings do not require a model field\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-3e6cb0d5-b1a5-4bc6-b594-3aeb2c1e546c",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.198645Z",
+  "updated_at": "2026-09-10T18:29:10.198662Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

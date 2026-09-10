@@ -1,0 +1,22 @@
+{
+  "id": "LIM-9440e9b4-bd51-4a62-ae1a-89123d819d48",
+  "title": "Voice-local always-lane signals",
+  "description": "# Voice-local always-lane signals\n\n## Intent\n\nAs a publication operator, I want the scan's always-lane to use **this** publication's style profile, so the same draft yields different pertinent suggestions for Anth.us vs another voice.\n\n## Done when\n\n- Profile `checks`, `rules`, `density`, lexicon, and evidence rules drive always-lane findings.\n- Quality ideas that can be measured without an LLM live here: banned hedges/clichés, empty lead-ins, n-gram redundancy, lexical density / gzip, unsupported certainty, missing attribution, list-shaped prose, optional cadence.\n- House-voice reference samples (word count ≥ profile `minWords`) are not flagged as low density / high compressibility.\n- Short drafts below `minWords` skip document-level density flags.\n- Always-lane is reproducible given the same draft + profile (no LLM).\n\n## Out of scope\n\nJudge-lane findings. Changing Markus directive syntax.\n",
+  "type": "epic",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:09.844268Z",
+  "updated_at": "2026-09-10T18:29:09.844293Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "299c689f-9e71-4778-8cd1-172ce70ce79f",
+  "issue_id": "LIM-3e89d941-faa4-48a5-a6b1-d1fb967d5484",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.555Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nHuman chooses; agent ranks.\n\n## Gherkin\n\n```gherkin\nFeature: Agent shortlist before human\n  As a copy-editing agent\n  I want 2-3 patch options ranked by compare\n  So a human sees a shortlist instead of raw patches\n\n  Scenario: Ranked options\n    Given rewrite decisions and generated options\n    When I run limatus compare on those option texts\n    Then I obtain a ranking of all options\n    And I do not apply a winner automatically\n    And the working draft is unchanged until a human apply is recorded\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-e9176aa9-59ee-402c-aaa8-0023b7610e24",
+    "priority": 1,
+    "status": "open",
+    "title": "Options then compare then human choose"
+  }
+}

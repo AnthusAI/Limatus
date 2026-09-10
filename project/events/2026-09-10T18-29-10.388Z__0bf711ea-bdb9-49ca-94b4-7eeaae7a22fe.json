@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "0bf711ea-bdb9-49ca-94b4-7eeaae7a22fe",
+  "issue_id": "LIM-51c72aba-1a70-462b-8c4b-03e9e4d48f1f",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.388Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nDocument and enforce this-stage provider scope.\n\n## Gherkin\n\n```gherkin\nFeature: OpenAI-only judge this stage\n  As an operator\n  I want a clear error if I name Bedrock or Anthropic\n  So we do not pretend multi-provider support exists\n\n  Scenario: Unknown provider\n    Given a profile that sets judge provider to anthropic\n    When I run limatus scan\n    Then the command fails with an unsupported-provider error\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-f233fb12-43c3-4b9c-829e-f9f8ac0843fa",
+    "priority": 1,
+    "status": "open",
+    "title": "Unsupported providers are out of scope and rejected"
+  }
+}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "8d723e11-47a7-4726-87ca-e56cd5a36b61",
+  "issue_id": "LIM-cebc08fa-7ca5-4040-b94a-e735f1bf03bb",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.302Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nCarry forward established density behavior into scan's always-lane.\n\n## Gherkin\n\n```gherkin\nFeature: Density flags respect profile thresholds\n  As a publication operator\n  I want density findings only when the draft is long enough and actually fluffy\n  So house voice is not punished\n\n  Scenario: House voice\n    Given an Anth.us reference excerpt longer than minWords\n    And the Anth.us style profile\n    When I run limatus scan with no judge\n    Then there is no low_lexical_density finding\n    And there is no high_compressibility finding\n\n  Scenario: Short draft\n    Given a fluffy draft shorter than minWords\n    When I run limatus scan with no judge\n    Then there is no low_lexical_density finding\n    And there is no high_compressibility finding\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-9440e9b4-bd51-4a62-ae1a-89123d819d48",
+    "priority": 1,
+    "status": "open",
+    "title": "House-voice and short drafts skip document-level density flags"
+  }
+}

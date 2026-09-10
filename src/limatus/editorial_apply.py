@@ -17,6 +17,24 @@ from .editorial_options_schema import validate_options
 
 
 SCHEMA_VERSION = 1
+_SPAN_PREFIX_PROBE_LEN = 40
+
+
+def _replacement_skips_span_prefix(excerpt: str, replacement: str) -> bool:
+    """Return whether a non-empty replacement aligns with a suffix of the span excerpt.
+
+    When the replacement text matches a substring of the excerpt that does not start
+    at the excerpt beginning, applying it would drop unread prefix bytes inside the
+    span. Empty replacements (deletions) are not treated as skipping.
+    """
+
+    if not replacement:
+        return False
+    probe = replacement.lstrip()[:_SPAN_PREFIX_PROBE_LEN]
+    if not probe:
+        return False
+    index = excerpt.find(probe)
+    return index > 0
 
 
 def _sha256(data: bytes) -> str:
@@ -106,6 +124,11 @@ def apply_patch(
         raise ValueError("Patch anchor is stale or conflicting with the current working copy.")
 
     replacement = option["patch"]["replacement"]
+    if _replacement_skips_span_prefix(anchor, replacement):
+        raise ValueError(
+            "Patch replacement skips the start of the span excerpt; "
+            "it would delete unread prefix text inside the anchor."
+        )
     if delete and replacement != "":
         raise ValueError("The selected deletion option must have an empty replacement.")
     updated_text = working_text[:start] + replacement + working_text[end:]

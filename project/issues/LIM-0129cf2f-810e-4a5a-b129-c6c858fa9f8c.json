@@ -3,7 +3,7 @@
   "title": "Ship Limatus CLI: diagnose, suggest, diff-oriented apply helpers",
   "description": "Human-facing CLI for diagnose to marked findings to rewrite options or redline-style suggestions to an explicit diff. Config comes from a local style-rules file. No Papyrus required.\n\nDependencies:\n- blocked-by: LIM-dca47857-e14f-4c66-aa4a-37200a524880\n\nFeature: Human-steered CLI editing\n  Scenario: Apply one chosen finding option\n    Given a diagnosis and a human-selected option for one finding\n    When the operator applies it to an explicit working-copy path\n    Then only that anchored patch changes the working copy\n    And Limatus presents a diff while preserving the original draft\n\nMigrated from PPY-0f7fc1.",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -38,11 +38,18 @@
       "text": "PR https://github.com/AnthusAI/Limatus/pull/10. Review ACCEPT on wiring (`__main__`, decide, apply/diff via CLI, no project/). Live CLI acceptance started on the worktree before merge.\n",
       "created_at": "2026-09-10T23:25:35.322083Z",
       "comment_type": "default"
+    },
+    {
+      "id": "407cc246-308f-4dcc-bc22-037fb5d30791",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "PR #10 squash-merged to main (`48675ad`). `python -m limatus`, `limatus decide`, apply/diff via CLI. Acceptance passed on worktree. DoD met.\n",
+      "created_at": "2026-09-10T23:26:39.833214Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:39:19.470819Z",
-  "updated_at": "2026-09-10T23:25:35.322097Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T23:26:39.873821Z",
+  "closed_at": "2026-09-10T23:26:39.873797Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {

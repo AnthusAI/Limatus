@@ -1,10 +1,63 @@
 # CHANGELOG
 
-## Unreleased
+
+## v0.9.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Authorize LIM-0e3f4e compare implementation
+  ([`9df08e4`](https://github.com/AnthusAI/Limatus/commit/9df08e489adefdb8ef1635fd488375c7e68adac3))
+
+- **kanbus**: Authorize LIM-9440e9 always-lane implementation
+  ([`3af4932`](https://github.com/AnthusAI/Limatus/commit/3af49325b08a125dedf150321e867d5e85b5a9b6))
+
+- **kanbus**: Authorize LIM-f233fb OpenAI judge implementation
+  ([`2901574`](https://github.com/AnthusAI/Limatus/commit/2901574e4326a1795250f291645900d286cd553b))
+
+- **kanbus**: Close LIM-9440e9 after PR #2 merge
+  ([`2a621b3`](https://github.com/AnthusAI/Limatus/commit/2a621b33af780a8cf83f010ac9d5a3dea5d7a92e))
+
+- **kanbus**: Close LIM-f233fb after PR #3 merge
+  ([`bd0b1bd`](https://github.com/AnthusAI/Limatus/commit/bd0b1bd46af4c18e8ebd50438a0a1e47368ce521))
+
+- **kanbus**: Lim-9440e9 acceptance passed; PR blocked on project/ files
+  ([`526eab0`](https://github.com/AnthusAI/Limatus/commit/526eab0941feaff16b54f3068db710d7cff3077d))
+
+- **kanbus**: Lim-f233fb acceptance rejected on missing Behave step
+  ([`da26e0d`](https://github.com/AnthusAI/Limatus/commit/da26e0d96ae3e10934b7bce7ce4c3e8debabe455))
+
+- **kanbus**: Re-accept LIM-f233fb; start LIM-0e3f4e compare plan
+  ([`18fa3cd`](https://github.com/AnthusAI/Limatus/commit/18fa3cd434f0ee27b82c63c3820b52fae0f5bb95))
+
+- **kanbus**: Send LIM-9440e9 plan back for missing worktree
+  ([`290859d`](https://github.com/AnthusAI/Limatus/commit/290859df133e9460d330d426cb723ec6e02ea9f8))
 
 ### Features
 
-- Configured OpenAI judge lane for `limatus scan`: Terra default model, optional dimension rubric (scores 1–5), union with profile findings, and `--require-judge` for hard-fail when the judge cannot run.
+- **judge**: Configured OpenAI judge lane (LIM-f233fb)
+  ([#3](https://github.com/AnthusAI/Limatus/pull/3),
+  [`4870dc0`](https://github.com/AnthusAI/Limatus/commit/4870dc023cccf184c6981ec19a287ece70e17b3c))
+
+* feat(judge): configured OpenAI judge lane (LIM-f233fb)
+
+Wire live OpenAI judge when OPENAI_API_KEY is set, Terra default model, optional 1-5 rubric
+  dimensions, union with profile findings, and --require-judge for hard-fail when the judge cannot
+  run. Add verbatim Behave stories and mocked unit coverage; CI stays green without secrets.
+
+* fix(test): register judge findings absent Behave step (LIM-f233fb)
+
+Restore `when` import so editorial_judge_steps loads, and bind "judge findings are absent" to the
+  existing no-judge-findings assertion.
+
+### Testing
+
+- **editorial**: Behave always-lane voice-local and density scenarios
+  ([#2](https://github.com/AnthusAI/Limatus/pull/2),
+  [`8001b5a`](https://github.com/AnthusAI/Limatus/commit/8001b5a0610e525e49d45e16619e97ca6cc497c1))
+
+Add Kanbus LIM-0fa50c and LIM-cebc08 Gherkin with fixtures that prove scan findings differ per
+  profile bans and skip document-level density flags for house-voice and sub-minWords drafts.
+
 
 ## v0.8.0 (2026-09-10)
 

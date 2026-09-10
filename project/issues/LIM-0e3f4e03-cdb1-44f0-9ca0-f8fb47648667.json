@@ -3,7 +3,7 @@
   "title": "Compare candidates and regression",
   "description": "# Compare candidates and regression\n\n## Intent\n\nAs a copy-editing agent, I want to rank two or three candidate texts and to compare a working copy to the original, so I can pick a shortlist and catch quality regressions before I bother a human.\n\n## Done when\n\n- `limatus compare` takes a style profile plus two or more candidate files (or original + working copy).\n- Output lists **all** candidates with ranks, always-lane **deltas** (finding counts by kind, density numbers), and optional judge rubric deltas when a judge is configured.\n- Hard fail: a candidate that **increases unsupported claims** (or other configured hard constraints) cannot be rank 1; the report says why.\n- Ranking does not hide losers.\n- Neither input file is modified.\n- This replaces weighted `should_accept_revision` as the agent-facing “is B better than A?” tool. `verify` may remain as a compatibility alias that calls compare, or is documented as superseded.\n\n## Out of scope\n\nAuto-applying the winner. Auto-publish. Multi-provider judges.\n",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -38,11 +38,18 @@
       "text": "PR #4 up (feat compare). No project/ in the product diff. Acceptance running on /tmp/limatus-LIM-0e3f4e-compare.",
       "created_at": "2026-09-10T19:17:00.227646Z",
       "comment_type": "default"
+    },
+    {
+      "id": "4ec1f8aa-8363-42bd-8714-dd7a03b2b23d",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Acceptance passed. PR #4 squash-merged to main.",
+      "created_at": "2026-09-10T19:17:32.935640Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.898253Z",
-  "updated_at": "2026-09-10T19:17:00.227665Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:17:33.224750Z",
+  "closed_at": "2026-09-10T19:17:33.224730Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

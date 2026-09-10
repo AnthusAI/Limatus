@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "4662d0e0-1ea1-4902-baea-0141001bb7cb",
+  "issue_id": "LIM-f233fb12-43c3-4b9c-829e-f9f8ac0843fa",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:09.869Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "# Configured OpenAI judge lane\n\n## Intent\n\nAs a copy-editing agent with OpenAI configured, I want scan to add judge findings and dimension grades (Terra by default), so I see problems heuristics miss — without the judge silently editing the finding list.\n\n## Done when\n\n- Project/profile config can set `judge.provider: openai` and `judge.model` (default **gpt-5.6-terra** or the documented Terra id).\n- When configured and an API key is present, scan may emit extra findings and an optional `rubric` object (clarity, directness, specificity, voice, fidelity — anchored ordinals + evidence spans).\n- Judge findings use `source: judge` and record `model` and `promptVersion`.\n- Judge **adds** only. Always-lane findings remain even when the judge would skip them.\n- Behave/unit tests inject a fake judge resolver. No `LIMATUS_TEST_*` production env hooks.\n- Missing API key: always-lane still succeeds; judge lane is omitted (or a clear non-fatal notice), not a hard fail unless `--require-judge` is set.\n- Other providers are rejected or ignored with a clear error if named.\n\n## Out of scope\n\nBedrock, Anthropic, Google, Chinese providers. Fine-tuning a domain judge. Using Sol as default.\n",
+    "issue_type": "epic",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+    "priority": 1,
+    "status": "open",
+    "title": "Configured OpenAI judge lane"
+  }
+}

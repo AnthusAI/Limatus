@@ -1,0 +1,22 @@
+{
+  "id": "LIM-aee6e0df-1fed-42e1-b877-00b2f86c12d2",
+  "title": "Scan with a judge unions findings and never drops always-lane",
+  "description": "## Intent\n\nAs a copy-editing agent, I want the judge to add signals, not veto the style profile.\n\n## Gherkin\n\n```gherkin\nFeature: Scan with configured judge\n  As a copy-editing agent\n  I want heuristic and judge findings in one list\n  So I do not lose profile rules when Terra runs\n\n  Scenario: Union not filter\n    Given a draft that triggers a profile banned-phrase finding\n    And a judge is configured that would not flag that phrase\n    When I run limatus scan\n    Then the banned-phrase finding is still present with source profile\n    And any judge findings are additional\n    And each judge finding records model and promptVersion\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-3e6cb0d5-b1a5-4bc6-b594-3aeb2c1e546c",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.161444Z",
+  "updated_at": "2026-09-10T18:29:10.161463Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,22 @@
+{
+  "id": "LIM-152b38c1-1529-482a-aa2d-c3d3d9b5f0fc",
+  "title": "Scan a draft without a judge configured",
+  "description": "## Intent\n\nAs a copy-editing agent, I want scan without an API key, so local and CI runs still work.\n\n## Gherkin\n\n```gherkin\nFeature: Scan without a judge\n  As a copy-editing agent\n  I want scan to work from a style profile alone\n  So I get pertinent findings offline\n\n  Scenario: Always-lane findings only\n    Given a draft file and a loadable style profile\n    And no judge is configured\n    When I run limatus scan\n    Then the JSON includes findings with source profile\n    And the JSON does not include judge findings\n    And the draft file is unchanged\n    And the result does not include revised_text\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-3e6cb0d5-b1a5-4bc6-b594-3aeb2c1e546c",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.117567Z",
+  "updated_at": "2026-09-10T18:29:10.117586Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

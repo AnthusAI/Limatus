@@ -1,0 +1,22 @@
+{
+  "id": "LIM-63e9745e-f53f-495e-a0cc-8b041306de4b",
+  "title": "The agent records decisions; scan does not decide worth-fixing",
+  "description": "## Intent\n\nPrioritization is the agent's job.\n\n## Gherkin\n\n```gherkin\nFeature: Explicit finding decisions\n  As a copy-editing agent\n  I want to mark findings skip or rewrite myself\n  So the scanner is not a silent editor\n\n  Scenario: Scan then decide\n    Given scan JSON with profile and optional judge findings\n    When I record skip on one finding and rewrite on another\n    Then later option generation is eligible only for the rewrite finding\n    And the draft is unchanged\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e9176aa9-59ee-402c-aaa8-0023b7610e24",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.521429Z",
+  "updated_at": "2026-09-10T18:29:10.521448Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

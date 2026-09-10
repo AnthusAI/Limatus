@@ -1,0 +1,22 @@
+{
+  "id": "LIM-ca93caec-0f3d-485f-8223-c81c553d2e28",
+  "title": "Canary records scan output by model and prompt version",
+  "description": "## Intent\n\nStart calibration without a 500-item gold set.\n\n## Gherkin\n\n```gherkin\nFeature: Judge canary\n  As an operator\n  I want a small fixture canary\n  So a prompt or Terra-default change is visible\n\n  Scenario: Versioned canary\n    Given the canary fixture drafts\n    When the eval runner scans them with the configured judge fake or live\n    Then each result records promptVersion and model\n    And house-voice canary drafts do not gain density flags on the always-lane\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-d895df5b-292d-4b8e-ac55-ef62d5bcfa2f",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.587784Z",
+  "updated_at": "2026-09-10T18:29:10.587803Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

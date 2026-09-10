@@ -1,0 +1,22 @@
+{
+  "id": "LIM-3e6cb0d5-b1a5-4bc6-b594-3aeb2c1e546c",
+  "title": "Unified scan surface",
+  "description": "# Unified scan surface\n\n## Intent\n\nAs a copy-editing agent, I want one command that reads a draft and a style profile and returns a structured list of findings, so I do not juggle separate heuristic and LLM tools.\n\n## Done when\n\n- `limatus scan` (or `diagnose` kept as a compatible alias) takes draft + profile and writes versioned JSON.\n- Always-lane findings appear with no API key.\n- When a judge is configured, output is the **union** of always-lane and judge-lane findings.\n- Always-lane findings are never omitted because the judge disagreed.\n- Each finding has stable id, kind, span, excerpt, rationale, and `source` (`profile` or `judge`) plus judge `model` / `promptVersion` when applicable.\n- The draft file is unchanged.\n- Optional `--markup-out` / `--xml-out` still emit Markus / XML handoffs.\n- No top-level `revised_text`. No detector-score keys.\n\n## Out of scope\n\nGenerating rewrite options. Ranking candidates (compare epic). Non-OpenAI providers.\n",
+  "type": "epic",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:09.806279Z",
+  "updated_at": "2026-09-10T18:29:09.806299Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

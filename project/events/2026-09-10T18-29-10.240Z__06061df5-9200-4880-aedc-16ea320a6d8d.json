@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "06061df5-9200-4880-aedc-16ea320a6d8d",
+  "issue_id": "LIM-3e6c76d8-2141-494c-bcd9-204768b2202d",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.240Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nKeep the existing annotated handoff on the unified scan command.\n\n## Gherkin\n\n```gherkin\nFeature: Annotated scan export\n  As a copy-editing agent\n  I want Markus and XML views of scan findings\n  So I can review portable marked-up text\n\n  Scenario: Markup flags\n    Given a draft and style profile\n    When I run limatus scan with markup-out and xml-out\n    Then the Markdown contains editorial-finding directives\n    And the XML lists findings with ids and spans\n    And the draft file is unchanged\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-3e6cb0d5-b1a5-4bc6-b594-3aeb2c1e546c",
+    "priority": 1,
+    "status": "open",
+    "title": "Scan still emits Markus and XML handoffs"
+  }
+}

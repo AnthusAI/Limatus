@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "c541f779-1cb8-4812-9aec-41ad734814ff",
+  "issue_id": "LIM-8cd4221a-9ae6-4817-ade2-408bae2be806",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.329Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nAs an operator, I want Terra by default and tests that do not call OpenAI.\n\n## Gherkin\n\n```gherkin\nFeature: OpenAI judge configuration\n  As a copy-editing agent\n  I want Terra as the default judge model\n  So scan stays cheap enough to run often\n\n  Scenario: Default model\n    Given a profile that enables the OpenAI judge without naming a model\n    When I inspect the scan configuration\n    Then the judge model is the documented Terra default\n\n  Scenario: Fake judge in acceptance tests\n    Given a draft and a fake judge resolver that emits one clarity finding\n    When I run limatus scan\n    Then the output includes that judge finding\n    And production code has no LIMATUS_TEST environment hook\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-f233fb12-43c3-4b9c-829e-f9f8ac0843fa",
+    "priority": 1,
+    "status": "open",
+    "title": "Judge defaults to Terra and is injectable in tests"
+  }
+}

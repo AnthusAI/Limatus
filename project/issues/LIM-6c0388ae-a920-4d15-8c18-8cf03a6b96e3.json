@@ -1,0 +1,22 @@
+{
+  "id": "LIM-6c0388ae-a920-4d15-8c18-8cf03a6b96e3",
+  "title": "Compare ranks all candidates and keeps losers visible",
+  "description": "## Intent\n\nAs an agent, I want a ranked shortlist, not a hidden winner-only API.\n\n## Gherkin\n\n```gherkin\nFeature: Rank rewrite candidates\n  As a copy-editing agent\n  I want to compare two or three options I generated\n  So I can shortlist before asking a human\n\n  Scenario: Three candidates\n    Given a style profile and three candidate texts\n    When I run limatus compare\n    Then the JSON lists all three candidates\n    And each has a rank and always-lane deltas versus the baseline\n    And no candidate is omitted because it lost\n    And none of the candidate files are modified\n```\n",
+  "type": "story",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-0e3f4e03-cdb1-44f0-9ca0-f8fb47648667",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T18:29:10.422870Z",
+  "updated_at": "2026-09-10T18:29:10.422889Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

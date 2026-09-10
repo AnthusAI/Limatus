@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "99847ed0-0705-425e-a968-5240afb7b118",
+  "issue_id": "LIM-63e9745e-f53f-495e-a0cc-8b041306de4b",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T18:29:10.521Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nPrioritization is the agent's job.\n\n## Gherkin\n\n```gherkin\nFeature: Explicit finding decisions\n  As a copy-editing agent\n  I want to mark findings skip or rewrite myself\n  So the scanner is not a silent editor\n\n  Scenario: Scan then decide\n    Given scan JSON with profile and optional judge findings\n    When I record skip on one finding and rewrite on another\n    Then later option generation is eligible only for the rewrite finding\n    And the draft is unchanged\n```\n",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-e9176aa9-59ee-402c-aaa8-0023b7610e24",
+    "priority": 1,
+    "status": "open",
+    "title": "The agent records decisions; scan does not decide worth-fixing"
+  }
+}

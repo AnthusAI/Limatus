@@ -1,0 +1,23 @@
+{
+  "id": "LIM-ed02c379-034a-443f-8652-3494f4627b8d",
+  "title": "Redundancy 4-grams misfire on image alts and quoted refrain",
+  "description": "",
+  "type": "story",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T20:39:31.745798Z",
+  "updated_at": "2026-09-10T20:39:31.745821Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

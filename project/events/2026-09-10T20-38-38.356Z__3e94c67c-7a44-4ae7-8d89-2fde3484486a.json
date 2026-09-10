@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "3e94c67c-7a44-4ae7-8d89-2fde3484486a",
+  "issue_id": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T20:38:38.356Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "# HITL packets for published Pilobolus\n\n## Done when\n\n- Each published article has a read-only scan packet (JSON + finding list) from latest origin/main.\n- A decisions template lists finding ids with no pre-filled skip/rewrite.\n- A Pilobolus rewrite skill exists (VOICE constraints: no house name, no not-A-it's-B stacks, no invented facts).\n- After Ryan records decisions, options + compare can run without touching published files until apply.\n- Provenance can be composed (scan, decisions, options, compare, models).",
+    "issue_type": "epic",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": "LIM-df9d580a-02a4-44eb-861f-a8a54c7d5a86",
+    "priority": 1,
+    "status": "open",
+    "title": "HITL packets for published Pilobolus"
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "e265f63b-757b-451a-9704-ca09226eaf87",
+  "issue_id": "LIM-ed02c379-034a-443f-8652-3494f4627b8d",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T20:39:31.745Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "",
+    "issue_type": "story",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+    "priority": 2,
+    "status": "open",
+    "title": "Redundancy 4-grams misfire on image alts and quoted refrain"
+  }
+}

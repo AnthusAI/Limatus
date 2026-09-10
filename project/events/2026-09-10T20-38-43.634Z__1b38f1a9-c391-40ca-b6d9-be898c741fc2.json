@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "1b38f1a9-c391-40ca-b6d9-be898c741fc2",
+  "issue_id": "LIM-80209beb-5b07-4fd0-93b6-3a6671933e81",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T20:38:43.634Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan (publication operator), I want to scan every published Pilobolus article with current Limatus, record my own skip/rewrite/delete/keep/add decisions, review ranked rewrite options, and apply only what I chose — so we dogfood Limatus on live copy without a silent editor or auto-publish.\n\n## Guardrails\n\n- Source of published copy: latest `origin/main` of Pilobol.us (`web/content/articles/*.md`, not `index.md`).\n- Style profile: Papyrus `publications/pilobolus/style-profile.yml`.\n- Limatus must not invent decisions. Options run only after recorded `rewrite`.\n- Working copies change only after an explicit human apply. Site publish stays a separate human gate.\n- Do not merge dirty local Pilobol.us; dogfood from an isolated checkout of origin.\n\n## Loop\n\nscan → human decisions → options (rewrite only) → compare shortlist → human choose → apply to working copy → human publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
+    "issue_type": "initiative",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": null,
+    "priority": 1,
+    "status": "open",
+    "title": "HITL dogfood: Limatus on published Pilobolus"
+  }
+}

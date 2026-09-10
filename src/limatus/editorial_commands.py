@@ -12,6 +12,8 @@ from .editorial_options_schema import validate_decisions
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
 from .editorial_apply import apply_patch, render_diff
+from .editorial_compare import compare_candidates, compare_regression
+from .editorial_compare_schema import validate_compare_report
 from .editorial_verifier import verify_revision
 from .editorial_standfirst import check_standfirst
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
@@ -169,6 +171,90 @@ def editorial_diff(flags: list[str]) -> None:
     parser.add_argument("--output", default="", help="Optional path for the unified diff.")
     args = parser.parse_args(flags)
     rendered = render_diff(args.original, args.working_copy)
+    if args.output:
+        Path(args.output).resolve().write_text(rendered, encoding="utf-8")
+    else:
+        sys.stdout.write(rendered)
+
+
+def editorial_compare(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus compare")
+    parser.add_argument("--profile", required=True, help="Path to the style profile YAML or JSON.")
+    parser.add_argument("--baseline", default="", help="Baseline draft path (read-only).")
+    parser.add_argument("--candidate", action="append", default=[], help="Candidate draft path (read-only); repeat for each.")
+    parser.add_argument(
+        "--candidate-id",
+        action="append",
+        default=[],
+        help="Optional id for each --candidate (same order).",
+    )
+    parser.add_argument("--original", default="", help="Regression mode: original draft path (read-only).")
+    parser.add_argument(
+        "--working-copy",
+        default="",
+        help="Regression mode: working copy path (read-only).",
+    )
+    parser.add_argument(
+        "--surface",
+        default="",
+        help="Named surface override from the profile, if any.",
+    )
+    parser.add_argument("--output", default="", help="Optional path for compare JSON.")
+    args = parser.parse_args(flags)
+
+    regression = bool(args.original or args.working_copy)
+    rank = bool(args.baseline or args.candidate)
+    if regression and rank:
+        raise ValueError("Use either regression (--original/--working-copy) or rank (--baseline/--candidate) flags.")
+    if not regression and not rank:
+        raise ValueError("Provide regression paths or a baseline with candidates.")
+
+    style_profile = load_style_profile(Path(args.profile).resolve())
+    surface = args.surface or None
+
+    if regression:
+        if not args.original or not args.working_copy:
+            raise ValueError("Regression compare requires both --original and --working-copy.")
+        original_path = Path(args.original).resolve()
+        working_path = Path(args.working_copy).resolve()
+        if not original_path.is_file() or not working_path.is_file():
+            raise ValueError("Both --original and --working-copy must point to files.")
+        result = compare_regression(
+            original_path.read_text(encoding="utf-8"),
+            working_path.read_text(encoding="utf-8"),
+            style_profile=style_profile,
+            surface=surface,
+        )
+    else:
+        baseline_path = Path(args.baseline).resolve()
+        if not baseline_path.is_file():
+            raise ValueError(f"Baseline file not found: {baseline_path}")
+        if len(args.candidate) < 2:
+            raise ValueError("Rank compare requires at least two --candidate paths.")
+        candidate_paths = [Path(path).resolve() for path in args.candidate]
+        for path in candidate_paths:
+            if not path.is_file():
+                raise ValueError(f"Candidate file not found: {path}")
+        ids = list(args.candidate_id)
+        candidates: list[dict[str, str]] = []
+        for index, path in enumerate(candidate_paths):
+            candidate_id = ids[index] if index < len(ids) else path.stem
+            candidates.append(
+                {
+                    "id": candidate_id,
+                    "text": path.read_text(encoding="utf-8"),
+                }
+            )
+        result = compare_candidates(
+            baseline_path.read_text(encoding="utf-8"),
+            candidates,
+            style_profile=style_profile,
+            surface=surface,
+            mode="rank",
+        )
+
+    validate_compare_report(result)
+    rendered = json.dumps(result, indent=2) + "\n"
     if args.output:
         Path(args.output).resolve().write_text(rendered, encoding="utf-8")
     else:

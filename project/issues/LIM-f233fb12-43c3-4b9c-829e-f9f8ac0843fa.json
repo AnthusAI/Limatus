@@ -24,10 +24,17 @@
       "text": "Composer 2.5 planner dispatched. Worktree: /tmp/limatus-LIM-f233fb-judge on cursor/feature/LIM-f233fb-judge. Plan only. Also document scan in top-level CLI help.",
       "created_at": "2026-09-10T19:01:28.069566Z",
       "comment_type": "default"
+    },
+    {
+      "id": "a2f67428-bfe0-4bb6-bd2c-16ac1e17400c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan approved. Worktree verified at /tmp/limatus-LIM-f233fb-judge. Rebase onto origin/main first. Implementation authorized. PR to main. Rubric 1-5. No LIMATUS_TEST hooks. No project/.",
+      "created_at": "2026-09-10T19:05:15.645006Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.868998Z",
-  "updated_at": "2026-09-10T19:01:28.069579Z",
+  "updated_at": "2026-09-10T19:05:15.645018Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

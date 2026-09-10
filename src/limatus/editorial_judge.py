@@ -118,7 +118,7 @@ def _judge_output_schema() -> dict[str, Any]:
                 "additionalProperties": False,
             },
         },
-        "required": ["findings"],
+        "required": ["findings", "rubric"],
         "additionalProperties": False,
     }
 

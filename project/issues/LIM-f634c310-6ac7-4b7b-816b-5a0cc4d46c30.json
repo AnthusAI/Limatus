@@ -3,7 +3,7 @@
   "title": "Options retry when prefix-skipping replacements leave fewer than two",
   "description": "## Intent\n\nAfter LIM-073443, `limatus options` on the wiki-janitor rewrite finding fails with `Finding finding-abe57b9a455db41d requires at least two rewrite options` because every model candidate skipped the span prefix and was dropped. Working copy and published file were unchanged (hash `60f0d280…`). Fail-closed is correct; leaving the editor with **no** patches is not done.\n\n## Gherkin\n\n```gherkin\nFeature: Options retry when prefix-skipping candidates are dropped\n  Scenario: One retry asks for full-span replacements\n    Given rewrite options whose replacements start later in the excerpt\n    When those candidates are dropped as prefix skips\n    And fewer than two options remain\n    Then Limatus retries option generation once with an instruction to rewrite from the excerpt start\n    And it still fails closed if the retry also cannot supply two valid options\n    And the draft is not modified\n```\n\n## Out of scope\n\nPublished-file apply. Changing the two-option minimum. Papyrus adapter.",
   "type": "bug",
-  "status": "open",
+  "status": "in_progress",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -13,9 +13,17 @@
     "dogfood"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "2af9791a-2c96-46d7-8269-7b76f9248655",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Grok plan. Composer implements. Worktree `/tmp/limatus-LIM-f634c3-options-retry` branch `cursor/feature/LIM-f634c3-options-retry` off origin/main.\n\nIn `generate_rewrite_options`, after the first LLM/resolver batch: if `_normalize_options_for_finding` would have fewer than two (including prefix-skip drops), call the resolver **once more** with an extra instruction that replacements must rewrite the entire excerpt from its first character. Still fail closed if the retry cannot supply two valid options. Draft unmodified. No `project/` in the PR.\n",
+      "created_at": "2026-09-10T23:58:18.872060Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T23:52:14.619970Z",
-  "updated_at": "2026-09-10T23:52:14.619999Z",
+  "updated_at": "2026-09-10T23:58:18.872072Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

@@ -19,10 +19,17 @@
       "text": "Composer 2.5 planner dispatched for unified scan (LIM-152b38, aee6e0, 4ab3f0, 3e6c76). Worktree to create: /tmp/limatus-LIM-3e6cb0-scan on cursor/feature/LIM-3e6cb0-scan. Plan only.",
       "created_at": "2026-09-10T18:55:23.226191Z",
       "comment_type": "default"
+    },
+    {
+      "id": "35d31de3-3902-47b2-aeb5-679d2d58b21d",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan approved. Worktree verified at /tmp/limatus-LIM-3e6cb0-scan. Implementation authorized. Fake judge only this PR; no live OpenAI; no project/ in product PR.",
+      "created_at": "2026-09-10T18:57:36.023553Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.806279Z",
-  "updated_at": "2026-09-10T18:55:23.226202Z",
+  "updated_at": "2026-09-10T18:57:36.023574Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

@@ -3,7 +3,7 @@
   "title": "CLI dogfood: mid-word judge spans garbled apply; decide duplicates",
   "description": "## Intent\n\nDogfood of `limatus apply` on a wiki-janitor working copy applied option-3685ce47f53e52da and produced broken prose (`watching.ng hidden from whoever was watching.`) because the judge span ended mid-word (`stayi` | `ng`). `limatus decide` also appends duplicate rows for the same finding_id.\n\n## Gherkin\n\n```gherkin\nFeature: Dogfood CLI rough edges\n  Scenario: Mid-word judge spans are dropped\n    Given an OpenAI judge finding whose end offset splits a word\n    When the judge lane maps findings\n    Then that span is not emitted\n\n  Scenario: Decide replaces an existing finding id\n    Given a decisions file already containing finding-aaa\n    When I run limatus decide for finding-aaa again\n    Then the file has one row for that id\n    And the draft is unchanged\n```\n\n## Also\n\nREADME has CLI examples but no `from limatus import load_config, diagnose` SDK example (LIM-c32c24 leftover). Add a short SDK snippet in the same PR.\n\n## Out of scope\n\nPublished-file apply. Papyrus adapter.",
   "type": "bug",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Grok plan. Composer implements. Worktree `/tmp/limatus-LIM-906fc9-dogfood-edges` branch `cursor/feature/LIM-906fc9-dogfood-edges` off origin/main.\n\n1. Drop judge findings whose start/end split an alphanumeric word (`_map_openai_findings`).\n2. `record_finding_decision` replaces an existing same finding_id (SDK+CLI).\n3. README: short `from limatus import load_config, diagnose` example (closes LIM-c32c24 leftover).\nNo project/ in PR. No live OpenAI. Unittest + Behave decide replace.\n",
       "created_at": "2026-09-10T23:36:27.748740Z",
       "comment_type": "default"
+    },
+    {
+      "id": "71a596d4-2231-4e54-ae28-48a22e496486",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Squash-merged https://github.com/AnthusAI/Limatus/pull/11 to main (`9c5ab9d`). Mid-word judge spans dropped at map time; decide upserts same finding_id; README has load_config/diagnose. Acceptance: span 1256–1471 maps to 0 findings; wiki-janitor.md hash unchanged.\n",
+      "created_at": "2026-09-10T23:41:47.255834Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T23:36:07.685480Z",
-  "updated_at": "2026-09-10T23:36:27.748756Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T23:41:47.305385Z",
+  "closed_at": "2026-09-10T23:41:47.305365Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

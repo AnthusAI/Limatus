@@ -17,12 +17,14 @@ from .editorial_commands import (
     editorial_diagnose,
     editorial_diff,
     editorial_options,
+    editorial_scan,
     editorial_standfirst,
     editorial_verify,
 )
 from .editorial_eval import main as editorial_eval
 
 COMMANDS = {
+    "scan": editorial_scan,
     "diagnose": editorial_diagnose,
     "options": editorial_options,
     "apply": editorial_apply,

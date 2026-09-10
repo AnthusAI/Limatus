@@ -5,9 +5,9 @@ import json
 import sys
 from pathlib import Path
 
-from .editorial_diagnosis import diagnose_draft
 from .editorial_diagnosis_schema import validate_diagnosis
 from .editorial_markup import render_annotated_markus, render_annotated_xml
+from .editorial_scan import scan_draft
 from .editorial_options_schema import validate_decisions
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
@@ -17,11 +17,11 @@ from .editorial_standfirst import check_standfirst
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 
-def editorial_diagnose(flags: list[str]) -> None:
-    parser = argparse.ArgumentParser(prog="limatus diagnose")
+def _run_scan_command(flags: list[str], *, prog: str) -> None:
+    parser = argparse.ArgumentParser(prog=prog)
     input_group = parser.add_mutually_exclusive_group(required=True)
     input_group.add_argument("--draft", help="Path to the draft file (read-only).")
-    input_group.add_argument("--text", help="Draft text to diagnose without reading a file.")
+    input_group.add_argument("--text", help="Draft text to scan without reading a file.")
     parser.add_argument("--profile", required=True, help="Path to the style profile YAML.")
     parser.add_argument(
         "--surface",
@@ -51,7 +51,7 @@ def editorial_diagnose(flags: list[str]) -> None:
         draft_text = args.text
 
     style_profile = load_style_profile(profile_path)
-    diagnosis = diagnose_draft(draft_text, style_profile=style_profile, surface=args.surface or None)
+    diagnosis = scan_draft(draft_text, style_profile=style_profile, surface=args.surface or None)
     rendered = json.dumps(diagnosis, indent=2) + "\n"
 
     if args.markup_out:
@@ -68,6 +68,14 @@ def editorial_diagnose(flags: list[str]) -> None:
         return
 
     sys.stdout.write(rendered)
+
+
+def editorial_scan(flags: list[str]) -> None:
+    _run_scan_command(flags, prog="limatus scan")
+
+
+def editorial_diagnose(flags: list[str]) -> None:
+    _run_scan_command(flags, prog="limatus diagnose")
 
 
 def editorial_options(flags: list[str]) -> None:

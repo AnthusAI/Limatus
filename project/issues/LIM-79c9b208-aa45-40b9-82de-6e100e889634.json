@@ -34,10 +34,17 @@
       "text": "PR https://github.com/AnthusAI/Limatus/pull/9 opened (three files, no project/). Review ACCEPT on the budget wiring. Live `--require-judge` acceptance started on wiki-janitor using the worktree before merge.\n",
       "created_at": "2026-09-10T21:22:04.478826Z",
       "comment_type": "default"
+    },
+    {
+      "id": "90029713-c230-4eee-be15-b826f2af2898",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Live acceptance REJECT. wiki-janitor succeeded (budget 8412, prompt v2, Terra). you-confessed-to-a-bag-of-numbers still truncated at ~8444 (`max_output_tokens`). Draft is only ~4k chars; output size follows findings+rubric, not length. Sent back: raise DEFAULT to 16384 and MAX to 32768; length addend cannot be the thing that clears dense short articles. Do not merge PR #9 yet.\n",
+      "created_at": "2026-09-10T21:26:47.638513Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T21:18:30.306710Z",
-  "updated_at": "2026-09-10T21:22:04.478842Z",
+  "updated_at": "2026-09-10T21:26:47.638529Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

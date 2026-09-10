@@ -3,7 +3,7 @@
   "title": "Ship Limatus Python SDK API for programmatic callers",
   "description": "Public Python module API: load style config, diagnose draft text, propose options for human decisions, and render/apply helpers. Suitable for Papyrus and Tactus procedures. It uses the same core as the CLI, never a CLI wrapper.\n\nDependencies:\n- blocked-by: LIM-dca47857-e14f-4c66-aa4a-37200a524880\n\nFeature: Programmatic Limatus access\n  Scenario: Diagnose without a subprocess\n    Given a caller with draft text and local style configuration\n    When it calls the public Limatus SDK\n    Then it receives the same validated diagnosis shape as the CLI\n    And no draft file is modified\n\nMigrated from PPY-46c0b8.",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -24,11 +24,18 @@
       "text": "SDK API already exists (`test_sdk.py`). Remaining: README importable example, landing with LIM-906fc9.\n",
       "created_at": "2026-09-10T23:36:27.819594Z",
       "comment_type": "default"
+    },
+    {
+      "id": "f4284dc6-db30-4894-a4cf-0e5b42e3f9d3",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "DoD met: SDK already shipped; README now documents `from limatus import load_config, diagnose` and that diagnose does not modify the draft (PR #11).\n",
+      "created_at": "2026-09-10T23:41:47.343036Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:39:24.413974Z",
-  "updated_at": "2026-09-10T23:36:27.819609Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T23:41:47.376954Z",
+  "closed_at": "2026-09-10T23:41:47.376936Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {

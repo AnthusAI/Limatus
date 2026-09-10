@@ -204,6 +204,11 @@ def step_then_json_has_no_judge_findings(context):
     assert not any(finding.get("source") == FINDING_SOURCE_JUDGE for finding in findings), findings
 
 
+@then("judge findings are absent")
+def step_then_judge_findings_are_absent(context):
+    step_then_json_has_no_judge_findings(context)
+
+
 @then("the result does not include revised_text")
 def step_then_no_revised_text_in_scan(context):
     _walk_forbidden_keys(context.diagnosis)

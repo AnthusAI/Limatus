@@ -5,7 +5,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from behave import given, then
+from behave import given, then, when
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src"
@@ -125,12 +125,6 @@ def step_when_scan_without_require_judge(context):
 def step_then_always_lane_findings_present(context):
     findings = _collect_leaf_findings(context.diagnosis)
     assert any(f.get("source") == FINDING_SOURCE_PROFILE for f in findings), findings
-
-
-@then("judge findings are absent")
-def step_then_judge_findings_absent(context):
-    findings = _collect_leaf_findings(context.diagnosis)
-    assert not any(f.get("source") == FINDING_SOURCE_JUDGE for f in findings), findings
 
 
 @given("a profile that sets judge provider to anthropic")

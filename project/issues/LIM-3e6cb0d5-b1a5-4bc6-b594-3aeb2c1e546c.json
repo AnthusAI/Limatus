@@ -3,7 +3,7 @@
   "title": "Unified scan surface",
   "description": "# Unified scan surface\n\n## Intent\n\nAs a copy-editing agent, I want one command that reads a draft and a style profile and returns a structured list of findings, so I do not juggle separate heuristic and LLM tools.\n\n## Done when\n\n- `limatus scan` (or `diagnose` kept as a compatible alias) takes draft + profile and writes versioned JSON.\n- Always-lane findings appear with no API key.\n- When a judge is configured, output is the **union** of always-lane and judge-lane findings.\n- Always-lane findings are never omitted because the judge disagreed.\n- Each finding has stable id, kind, span, excerpt, rationale, and `source` (`profile` or `judge`) plus judge `model` / `promptVersion` when applicable.\n- The draft file is unchanged.\n- Optional `--markup-out` / `--xml-out` still emit Markus / XML handoffs.\n- No top-level `revised_text`. No detector-score keys.\n\n## Out of scope\n\nGenerating rewrite options. Ranking candidates (compare epic). Non-OpenAI providers.\n",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -26,11 +26,18 @@
       "text": "Plan approved. Worktree verified at /tmp/limatus-LIM-3e6cb0-scan. Implementation authorized. Fake judge only this PR; no live OpenAI; no project/ in product PR.",
       "created_at": "2026-09-10T18:57:36.023553Z",
       "comment_type": "default"
+    },
+    {
+      "id": "5edeba50-f5b6-4115-994c-668fe4b6613a",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged https://github.com/AnthusAI/Limatus/pull/1. Acceptance approved. Worker: remove /tmp/limatus-LIM-3e6cb0-scan.",
+      "created_at": "2026-09-10T19:01:27.956093Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.806279Z",
-  "updated_at": "2026-09-10T18:57:36.023574Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:01:27.956106Z",
+  "closed_at": "2026-09-10T19:01:27.927571Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

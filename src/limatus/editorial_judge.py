@@ -23,6 +23,17 @@ JUDGE_PROMPT_VERSION = "2"
 
 JUDGE_REFERENCE_EXCERPT_CHARS = 500
 
+DEFAULT_JUDGE_OUTPUT_TOKENS = 16384
+MAX_JUDGE_OUTPUT_TOKENS = 32768
+
+
+def _judge_output_budget(draft_text: str) -> int:
+    estimated = max(1, (len(draft_text) + 3) // 4)
+    return min(
+        MAX_JUDGE_OUTPUT_TOKENS,
+        max(DEFAULT_JUDGE_OUTPUT_TOKENS, DEFAULT_JUDGE_OUTPUT_TOKENS + estimated // 4),
+    )
+
 JudgeResolver = Callable[
     [str, LoadedStyleProfile, JudgeConfig],
     list[dict[str, Any]],
@@ -250,7 +261,7 @@ def _call_openai_judge(
         user_prompt=user_prompt,
         schema_name="editorial_judge_scan",
         schema=_judge_output_schema(),
-        max_output_tokens=2400,
+        max_output_tokens=_judge_output_budget(draft_text),
     )
     raw_findings = payload.get("findings")
     if not isinstance(raw_findings, list):

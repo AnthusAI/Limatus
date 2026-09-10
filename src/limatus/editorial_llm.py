@@ -76,9 +76,9 @@ def call_structured_responses_api(
         details = parsed.get("incomplete_details")
         reason = details.get("reason") if isinstance(details, dict) else "unknown"
         raise EditorialResponseTruncationError(
-            "OpenAI editorial rewrite response was incomplete "
+            "OpenAI structured editorial response was incomplete "
             f"(reason: {reason}). Increase max_output_tokens and retry; "
-            "no partial candidate was returned."
+            "no partial JSON was returned."
         )
 
     text = extract_response_text(parsed)

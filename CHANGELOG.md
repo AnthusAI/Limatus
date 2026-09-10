@@ -1,6 +1,54 @@
 # CHANGELOG
 
 
+## v0.13.1 (2026-09-10)
+
+### Bug Fixes
+
+- **judge**: Bounded output token budget for rubric+findings (LIM-79c9b2)
+  ([#9](https://github.com/AnthusAI/Limatus/pull/9),
+  [`68130ed`](https://github.com/AnthusAI/Limatus/commit/68130ed71505ce73fdbf6de8870a89167f026564))
+
+* fix(judge): raise bounded output token budget for rubric+findings
+
+Hard-coded 2400 max_output_tokens truncated structured judge responses on long Pilobolus drafts with
+  required rubric evidence. Use named DEFAULT/MAX judge budgets and draft-scaled helper; generalize
+  truncation error wording for non-rewrite callers.
+
+* fix(judge): use 16k floor and 32k cap for finding-heavy scans
+
+Short drafts with dense judge output still truncated at ~8.4k budget because output scales with
+  findings and rubric evidence, not draft length. Raise DEFAULT to 16384 for every article and MAX
+  to 32768.
+
+### Chores
+
+- **kanbus**: Authorize LIM-79c9b2 judge output budget
+  ([`9243b47`](https://github.com/AnthusAI/Limatus/commit/9243b47b30a455948446f0e91fbd3cef6a729597))
+
+Plan approved; implementer to use an isolated worktree off main.
+
+- **kanbus**: File LIM-79c9b2 judge output budget
+  ([`7ac10bc`](https://github.com/AnthusAI/Limatus/commit/7ac10bcd6460e0171fb013add369980a5f26ed7c))
+
+Live --require-judge HITL truncated at 2400 output tokens.
+
+- **kanbus**: Lim-79c9b2 16k floor pushed, re-acceptance
+  ([`0355aa6`](https://github.com/AnthusAI/Limatus/commit/0355aa6b4c4198bab6b8a74ef5f7c18f8b2dc9f5))
+
+Confession article is the gate after the 8444 truncation reject.
+
+- **kanbus**: Lim-79c9b2 live acceptance reject
+  ([`eea3da2`](https://github.com/AnthusAI/Limatus/commit/eea3da22fcb66bc991cc593e8e37de211cb53ad1))
+
+Confession article still truncated; budget must not key off draft length.
+
+- **kanbus**: Lim-79c9b2 PR #9 opened, live acceptance
+  ([`d5bf59b`](https://github.com/AnthusAI/Limatus/commit/d5bf59b35b62f31f3744e4b987d0c023d7dcb707))
+
+Unit review passed; merge waits on --require-judge against published copy.
+
+
 ## v0.13.0 (2026-09-10)
 
 ### Chores

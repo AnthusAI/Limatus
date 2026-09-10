@@ -12,8 +12,11 @@ sys.path.insert(0, str(SRC))
 
 from limatus.editorial_diagnosis_schema import FINDING_SOURCE_JUDGE  # noqa: E402
 from limatus.editorial_judge import (  # noqa: E402
+    DEFAULT_JUDGE_OUTPUT_TOKENS,
     JUDGE_REFERENCE_EXCERPT_CHARS,
+    MAX_JUDGE_OUTPUT_TOKENS,
     JudgeUnavailableError,
+    _judge_output_budget,
     _judge_output_schema,
     build_judge_user_prompt,
     run_default_judge_lane,
@@ -35,6 +38,17 @@ _SAMPLE_RUBRIC = {
 
 
 class EditorialJudgeTests(unittest.TestCase):
+    def test_judge_output_budget_bounds(self):
+        self.assertEqual(_judge_output_budget(""), DEFAULT_JUDGE_OUTPUT_TOKENS)
+        tiny = "ab"
+        self.assertEqual(_judge_output_budget(tiny), DEFAULT_JUDGE_OUTPUT_TOKENS)
+        mid = "x" * 12000
+        mid_budget = _judge_output_budget(mid)
+        self.assertGreater(mid_budget, DEFAULT_JUDGE_OUTPUT_TOKENS)
+        self.assertLessEqual(mid_budget, MAX_JUDGE_OUTPUT_TOKENS)
+        long_draft = "y" * 300_000
+        self.assertEqual(_judge_output_budget(long_draft), MAX_JUDGE_OUTPUT_TOKENS)
+
     def test_judge_output_schema_root_required_matches_properties(self):
         schema = _judge_output_schema()
         props = schema["properties"]
@@ -81,6 +95,7 @@ class EditorialJudgeTests(unittest.TestCase):
 
         def capture_api(**kwargs):
             captured["user_prompt"] = kwargs["user_prompt"]
+            captured["max_output_tokens"] = kwargs["max_output_tokens"]
             return payload
 
         with patch.dict(os.environ, env, clear=False):
@@ -89,6 +104,9 @@ class EditorialJudgeTests(unittest.TestCase):
                 side_effect=capture_api,
             ):
                 diagnosis = scan_draft(draft_text, style_profile=config)
+        expected_budget = _judge_output_budget(draft_text)
+        self.assertEqual(captured["max_output_tokens"], expected_budget)
+        self.assertNotEqual(captured["max_output_tokens"], 2400)
         self.assertIn("Sentence style:", captured["user_prompt"])
         self.assertIn("Structure:", captured["user_prompt"])
         self.assertIn("Reference samples (voice/register only", captured["user_prompt"])

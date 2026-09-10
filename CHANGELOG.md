@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.11.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Authorize LIM-e9176a agent-loop implementation
+  ([`29d3bcb`](https://github.com/AnthusAI/Limatus/commit/29d3bcbe80f98214b4f90dfd2bd67cbb53347ba0))
+
+- **kanbus**: Close LIM-e9176a; start LIM-d895df canary plan
+  ([`59608f7`](https://github.com/AnthusAI/Limatus/commit/59608f7a052d7284658dbf353815908e6b4e43c9))
+
+- **kanbus**: Lim-e9176a acceptance passed; PR pending
+  ([`0ac9904`](https://github.com/AnthusAI/Limatus/commit/0ac99042f7478a611151779ba18f757cb370b009))
+
+### Features
+
+- **editorial**: Agent copy-edit loop wiring (LIM-e9176a)
+  ([#5](https://github.com/AnthusAI/Limatus/pull/5),
+  [`bd4aa1c`](https://github.com/AnthusAI/Limatus/commit/bd4aa1ceb8033326f4d6da4db14644bb7176376c))
+
+Add read-only patch preview and compare candidate expansion, plus compose_loop_record for audit
+  bundles. Ship Behave contracts for explicit finding decisions and agent shortlist before human
+  apply.
+
+
 ## v0.10.0 (2026-09-10)
 
 ### Chores
@@ -12,11 +36,6 @@
   ([`3622298`](https://github.com/AnthusAI/Limatus/commit/3622298eb5573b92e09741296fe0cf53e0d87f0a))
 
 ### Features
-
-- **editorial**: Agent copy-edit loop wiring (LIM-e9176a)
-  Add read-only `preview_patch_text`, `candidates_from_options`, and `compose_loop_record` for
-  scan → decisions → options → compare → human apply. Behave stories LIM-63e974 and LIM-3e89d9 plus
-  loop provenance coverage.
 
 - **compare**: Rank candidates with always-lane deltas (LIM-0e3f4e)
   ([#4](https://github.com/AnthusAI/Limatus/pull/4),

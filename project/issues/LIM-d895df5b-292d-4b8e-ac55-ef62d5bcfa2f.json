@@ -24,10 +24,17 @@
       "text": "Composer 2.5 planner dispatched. Worktree will be /tmp/limatus-LIM-d895df-canary on cursor/feature/LIM-d895df-canary. Plan only. Complement LIM-66c047; do not replace the eval harness. PR to main. No project/.",
       "created_at": "2026-09-10T19:24:22.334592Z",
       "comment_type": "default"
+    },
+    {
+      "id": "6c38708c-78eb-47ac-8321-697f3764017e",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan approved. Worktree verified at /tmp/limatus-LIM-d895df-canary. Additive to limatus eval. Implementation authorized. Skip fixture digest unless cheap. Calibration mismatch fails CI. No live-only Behave. No project/.",
+      "created_at": "2026-09-10T19:29:12.110853Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.951877Z",
-  "updated_at": "2026-09-10T19:24:22.334603Z",
+  "updated_at": "2026-09-10T19:29:12.110876Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

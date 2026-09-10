@@ -3,7 +3,7 @@
   "title": "Apply drops unread prefix when option replacement skips span start",
   "description": "## Intent\n\nAfter PR #11, mid-word spans are dropped. A live wiki-janitor rescan (`--require-judge`) then `options` + `apply` to a **working copy** still produced broken prose:\n\n`the way water finds the lower It ended the way it started`\n\nThe judge span started at `gap in a wall.` (word-bounded, not mid-word). The chosen option replacement began at `It ended…` and **omitted the span prefix** `gap in a wall.\n\n`. Apply deleted that prefix. Published `wiki-janitor.md` was not written (hash `60f0d280…` unchanged).\n\n## Gherkin\n\n```gherkin\nFeature: Apply preserves unread span prefix\n  Scenario: Replacement that does not echo the start of the span is rejected\n    Given a finding span that includes the end of the previous sentence\n    And a rewrite option whose replacement starts later in that span\n    When limatus apply runs on a working copy\n    Then apply fails closed\n    And the working copy is unchanged\n```\n\n## Out of scope\n\nPublished-file apply. Asking a human to pick option ids.",
   "type": "bug",
-  "status": "open",
+  "status": "in_progress",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -13,9 +13,17 @@
     "dogfood"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "92753ec0-98e4-4bb5-a5cf-a8fc72828d30",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Grok plan. Composer implements. Worktree `/tmp/limatus-LIM-073443-span-prefix` branch `cursor/feature/LIM-073443-span-prefix` off origin/main.\n\nFail closed in `apply_patch` (and drop at option map time): if a non-empty replacement matches a later substring of the span excerpt (`excerpt.find(replacement[:40]) > 0`), the prefix would be deleted. Raise before any working-copy write. Deletions (`replacement == \"\"`) unchanged. No `project/` in the PR. Unittest + CLI apply unchanged working copy.\n",
+      "created_at": "2026-09-10T23:46:51.308670Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T23:45:18.275170Z",
-  "updated_at": "2026-09-10T23:45:18.275194Z",
+  "updated_at": "2026-09-10T23:46:51.308686Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

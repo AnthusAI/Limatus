@@ -1,0 +1,23 @@
+{
+  "id": "LIM-0734436d-939b-433e-9c79-6853cfb39e44",
+  "title": "Apply drops unread prefix when option replacement skips span start",
+  "description": "## Intent\n\nAfter PR #11, mid-word spans are dropped. A live wiki-janitor rescan (`--require-judge`) then `options` + `apply` to a **working copy** still produced broken prose:\n\n`the way water finds the lower It ended the way it started`\n\nThe judge span started at `gap in a wall.` (word-bounded, not mid-word). The chosen option replacement began at `It ended…` and **omitted the span prefix** `gap in a wall.\n\n`. Apply deleted that prefix. Published `wiki-janitor.md` was not written (hash `60f0d280…` unchanged).\n\n## Gherkin\n\n```gherkin\nFeature: Apply preserves unread span prefix\n  Scenario: Replacement that does not echo the start of the span is rejected\n    Given a finding span that includes the end of the previous sentence\n    And a rewrite option whose replacement starts later in that span\n    When limatus apply runs on a working copy\n    Then apply fails closed\n    And the working copy is unchanged\n```\n\n## Out of scope\n\nPublished-file apply. Asking a human to pick option ids.",
+  "type": "bug",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T23:45:18.275170Z",
+  "updated_at": "2026-09-10T23:45:18.275194Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -3,7 +3,7 @@
   "title": "Judge prompt includes voicePatterns, structure, and sample feel",
   "description": "## Intent\n\nThe judge should think from house voice, not only tone/lexicon snippets.\n\n## Gherkin\n\n```gherkin\nFeature: Judge sees house voice\n  As a copy-editing agent\n  I want the OpenAI judge to receive voicePatterns, sentenceStyle, structure, and reference-sample feel\n  So skip/rewrite judgment matches the publication, not generic editorial taste\n\n  Scenario: Prompt carries voice\n    Given a style profile with voicePatterns and reference samples\n    When the OpenAI judge runs\n    Then the judge request includes those fields (or excerpts)\n    And it still does not rewrite the draft\n```",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -26,11 +26,18 @@
       "text": "Limatus PR #8 is dirty against origin/main (3 behind including v0.12.1). Sent back to rebase: drop Unreleased CHANGELOG (semantic-release owns it), keep product+tests only, no project/.\n",
       "created_at": "2026-09-10T21:11:43.704Z",
       "comment_type": "default"
+    },
+    {
+      "id": "bdaa2a20-6943-446a-bb22-aca816bdeab8",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Limatus PR #8 squash-merged to main (`3aa6441`). Judge prompt v2 sends sentenceStyle, voicePatterns, structure, and 500-char sample excerpts. CHANGELOG left to semantic-release. DoD met.\n",
+      "created_at": "2026-09-10T21:14:05.239867Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T21:03:55.365950Z",
-  "updated_at": "2026-09-10T21:11:43.704016Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T21:14:05.280774Z",
+  "closed_at": "2026-09-10T21:14:05.280754Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

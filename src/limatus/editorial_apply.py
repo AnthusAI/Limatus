@@ -23,6 +23,28 @@ def _sha256(data: bytes) -> str:
     return hashlib.sha256(data).hexdigest()
 
 
+def preview_patch_text(draft_text: str, patch: dict[str, Any]) -> str:
+    """Return draft text with one patch applied in memory (read-only)."""
+
+    if not isinstance(draft_text, str):
+        raise ValueError("draft_text must be a string.")
+    if not isinstance(patch, dict):
+        raise ValueError("patch must be a mapping.")
+    span = patch.get("span")
+    if not isinstance(span, dict):
+        raise ValueError("patch.span must be a mapping.")
+    start = span.get("start")
+    end = span.get("end")
+    if not isinstance(start, int) or not isinstance(end, int) or start < 0 or end < start:
+        raise ValueError("patch.span start and end must be valid non-negative integers.")
+    if end > len(draft_text):
+        raise ValueError("Patch span is outside the draft.")
+    replacement = patch.get("replacement")
+    if not isinstance(replacement, str):
+        raise ValueError("patch.replacement must be a string.")
+    return draft_text[:start] + replacement + draft_text[end:]
+
+
 def _selected_option(options: dict[str, Any], finding_id: str, option_id: str) -> dict[str, Any]:
     validated = validate_options(options)
     for finding in validated["findings"]:

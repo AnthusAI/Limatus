@@ -28,10 +28,17 @@
       "text": "Composer 2.5 planner dispatched. Worktree will be /tmp/limatus-LIM-e9176a-loop on cursor/feature/LIM-e9176a-loop. Plan only. PR to main. No project/.",
       "created_at": "2026-09-10T19:17:33.366251Z",
       "comment_type": "default"
+    },
+    {
+      "id": "ec9ddb88-cba8-4b00-9abe-feb673177e5a",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Plan approved. Worktree verified at /tmp/limatus-LIM-e9176a-loop. Implementation authorized. Reuse scan/options/compare/apply. preview_patch_text is read-only. Provenance is compose-only (no I/O). No new compare --options flag unless Behave cannot use SDK/temp files. No project/.",
+      "created_at": "2026-09-10T19:20:38.845931Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.926066Z",
-  "updated_at": "2026-09-10T19:17:33.366263Z",
+  "updated_at": "2026-09-10T19:20:38.845951Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

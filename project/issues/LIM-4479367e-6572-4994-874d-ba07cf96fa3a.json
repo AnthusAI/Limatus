@@ -27,10 +27,17 @@
       "text": "Judge re-scan starting on published Pilobolus: Limatus main has prompt v2 (PR #8); Papyrus develop has judge.provider openai (PR #75). Packets go under /tmp/limatus-pilobol-hitl/<slug>/; no apply.\n",
       "created_at": "2026-09-10T21:14:13.756957Z",
       "comment_type": "default"
+    },
+    {
+      "id": "f68341ca-f502-4e32-8e3b-21bf00711c44",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Judge re-scan blocked: LIM-79c9b2. Two live `--require-judge` calls truncated at 2400 output tokens. Always-lane `scan.json` unchanged; no `scan-judge.json`.\n",
+      "created_at": "2026-09-10T21:18:37.929257Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.649005Z",
-  "updated_at": "2026-09-10T21:14:13.756976Z",
+  "updated_at": "2026-09-10T21:18:37.929277Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

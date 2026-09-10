@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": "dc8c8b25-b7c1-44cc-8e14-4e48baeac8aa",
+  "issue_id": "LIM-74d5fb77-e6b3-4bc7-b283-77e37a8ca32a",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T11:48:57.563Z",
+  "actor_id": "home",
+  "payload": {
+    "assignee": null,
+    "description": "",
+    "issue_type": "story",
+    "labels": [],
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "priority": 2,
+    "status": "open",
+    "title": "Register-aware phrasing: bare noun-compound density vs pithy/accessible dial"
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "event_id": "b0f218db-7187-4e43-9593-c67f181e2f71",
+  "issue_id": "LIM-fc61e898-bf80-4410-b2db-145707b17dee",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T11:49:38.082Z",
+  "actor_id": "home",
+  "payload": {
+    "assignee": null,
+    "description": "",
+    "issue_type": "story",
+    "labels": [],
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "priority": 2,
+    "status": "open",
+    "title": "Run VOICE.md/AGENTS.md coverage audit for Anth.us and Chattic.us"
+  }
+}

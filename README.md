@@ -62,6 +62,17 @@ limatus apply --original path/to/original.md --working-copy path/to/working.md \
   --anchor "exact span text"
 ```
 
+From Python, the same read-only diagnose step is available without touching the draft file:
+
+```python
+from limatus import load_config, diagnose
+
+config = load_config("path/to/style-profile.yml")
+result = diagnose(open("draft.md").read(), config=config)
+```
+
+`diagnose` returns structured findings only; it does not modify the draft.
+
 For a copy-editing agent, the intended loop is: **scan** (findings only, no steering decisions) → record **decisions** (`skip` / `rewrite` / `delete` / `keep` / `add`, via SDK or a decisions JSON file) → **options** for rewrite findings only → **compare** full-draft previews of each patch option (or regression compare after a trial edit) → **apply** exactly one human-chosen option to a working copy. Nothing auto-applies a compare winner.
 
 Run `limatus --help` for the full command reference.

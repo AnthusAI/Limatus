@@ -219,6 +219,25 @@ def _system_prompt() -> str:
     )
 
 
+def _index_is_word_boundary(text: str, index: int) -> bool:
+    draft_len = len(text)
+    if index <= 0 or index >= draft_len:
+        return True
+    inside = text[index]
+    outside = text[index - 1]
+    if not inside.isalnum():
+        return True
+    if not outside.isalnum():
+        return True
+    return False
+
+
+def _span_has_word_boundaries(draft_text: str, start: int, end: int) -> bool:
+    return _index_is_word_boundary(draft_text, start) and _index_is_word_boundary(
+        draft_text, end
+    )
+
+
 def _map_openai_findings(
     raw_findings: list[Any],
     draft_text: str,
@@ -241,6 +260,8 @@ def _map_openai_findings(
         if start < 0 or end < start or end > draft_len:
             continue
         if start == end and draft_len:
+            continue
+        if not _span_has_word_boundaries(draft_text, start, end):
             continue
         mapped.append(
             make_judge_finding(kind, draft_text, start, end, rationale, model=model)

@@ -213,7 +213,7 @@ def record_decision(
     *,
     note: str = "",
 ) -> list[dict[str, Any]]:
-    """Append one validated human steering decision without applying it."""
+    """Record one validated human steering decision without applying it (upserts by finding_id)."""
 
     try:
         updated = record_finding_decision(decisions, finding_id, decision, note)

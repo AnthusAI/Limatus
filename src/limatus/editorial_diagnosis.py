@@ -216,15 +216,19 @@ def record_finding_decision(
     if not finding_id.strip():
         raise ValueError("finding_id is required.")
     normalized = normalize_finding_decision(decision)
+    fid = finding_id.strip()
+    row = {
+        "schemaVersion": SCHEMA_VERSION,
+        "finding_id": fid,
+        "decision": normalized,
+        "note": note.strip(),
+    }
     updated = list(decisions)
-    updated.append(
-        {
-            "schemaVersion": SCHEMA_VERSION,
-            "finding_id": finding_id.strip(),
-            "decision": normalized,
-            "note": note.strip(),
-        }
-    )
+    for index, entry in enumerate(updated):
+        if isinstance(entry, dict) and entry.get("finding_id") == fid:
+            updated[index] = row
+            return updated
+    updated.append(row)
     return updated
 
 

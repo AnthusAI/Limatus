@@ -42,6 +42,10 @@ FINDING_DECISIONS = frozenset({"skip", "rewrite", "delete", "keep", "add"})
 
 STABLE_ID_PATTERN = re.compile(r"^finding-[a-f0-9]{16}$")
 
+FINDING_SOURCE_PROFILE = "profile"
+FINDING_SOURCE_JUDGE = "judge"
+ALLOWED_FINDING_SOURCES = frozenset({FINDING_SOURCE_PROFILE, FINDING_SOURCE_JUDGE})
+
 
 class EditorialDiagnosisValidationError(ValueError):
     """Raised when diagnostic JSON fails schema validation."""
@@ -149,6 +153,31 @@ def _validate_finding(entry: Any, location: str) -> None:
             raise EditorialDiagnosisValidationError(f"{location}.span.{coord} must be a non-negative integer.")
     if span["end"] < span["start"]:
         raise EditorialDiagnosisValidationError(f"{location}.span end must be >= start.")
+    _validate_finding_provenance(entry, location)
+
+
+def _validate_finding_provenance(entry: dict[str, Any], location: str) -> None:
+    source = entry.get("source")
+    if source not in ALLOWED_FINDING_SOURCES:
+        raise EditorialDiagnosisValidationError(
+            f"{location}.source must be '{FINDING_SOURCE_PROFILE}' or '{FINDING_SOURCE_JUDGE}'."
+        )
+    model = entry.get("model")
+    prompt_version = entry.get("promptVersion")
+    if source == FINDING_SOURCE_JUDGE:
+        if not isinstance(model, str) or not model.strip():
+            raise EditorialDiagnosisValidationError(f"{location}.model must be a non-empty string for judge findings.")
+        if not isinstance(prompt_version, str) or not prompt_version.strip():
+            raise EditorialDiagnosisValidationError(
+                f"{location}.promptVersion must be a non-empty string for judge findings."
+            )
+        return
+    if model is not None:
+        raise EditorialDiagnosisValidationError(f"{location}.model must be absent for profile findings.")
+    if prompt_version is not None:
+        raise EditorialDiagnosisValidationError(
+            f"{location}.promptVersion must be absent for profile findings."
+        )
 
 
 def _validate_repetition_group(group: Any, location: str) -> None:

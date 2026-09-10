@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## Unreleased
+
+### Features
+
+- Add `limatus scan` as the agent-facing unified scan command (`diagnose` remains a compatible alias).
+  Findings record lane provenance (`source`: profile or judge) with judge `model` and `promptVersion` when applicable.
+  Judge lane is stubbed offline; profile always-lane findings are unioned and never dropped.
+
+
 ## v0.7.0 (2026-09-10)
 
 ### Features

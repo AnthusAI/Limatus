@@ -4,7 +4,7 @@ import gzip
 from dataclasses import dataclass
 from typing import Any
 
-from .editorial_diagnosis_schema import stable_finding_id
+from .editorial_diagnosis_schema import FINDING_SOURCE_PROFILE, stable_finding_id
 from .editorial_text import sentence_spans, tokenize, word_count
 
 # Function-word inventory aligned with Ure (1971) / Halliday lexical-density practice.
@@ -239,4 +239,5 @@ def _document_finding(kind: str, text: str, rationale: str) -> dict[str, Any]:
         "excerpt": text[start:end],
         "span": {"start": start, "end": end},
         "rationale": rationale,
+        "source": FINDING_SOURCE_PROFILE,
     }

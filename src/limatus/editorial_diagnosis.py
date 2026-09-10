@@ -5,6 +5,7 @@ from typing import Any
 
 from .editorial_density import analyze_density, density_summary_as_dict
 from .editorial_diagnosis_schema import (
+    FINDING_SOURCE_PROFILE,
     SCHEMA_VERSION,
     stable_finding_id,
     stable_repetition_group_id,
@@ -268,6 +269,7 @@ def _make_finding(kind: str, draft_text: str, start: int, end: int, rationale: s
         "excerpt": draft_text[start:end],
         "span": {"start": start, "end": end},
         "rationale": rationale,
+        "source": FINDING_SOURCE_PROFILE,
     }
 
 
@@ -629,6 +631,7 @@ def _check_redundancy(text: str) -> list[dict[str, Any]]:
                     "excerpt": text[start:end],
                     "span": {"start": start, "end": end},
                     "rationale": "Repeated phrasing across the draft.",
+                    "source": FINDING_SOURCE_PROFILE,
                 }
             )
         if _is_rhetorical_refrain(members):

@@ -12,6 +12,7 @@ from typing import Any, Callable
 
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 from .editorial_diagnosis import check_rules_only, diagnose_draft, record_finding_decision
+from .editorial_scan import scan_draft
 from .editorial_diagnosis_schema import (
     EditorialDiagnosisValidationError,
     validate_diagnosis,
@@ -52,7 +53,19 @@ def diagnose(
         raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
     if not isinstance(draft_text, str):
         raise EditorialDiagnosisValidationError("draft_text must be a string.")
-    return diagnose_draft(draft_text, style_profile=config, surface=surface)
+    return scan_draft(draft_text, style_profile=config, surface=surface)
+
+
+def scan(
+    draft_text: str, *, config: LoadedStyleProfile, surface: str | None = None
+) -> dict[str, Any]:
+    """Scan draft text with a loaded config (profile lane plus optional judge lane)."""
+
+    if not isinstance(config, LoadedStyleProfile):
+        raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
+    if not isinstance(draft_text, str):
+        raise EditorialDiagnosisValidationError("draft_text must be a string.")
+    return scan_draft(draft_text, style_profile=config, surface=surface)
 
 
 def check_rules(
@@ -217,6 +230,7 @@ __all__ = [
     "LoadedStyleProfile",
     "StyleProfileValidationError",
     "diagnose",
+    "scan",
     "verify",
     "check_rules",
     "check_standfirst",

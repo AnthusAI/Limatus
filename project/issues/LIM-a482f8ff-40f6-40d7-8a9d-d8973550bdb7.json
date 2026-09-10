@@ -1,7 +1,7 @@
 {
   "id": "LIM-a482f8ff-40f6-40d7-8a9d-d8973550bdb7",
   "title": "Limatus",
-  "description": "Standalone editorial quality tool: diagnose slop-like weakness, propose constrained rewrite options (markup / redline-style suggestions), human-steered apply with diffs. Quality-first \u2014 **not** detector-score evasion.\n\n## Intent\n\nSpin the automated editorial loop out of Papyrus into **Limatus**, a clean isolated package (CLI + Python SDK) with its own local style-rules config. Planning and early milestones live on the Papyrus board until the Limatus repo/package is cut.\n\n## Guardrail\n\nQuality outcomes, not detector-score gaming. North-star: human acceptance after factual review.\n\n## What already exists\n\nEpic `PPY-54055d` \u2014 interactive editorial rewrite loop (diagnose \u2192 options \u2192 steer/apply/provenance), currently in-tree under `papyrus_content`. Style profile + diagnostic JSON closed; rewrite options / verifier / steer-apply remain open.\n\n## Milestones\n\n1. **In-Papyrus MVP loop** (`PPY-54055d`) \u2014 finish interactive loop while still in-tree.\n2. **Decouple into Limatus** (`PPY-639fb3`) \u2014 portable CLI + Python SDK; local style-rules config; no Papyrus imports.\n3. **Evaluations** (`PPY-89827a`) \u2014 harness for diagnose + rewrite-option quality.\n4. **Papyrus consumes Limatus via SDK** (`PPY-b536c2`) \u2014 newsroom / Tactus procedures call Limatus; in-tree core removed or shimmed.\n\n## Non-goals\n\n- Detector-gaming \"humanizer\" products.\n- Auto-publishing externally attributable copy without a human gate.\n\nMigrated from PPY-809091.",
+  "description": "Standalone editorial quality tool: diagnose slop-like weakness, propose constrained rewrite options (markup / redline-style suggestions), human-steered apply with diffs. Quality-first — **not** detector-score evasion.\n\n## Intent\n\nSpin the automated editorial loop out of Papyrus into **Limatus**, a clean isolated package (CLI + Python SDK) with its own local style-rules config. Planning and early milestones live on the Papyrus board until the Limatus repo/package is cut.\n\n## Guardrail\n\nQuality outcomes, not detector-score gaming. North-star: human acceptance after factual review.\n\n## What already exists\n\nEpic `PPY-54055d` — interactive editorial rewrite loop (diagnose → options → steer/apply/provenance), currently in-tree under `papyrus_content`. Style profile + diagnostic JSON closed; rewrite options / verifier / steer-apply remain open.\n\n## Milestones\n\n1. **In-Papyrus MVP loop** (`PPY-54055d`) — finish interactive loop while still in-tree.\n2. **Decouple into Limatus** (`PPY-639fb3`) — portable CLI + Python SDK; local style-rules config; no Papyrus imports.\n3. **Evaluations** (`PPY-89827a`) — harness for diagnose + rewrite-option quality.\n4. **Papyrus consumes Limatus via SDK** (`PPY-b536c2`) — newsroom / Tactus procedures call Limatus; in-tree core removed or shimmed.\n\n## Non-goals\n\n- Detector-gaming \"humanizer\" products.\n- Auto-publishing externally attributable copy without a human gate.\n\nMigrated from PPY-809091.",
   "type": "initiative",
   "status": "in_progress",
   "priority": 1,
@@ -14,12 +14,19 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "cd267d3c-4364-459b-bdb6-9bb0a5c5cd9d",
+      "author": "home",
+      "text": "Session recap (2026-09-09/10), shipped and released, not previously tracked\nas individual issues -- recording here for continuity:\n\n- check_rules / check_standfirst / component-source contrast-cap exemption:\n  migrated Chattic.us-web's bespoke check_editorial_rules.py (the tool that\n  originally inspired Limatus) onto real Limatus, behavior-preserving,\n  verified against all existing content before/after.\n- rules.noEmojis, rules.bySurface (per-surface contrast-cap override),\n  standfirst schema + limatus standfirst / check_standfirst: new profile\n  capabilities, all shipped.\n- overusedWords check: crutch-word frequency (actually/really/very/...)\n  scaled to document length -- caught 7x 'actually' in one Anth.us post.\n- uncontractedForms check: flags stated-but-unenforced 'use contractions'\n  rules (that is -> that's, does not -> doesn't); per-profile toggle since\n  Pilobolus's narrator deliberately stays uncontracted (VOICE.md) --\n  confirmed OFF is correct against all 5 of its published pieces.\n- editorial_verifier.py frontmatter-masking bug fix: verify() was treating\n  a changed title/date as a 'deleted claim', found dogfooding a real\n  copy-edit.\n- Coverage-audit methodology: read a publication's VOICE.md end to end\n  against its style-profile.yml line by line, looking for rules stated in\n  prose with no matching mechanical check. Found real gaps this way twice\n  (Pilobolus: noEmojis never set, brand-self-naming bans incomplete, 5\n  missing jargon words, trailing-Sources-list pattern missing -- one of\n  which had already shipped a real violation to a published article\n  before the audit caught it). Worth doing for Anth.us and Chattic.us too;\n  not yet done.\n- Style-profile.yml coverage in production: Anth.us, Pilobolus, and\n  Chattic.us profiles all now materially richer than at session start.\n\nAll released to PyPI incrementally (0.1.0 -> 0.6.0+) as each check landed,\neach with a real dogfooded catch as the reason it was built rather than\nspeculative coverage.",
+      "created_at": "2026-09-10T11:49:32.623083Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:35:37.756767Z",
-  "updated_at": "2026-09-08T18:35:41.737218Z",
+  "updated_at": "2026-09-10T11:49:32.623100Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {},
-  "agent": null
+  "custom": {}
 }

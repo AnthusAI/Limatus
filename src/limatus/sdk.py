@@ -25,6 +25,9 @@ from .editorial_options_schema import (
 from .editorial_rewrite_options import generate_rewrite_options, generate_rewrite_suggestions
 from .editorial_standfirst import check_standfirst as _check_standfirst
 from .editorial_style import LoadedStyleProfile, StyleProfileValidationError, load_style_profile
+from .editorial_compare import compare_candidates, compare_regression
+from .editorial_compare_schema import validate_compare_report
+from .editorial_judge import JudgeResolver
 from .editorial_verifier import verify_revision
 
 
@@ -92,6 +95,28 @@ def check_rules(
     if not isinstance(text, str):
         raise EditorialDiagnosisValidationError("text must be a string.")
     return check_rules_only(text, style_profile=config, surface=surface)
+
+
+def compare(
+    baseline_text: str,
+    candidates: list[dict[str, str]],
+    *,
+    config: LoadedStyleProfile,
+    surface: str | None = None,
+    mode: str = "rank",
+    judge_resolver: JudgeResolver | None = None,
+) -> dict[str, Any]:
+    """Rank draft candidates against a baseline using inspectable always-lane deltas."""
+
+    report = compare_candidates(
+        baseline_text,
+        candidates,
+        style_profile=config,
+        surface=surface,
+        mode=mode,
+        judge_resolver=judge_resolver,
+    )
+    return validate_compare_report(report)
 
 
 def verify(
@@ -238,6 +263,7 @@ __all__ = [
     "EditorialOptionsValidationError",
     "LoadedStyleProfile",
     "StyleProfileValidationError",
+    "compare",
     "diagnose",
     "scan",
     "verify",

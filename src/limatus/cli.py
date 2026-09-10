@@ -1,6 +1,7 @@
 """Limatus CLI entry point.
 
     limatus scan --draft <file> --profile <style-profile.yml> [--require-judge] [...]
+    limatus compare --profile <style-profile.yml> --baseline <file> --candidate <file> [...]
     limatus diagnose  (alias for scan)
     limatus options  --draft <file> --profile <style-profile.yml> \\
                       --diagnosis <diagnosis.json> --decisions <decisions.json> \\
@@ -20,6 +21,7 @@ from .editorial_commands import (
     editorial_diagnose,
     editorial_diff,
     editorial_options,
+    editorial_compare,
     editorial_scan,
     editorial_standfirst,
     editorial_verify,
@@ -32,6 +34,7 @@ COMMANDS = {
     "options": editorial_options,
     "apply": editorial_apply,
     "diff": editorial_diff,
+    "compare": editorial_compare,
     "verify": editorial_verify,
     "standfirst": editorial_standfirst,
     "eval": editorial_eval,

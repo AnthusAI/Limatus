@@ -3,7 +3,7 @@
   "title": "Compare original to working copy for regression",
   "description": "## Intent\n\nReplace weighted verify as the regression tool.\n\n## Gherkin\n\n```gherkin\nFeature: Regression compare\n  As a copy-editing agent\n  I want to compare the original to a tweaked working copy\n  So I know whether my edit got worse\n\n  Scenario: Working copy\n    Given an original draft and a working copy after a trial edit\n    When I run limatus compare\n    Then the report includes always-lane deltas\n    And optional rubric deltas if a judge is configured\n    And both files are unchanged\n```\n",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "0a1cdade-ca7d-4061-95fa-cc96a801b956",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Shipped in PR #4.",
+      "created_at": "2026-09-10T19:17:33.067275Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T18:29:10.488397Z",
-  "updated_at": "2026-09-10T19:09:32.416451Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:17:33.192259Z",
+  "closed_at": "2026-09-10T19:17:33.192239Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

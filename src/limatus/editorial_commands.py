@@ -39,6 +39,11 @@ def _run_scan_command(flags: list[str], *, prog: str) -> None:
         default="",
         help="Optional path to write editorial annotation XML.",
     )
+    parser.add_argument(
+        "--require-judge",
+        action="store_true",
+        help="Fail when a configured judge cannot run (missing OPENAI_API_KEY or API error).",
+    )
     args = parser.parse_args(flags)
 
     profile_path = Path(args.profile).resolve()
@@ -51,7 +56,12 @@ def _run_scan_command(flags: list[str], *, prog: str) -> None:
         draft_text = args.text
 
     style_profile = load_style_profile(profile_path)
-    diagnosis = scan_draft(draft_text, style_profile=style_profile, surface=args.surface or None)
+    diagnosis = scan_draft(
+        draft_text,
+        style_profile=style_profile,
+        surface=args.surface or None,
+        require_judge=args.require_judge,
+    )
     rendered = json.dumps(diagnosis, indent=2) + "\n"
 
     if args.markup_out:

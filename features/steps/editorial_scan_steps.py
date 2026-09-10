@@ -168,6 +168,8 @@ def step_when_run_limatus_scan(context):
 
     completed = _run_scan_cli(context.profile_path, draft_path=context.draft_path)
     context.cli_result = completed
+    if getattr(context, "expect_scan_failure", False):
+        return
     assert completed.returncode == 0, completed.stderr
     context.diagnosis = json.loads(completed.stdout)
 

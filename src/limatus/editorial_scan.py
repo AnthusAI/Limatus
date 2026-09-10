@@ -4,8 +4,8 @@ import copy
 from typing import Any
 
 from .editorial_diagnosis import diagnose_draft
-from .editorial_diagnosis_schema import FINDING_ARRAY_KEYS, validate_diagnosis
-from .editorial_judge import JudgeResolver, default_judge_resolver
+from .editorial_diagnosis_schema import FINDING_ARRAY_KEYS, coerce_rubric, validate_diagnosis
+from .editorial_judge import JudgeResolver, resolve_judge_lane
 from .editorial_style import LoadedStyleProfile
 
 _KIND_TO_ARRAY: dict[str, str] = {
@@ -41,13 +41,23 @@ def scan_draft(
     style_profile: LoadedStyleProfile,
     surface: str | None = None,
     judge_resolver: JudgeResolver | None = None,
+    require_judge: bool = False,
 ) -> dict[str, Any]:
     profile_diagnosis = diagnose_draft(draft_text, style_profile=style_profile, surface=surface)
     judge_config = style_profile.profile.judge
     if judge_config is None:
         return profile_diagnosis
 
-    resolver = judge_resolver or default_judge_resolver
-    judge_findings = resolver(draft_text, style_profile, judge_config)
-    merged = union_judge_findings(profile_diagnosis, judge_findings)
+    lane = resolve_judge_lane(
+        draft_text,
+        style_profile,
+        judge_config,
+        judge_resolver=judge_resolver,
+        require_judge=require_judge,
+    )
+    merged = union_judge_findings(profile_diagnosis, lane.findings)
+    rubric = coerce_rubric(lane.rubric)
+    if rubric is not None:
+        merged = copy.deepcopy(merged)
+        merged["rubric"] = rubric
     return validate_diagnosis(merged)

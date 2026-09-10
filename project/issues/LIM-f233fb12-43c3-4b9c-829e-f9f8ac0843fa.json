@@ -38,10 +38,17 @@
       "text": "Acceptance rejected: missing Behave step 'judge findings are absent'. Sent back to implementer.",
       "created_at": "2026-09-10T19:07:49.943822Z",
       "comment_type": "default"
+    },
+    {
+      "id": "537ab848-054c-45a2-9d2a-8640151d9c45",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Implementer registered Then judge findings are absent. PR #3 updated (39d1770). Re-acceptance started on /tmp/limatus-LIM-f233fb-judge.",
+      "created_at": "2026-09-10T19:09:32.286763Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.868998Z",
-  "updated_at": "2026-09-10T19:07:49.943838Z",
+  "updated_at": "2026-09-10T19:09:32.286780Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

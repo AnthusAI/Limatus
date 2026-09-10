@@ -3,7 +3,7 @@
   "title": "Compare candidates and regression",
   "description": "# Compare candidates and regression\n\n## Intent\n\nAs a copy-editing agent, I want to rank two or three candidate texts and to compare a working copy to the original, so I can pick a shortlist and catch quality regressions before I bother a human.\n\n## Done when\n\n- `limatus compare` takes a style profile plus two or more candidate files (or original + working copy).\n- Output lists **all** candidates with ranks, always-lane **deltas** (finding counts by kind, density numbers), and optional judge rubric deltas when a judge is configured.\n- Hard fail: a candidate that **increases unsupported claims** (or other configured hard constraints) cannot be rank 1; the report says why.\n- Ranking does not hide losers.\n- Neither input file is modified.\n- This replaces weighted `should_accept_revision` as the agent-facing “is B better than A?” tool. `verify` may remain as a compatibility alias that calls compare, or is documented as superseded.\n\n## Out of scope\n\nAuto-applying the winner. Auto-publish. Multi-provider judges.\n",
   "type": "epic",
-  "status": "open",
+  "status": "in_progress",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -17,9 +17,17 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "55b12175-b3d6-4f19-a539-9f69cf19b032",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Composer 2.5 planner dispatched. Worktree will be /tmp/limatus-LIM-0e3f4e-compare on cursor/feature/LIM-0e3f4e-compare. Plan only. PR to main. No project/ in the product PR.",
+      "created_at": "2026-09-10T19:09:32.451655Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T18:29:09.898253Z",
-  "updated_at": "2026-09-10T18:29:10.007907Z",
+  "updated_at": "2026-09-10T19:09:32.451666Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

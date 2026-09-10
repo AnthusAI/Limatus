@@ -1,6 +1,32 @@
 # CHANGELOG
 
 
+## v0.14.1 (2026-09-10)
+
+### Bug Fixes
+
+- **cli**: Drop mid-word judge spans and upsert decisions
+  ([#11](https://github.com/AnthusAI/Limatus/pull/11),
+  [`9c5ab9d`](https://github.com/AnthusAI/Limatus/commit/9c5ab9dd3ed8faac8ea40993a5dc495de53ac334))
+
+Skip OpenAI judge findings whose spans cut inside a word so apply anchors stay on token boundaries.
+  Replace prior decision rows for the same finding_id instead of appending duplicates. Document SDK
+  diagnose in README.
+
+### Chores
+
+- **kanbus**: Close LIM-2a1ca5; file LIM-906fc9 dogfood edges
+  ([`f444433`](https://github.com/AnthusAI/Limatus/commit/f4444339686bb3a3cc39cd949eace81b1b77f826))
+
+CLI apply on wiki-janitor working copy garbled a mid-word judge span.
+
+- **kanbus**: Close LIM-906fc9 and LIM-c32c24 after PR #11
+  ([`593b004`](https://github.com/AnthusAI/Limatus/commit/593b0042640a55a5b1154000bc497f3ef12031b6))
+
+- **kanbus**: Note LIM-2d43b1 remaining Papyrus adapter DoD
+  ([`7c2fae7`](https://github.com/AnthusAI/Limatus/commit/7c2fae70627ec0b3ffded062056e2518d9f920f5))
+
+
 ## v0.14.0 (2026-09-10)
 
 ### Chores

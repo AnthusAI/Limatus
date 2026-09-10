@@ -1,13 +1,46 @@
 # CHANGELOG
 
 
-## Unreleased
+## v0.8.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Approve LIM-3e6cb0 plan; implementation authorized
+  ([`6aa5cd3`](https://github.com/AnthusAI/Limatus/commit/6aa5cd34a38f906cc986e0be0fdacff488ce5531))
+
+- **kanbus**: Close LIM-3e6cb0; start always-lane and judge epics
+  ([`fe0dbf7`](https://github.com/AnthusAI/Limatus/commit/fe0dbf7fa43e9bec43081a1ed4f3e7f49af69882))
+
+- **kanbus**: Commit board state (issues)
+  ([`5ac4b11`](https://github.com/AnthusAI/Limatus/commit/5ac4b1104dc47b3b8bf100b685973be216d0b282))
+
+- **kanbus**: File LIM-df9d58 scan/judge/compare initiative
+  ([`e74c3f9`](https://github.com/AnthusAI/Limatus/commit/e74c3f9b96f78432cfdc345a889dfa8303ce59b3))
+
+New initiative with six epics and behavioral stories for the agent-first copy-edit loop. Notes
+  successor relationship to LIM-9d14e6.
+
+- **kanbus**: Include event log for board updates
+  ([`c600c77`](https://github.com/AnthusAI/Limatus/commit/c600c77b4a57369c28ff7c1a044e9bc34f677812))
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+- **kanbus**: Start LIM-3e6cb0 unified scan; planner dispatched
+  ([`85581a0`](https://github.com/AnthusAI/Limatus/commit/85581a0aa6f11e558ae1a456e8f2c0abd9af85c1))
 
 ### Features
 
-- Add `limatus scan` as the agent-facing unified scan command (`diagnose` remains a compatible alias).
-  Findings record lane provenance (`source`: profile or judge) with judge `model` and `promptVersion` when applicable.
-  Judge lane is stubbed offline; profile always-lane findings are unioned and never dropped.
+- **scan**: Unified scan surface with finding provenance (LIM-3e6cb0)
+  ([#1](https://github.com/AnthusAI/Limatus/pull/1),
+  [`53da7ca`](https://github.com/AnthusAI/Limatus/commit/53da7caaa958bb6824cb92d33f1195b36f5cdee5))
+
+* feat(scan): unified scan surface with finding provenance (LIM-3e6cb0)
+
+Add limatus scan as the agent-facing entrypoint with diagnose as an alias, profile/judge source
+  fields on findings, stub judge lane with injectable resolver for tests, and Behave coverage for
+  the epic acceptance scenarios.
+
+* docs(cli): list scan as primary command in --help text
 
 
 ## v0.7.0 (2026-09-10)

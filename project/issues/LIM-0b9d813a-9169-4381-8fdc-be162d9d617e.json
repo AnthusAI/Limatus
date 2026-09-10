@@ -20,10 +20,17 @@
       "text": "Waiting on Ryan HITL: skip/rewrite/delete/keep/add per finding. Options will not run until rewrite decisions exist. Pilobolus rewrite skill still missing (only Anth.us skill in Papyrus).",
       "created_at": "2026-09-10T20:39:31.865641Z",
       "comment_type": "default"
+    },
+    {
+      "id": "334b7bf8-11cc-4b41-9552-2c710aae9faf",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Dogfood parked until LIM-0129cf ships a working CLI loop. Do not ask Ryan to pick published-article options.\n",
+      "created_at": "2026-09-10T23:18:42.162925Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:38.356742Z",
-  "updated_at": "2026-09-10T20:39:31.865652Z",
+  "updated_at": "2026-09-10T23:18:42.162938Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

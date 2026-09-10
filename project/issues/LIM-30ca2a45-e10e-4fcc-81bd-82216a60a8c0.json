@@ -27,10 +27,17 @@
       "text": "Agent decisions for all eight articles; options+compare for wiki-janitor and you-confessed. Packet: `/tmp/limatus-pilobol-hitl/HITL-OPTIONS.md`. Published copy unchanged. Blocked on Ryan choosing option ids before any apply.\n",
       "created_at": "2026-09-10T21:50:15.798517Z",
       "comment_type": "default"
+    },
+    {
+      "id": "81837955-a075-4053-a81f-0fd5cc75b77f",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Not blocked on Ryan picking /tmp packets. Dogfood parked until `limatus` CLI loop is proven (LIM-0129cf): decide subcommand, `python -m limatus`, apply/diff via CLI, original unchanged.\n",
+      "created_at": "2026-09-10T23:18:18.089583Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.684739Z",
-  "updated_at": "2026-09-10T21:50:15.798538Z",
+  "updated_at": "2026-09-10T23:18:18.089596Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

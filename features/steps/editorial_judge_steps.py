@@ -10,6 +10,7 @@ from behave import given, then, when
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SRC_ROOT = REPO_ROOT / "src"
 SCAN_FIXTURE_ROOT = REPO_ROOT / "features" / "fixtures" / "editorial-scan"
+VOICE_PROMPT_FIXTURE_ROOT = REPO_ROOT / "features" / "fixtures" / "editorial-judge"
 
 if str(SRC_ROOT) not in sys.path:
     sys.path.insert(0, str(SRC_ROOT))
@@ -17,6 +18,8 @@ if str(SRC_ROOT) not in sys.path:
 from limatus.editorial_diagnosis_schema import FINDING_SOURCE_JUDGE, FINDING_SOURCE_PROFILE  # noqa: E402
 from limatus.editorial_judge import (  # noqa: E402
     JUDGE_PROMPT_VERSION,
+    build_judge_user_prompt,
+    judge_system_prompt,
     make_judge_finding,
     resolved_judge_model,
 )
@@ -140,3 +143,50 @@ def step_then_unsupported_provider_error(context):
     assert completed.returncode != 0, completed.stdout
     combined = f"{completed.stdout}\n{completed.stderr}"
     assert "Unsupported judge.provider" in combined or "only openai is supported" in combined
+
+
+@given("a style profile for judge voice prompt fixtures")
+def step_given_judge_voice_prompt_profile(context):
+    context.profile_path = VOICE_PROMPT_FIXTURE_ROOT / "voice-prompt-profile.yml"
+    assert context.profile_path.is_file()
+
+
+@when("I build the OpenAI judge user prompt for a short draft")
+def step_when_build_judge_user_prompt(context):
+    loaded = load_style_profile(context.profile_path)
+    context.judge_user_prompt = build_judge_user_prompt("Short draft.", loaded)
+
+
+@then("the judge user prompt includes the sentence style marker")
+def step_then_prompt_includes_sentence_style_marker(context):
+    assert "JUDGE_FIXTURE_SENTENCE_STYLE_MARKER" in context.judge_user_prompt
+
+
+@then("the judge user prompt includes the structure marker")
+def step_then_prompt_includes_structure_marker(context):
+    assert "JUDGE_FIXTURE_STRUCTURE_MARKER" in context.judge_user_prompt
+
+
+@then("the judge user prompt includes the voice patterns marker")
+def step_then_prompt_includes_voice_patterns_marker(context):
+    assert "JUDGE_FIXTURE_VOICE_PATTERNS_MARKER" in context.judge_user_prompt
+
+
+@then("the judge user prompt includes the short reference sample body")
+def step_then_prompt_includes_short_sample(context):
+    assert "JUDGE_FIXTURE_SHORT_SAMPLE_BODY_MARKER" in context.judge_user_prompt
+
+
+@then("the judge user prompt omits the long reference sample tail marker")
+def step_then_prompt_omits_long_sample_tail(context):
+    assert "JUDGE_FIXTURE_LONG_SAMPLE_TAIL_MARKER" not in context.judge_user_prompt
+
+
+@when("I read the judge system prompt")
+def step_when_read_judge_system_prompt(context):
+    context.judge_system_prompt_text = judge_system_prompt()
+
+
+@then("the judge system prompt forbids rewriting the draft")
+def step_then_system_prompt_forbids_rewrite(context):
+    assert "Do not rewrite the draft" in context.judge_system_prompt_text

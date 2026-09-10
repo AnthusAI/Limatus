@@ -31,10 +31,17 @@
       "text": "Plan approved with constraints: rebase onto origin/main first (judge is merged). Density is a reported delta, not a primary rank key. verify is a map-only alias. Implementation authorized in /tmp/limatus-LIM-0e3f4e-compare. PR to main. No project/.",
       "created_at": "2026-09-10T19:13:23.118795Z",
       "comment_type": "default"
+    },
+    {
+      "id": "9c01f841-1cc7-4581-9687-2b6e5687ca06",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "PR #4 up (feat compare). No project/ in the product diff. Acceptance running on /tmp/limatus-LIM-0e3f4e-compare.",
+      "created_at": "2026-09-10T19:17:00.227646Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.898253Z",
-  "updated_at": "2026-09-10T19:13:23.118810Z",
+  "updated_at": "2026-09-10T19:17:00.227665Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

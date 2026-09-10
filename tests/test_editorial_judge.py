@@ -12,14 +12,17 @@ sys.path.insert(0, str(SRC))
 
 from limatus.editorial_diagnosis_schema import FINDING_SOURCE_JUDGE  # noqa: E402
 from limatus.editorial_judge import (  # noqa: E402
+    JUDGE_REFERENCE_EXCERPT_CHARS,
     JudgeUnavailableError,
     _judge_output_schema,
+    build_judge_user_prompt,
     run_default_judge_lane,
 )
 from limatus.editorial_scan import scan_draft  # noqa: E402
 from limatus.editorial_style import load_style_profile  # noqa: E402
 
 JUDGE_PROFILE = ROOT / "features/fixtures/editorial-scan/judge-enabled-profile.yml"
+VOICE_PROMPT_PROFILE = ROOT / "features/fixtures/editorial-judge/voice-prompt-profile.yml"
 BANNED_DRAFT = ROOT / "features/fixtures/editorial-scan/banned-phrase-draft.md"
 
 _SAMPLE_RUBRIC = {
@@ -40,6 +43,24 @@ class EditorialJudgeTests(unittest.TestCase):
         self.assertIn("rubric", required)
         self.assertIn("findings", required)
 
+    def test_build_judge_user_prompt_includes_voice_fields(self):
+        config = load_style_profile(VOICE_PROMPT_PROFILE)
+        prompt = build_judge_user_prompt("Draft.", config)
+        self.assertIn("JUDGE_FIXTURE_SENTENCE_STYLE_MARKER", prompt)
+        self.assertIn("JUDGE_FIXTURE_STRUCTURE_MARKER", prompt)
+        self.assertIn("JUDGE_FIXTURE_VOICE_PATTERNS_MARKER", prompt)
+        self.assertIn("Reference samples (voice/register only", prompt)
+
+    def test_build_judge_user_prompt_truncates_long_reference_sample(self):
+        config = load_style_profile(VOICE_PROMPT_PROFILE)
+        prompt = build_judge_user_prompt("Draft.", config)
+        self.assertIn("JUDGE_FIXTURE_SHORT_SAMPLE_BODY_MARKER", prompt)
+        self.assertNotIn("JUDGE_FIXTURE_LONG_SAMPLE_TAIL_MARKER", prompt)
+        long_sample = next(s for s in config.samples if s.id == "long-sample")
+        self.assertGreater(len(long_sample.body.strip()), JUDGE_REFERENCE_EXCERPT_CHARS)
+        self.assertIn(long_sample.body.strip()[:JUDGE_REFERENCE_EXCERPT_CHARS], prompt)
+        self.assertIn("…", prompt)
+
     def test_openai_judge_lane_mocked(self):
         config = load_style_profile(JUDGE_PROFILE)
         draft_text = BANNED_DRAFT.read_text(encoding="utf-8")
@@ -56,12 +77,21 @@ class EditorialJudgeTests(unittest.TestCase):
         }
         env = os.environ.copy()
         env["OPENAI_API_KEY"] = "test-key"
+        captured: dict[str, str] = {}
+
+        def capture_api(**kwargs):
+            captured["user_prompt"] = kwargs["user_prompt"]
+            return payload
+
         with patch.dict(os.environ, env, clear=False):
             with patch(
                 "limatus.editorial_judge.call_structured_responses_api",
-                return_value=payload,
+                side_effect=capture_api,
             ):
                 diagnosis = scan_draft(draft_text, style_profile=config)
+        self.assertIn("Sentence style:", captured["user_prompt"])
+        self.assertIn("Structure:", captured["user_prompt"])
+        self.assertIn("Reference samples (voice/register only", captured["user_prompt"])
         judge_hits = [
             f
             for f in diagnosis["generic_passages"]

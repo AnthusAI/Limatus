@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.10.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Close LIM-0e3f4e; start LIM-e9176a loop plan
+  ([`c794cfb`](https://github.com/AnthusAI/Limatus/commit/c794cfbc6a1adac240e908fa4e885b7bb85d8934))
+
+- **kanbus**: Lim-0e3f4e PR #4 opened; acceptance in flight
+  ([`3622298`](https://github.com/AnthusAI/Limatus/commit/3622298eb5573b92e09741296fe0cf53e0d87f0a))
+
+### Features
+
+- **compare**: Rank candidates with always-lane deltas (LIM-0e3f4e)
+  ([#4](https://github.com/AnthusAI/Limatus/pull/4),
+  [`c64d3fd`](https://github.com/AnthusAI/Limatus/commit/c64d3fd23cf5fc4949b37d03e730acbabc245bd5))
+
+Add limatus compare for multi-candidate ranking and regression mode with inspectable finding-count
+  deltas, hard constraints on unsupported-claim increases, and optional rubric deltas when judge
+  rubric is present.
+
+verify and sdk.verify remain compatibility aliases that run compare regression before emitting the
+  legacy advisory JSON.
+
+
 ## v0.9.0 (2026-09-10)
 
 ### Chores

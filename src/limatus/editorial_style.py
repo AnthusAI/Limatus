@@ -90,6 +90,15 @@ class StandfirstRules:
 
 
 @dataclass(frozen=True)
+class JudgeConfig:
+    provider: str
+    model: str
+
+
+DEFAULT_JUDGE_MODEL = "gpt-5.6-terra"
+
+
+@dataclass(frozen=True)
 class StyleProfile:
     publication_key: str
     voice_name: str
@@ -106,6 +115,7 @@ class StyleProfile:
     rules: EditorialRules
     density: DensityThresholds
     standfirst: StandfirstRules | None
+    judge: JudgeConfig | None
 
 
 @dataclass(frozen=True)
@@ -209,6 +219,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     rules = _parse_rules(raw.get("rules"), profile_path)
     density = _parse_density(raw.get("density"), profile_path)
     standfirst = _parse_standfirst(raw.get("standfirst"), profile_path)
+    judge = _parse_judge(raw.get("judge"), profile_path)
 
     return StyleProfile(
         publication_key=publication_key,
@@ -226,7 +237,29 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         rules=rules,
         density=density,
         standfirst=standfirst,
+        judge=judge,
     )
+
+
+def _parse_judge(value: Any, profile_path: Path) -> JudgeConfig | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"judge must be a mapping in {profile_path}")
+    provider_raw = value.get("provider")
+    if provider_raw is None or (isinstance(provider_raw, str) and not provider_raw.strip()):
+        return None
+    provider = str(provider_raw).strip().lower()
+    if provider != "openai":
+        raise StyleProfileValidationError(
+            f"Unsupported judge.provider '{provider_raw}' in {profile_path}; only openai is supported."
+        )
+    model_raw = value.get("model")
+    if model_raw is None or (isinstance(model_raw, str) and not str(model_raw).strip()):
+        model = DEFAULT_JUDGE_MODEL
+    else:
+        model = str(model_raw).strip()
+    return JudgeConfig(provider=provider, model=model)
 
 
 def _parse_checks(value: Any, profile_path: Path) -> dict[str, bool]:

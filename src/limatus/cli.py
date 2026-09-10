@@ -1,6 +1,7 @@
 """Limatus CLI entry point.
 
-    limatus diagnose --draft <file> --profile <style-profile.yml> [...]
+    limatus scan --draft <file> --profile <style-profile.yml> [...]
+    limatus diagnose  (alias for scan)
     limatus options  --draft <file> --profile <style-profile.yml> \\
                       --diagnosis <diagnosis.json> --decisions <decisions.json> \\
                       --skill <editorial-rewrite-skill.yml> [...]
@@ -17,12 +18,14 @@ from .editorial_commands import (
     editorial_diagnose,
     editorial_diff,
     editorial_options,
+    editorial_scan,
     editorial_standfirst,
     editorial_verify,
 )
 from .editorial_eval import main as editorial_eval
 
 COMMANDS = {
+    "scan": editorial_scan,
     "diagnose": editorial_diagnose,
     "options": editorial_options,
     "apply": editorial_apply,

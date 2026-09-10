@@ -3,7 +3,7 @@
   "title": "Limatus local style-rules config schema",
   "description": "Define a simple, portable YAML/JSON config for voice/style rules and reference samples. Map existing editorial profiles without requiring Papyrus paths. Document schema and validation.\n\nDependencies:\n- blocked-by: LIM-37145b77-54c3-478a-ba60-cf6756823663\n\nFeature: Load portable local style rules\n  Scenario: Validate a local profile\n    Given a portable YAML or JSON style profile with local reference samples\n    When Limatus loads the profile\n    Then it returns validated style rules without any Papyrus dependency\n    And a detector-score field is rejected with an actionable validation error\n\nMigrated from PPY-1b700a.",
   "type": "story",
-  "status": "open",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -17,10 +17,18 @@
       "type": "blocked-by"
     }
   ],
-  "comments": [],
+  "comments": [
+    {
+      "id": "179ce91d-20a0-415a-95c7-f418a2d4ba43",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "DoD met on main: YAML/JSON profiles, relative samples, detector-score rejection, Behave `editorial-style-profile.feature`, README portable profile section. No Papyrus imports.\n",
+      "created_at": "2026-09-10T23:36:07.600295Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:39:09.108078Z",
-  "updated_at": "2026-09-08T19:11:51.892699Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T23:36:07.643758Z",
+  "closed_at": "2026-09-10T23:36:07.643731Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {

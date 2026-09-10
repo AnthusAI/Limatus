@@ -1,0 +1,21 @@
+{
+  "schema_version": 1,
+  "event_id": "2edbc2ca-00b9-4cb9-879e-feb607c62630",
+  "issue_id": "LIM-906fc9e4-0f6a-40ef-83f2-15c39573905e",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T23:36:07.685Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nDogfood of `limatus apply` on a wiki-janitor working copy applied option-3685ce47f53e52da and produced broken prose (`watching.ng hidden from whoever was watching.`) because the judge span ended mid-word (`stayi` | `ng`). `limatus decide` also appends duplicate rows for the same finding_id.\n\n## Gherkin\n\n```gherkin\nFeature: Dogfood CLI rough edges\n  Scenario: Mid-word judge spans are dropped\n    Given an OpenAI judge finding whose end offset splits a word\n    When the judge lane maps findings\n    Then that span is not emitted\n\n  Scenario: Decide replaces an existing finding id\n    Given a decisions file already containing finding-aaa\n    When I run limatus decide for finding-aaa again\n    Then the file has one row for that id\n    And the draft is unchanged\n```\n\n## Also\n\nREADME has CLI examples but no `from limatus import load_config, diagnose` SDK example (LIM-c32c24 leftover). Add a short SDK snippet in the same PR.\n\n## Out of scope\n\nPublished-file apply. Papyrus adapter.",
+    "issue_type": "bug",
+    "labels": [
+      "editorial",
+      "dogfood"
+    ],
+    "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+    "priority": 1,
+    "status": "open",
+    "title": "CLI dogfood: mid-word judge spans garbled apply; decide duplicates"
+  }
+}

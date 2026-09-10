@@ -11,9 +11,17 @@ from .editorial_diagnosis_schema import (
     stable_finding_id,
 )
 from .editorial_llm import call_structured_responses_api
-from .editorial_style import DEFAULT_JUDGE_MODEL, JudgeConfig, LoadedStyleProfile
+from .editorial_style import (
+    DEFAULT_JUDGE_MODEL,
+    JudgeConfig,
+    LoadedStyleProfile,
+    ReferenceSample,
+    StyleProfile,
+)
 
-JUDGE_PROMPT_VERSION = "1"
+JUDGE_PROMPT_VERSION = "2"
+
+JUDGE_REFERENCE_EXCERPT_CHARS = 500
 
 JudgeResolver = Callable[
     [str, LoadedStyleProfile, JudgeConfig],
@@ -123,21 +131,68 @@ def _judge_output_schema() -> dict[str, Any]:
     }
 
 
-def _profile_summary(style_profile: LoadedStyleProfile) -> str:
-    profile = style_profile.profile
+def _truncate_reference_excerpt(body: str, max_chars: int) -> str:
+    text = body.strip()
+    if len(text) <= max_chars:
+        return text
+    return f"{text[:max_chars]}…"
+
+
+def _reference_excerpts_section(
+    samples: tuple[ReferenceSample, ...],
+    max_chars: int = JUDGE_REFERENCE_EXCERPT_CHARS,
+) -> str:
+    if not samples:
+        return ""
+    lines = [
+        "Reference samples (voice/register only; do not copy verbatim):",
+    ]
+    for sample in samples:
+        excerpt = _truncate_reference_excerpt(sample.body, max_chars)
+        lines.append(f'From "{sample.title}": {excerpt}')
+    return "\n".join(lines) + "\n"
+
+
+def _voice_config_section(profile: StyleProfile) -> str:
     tone = "\n".join(f"- {item}" for item in profile.tone)
+    sentence_style = "\n".join(f"- {item}" for item in profile.sentence_style)
+    structure = "\n".join(f"- {item}" for item in profile.structure)
     prefer = ", ".join(profile.lexicon_prefer[:12])
     avoid = ", ".join(profile.lexicon_avoid[:12])
     evidence = "\n".join(f"- {rule}" for rule in profile.evidence_rules)
-    return (
-        f"Publication: {profile.publication_key}\n"
-        f"Voice: {profile.voice_name}\n"
-        f"Audience: {profile.audience}\n"
-        f"Tone:\n{tone}\n"
-        f"Prefer lexicon: {prefer}\n"
-        f"Avoid lexicon: {avoid}\n"
-        f"Evidence rules:\n{evidence}\n"
+    lines = [
+        f"Publication: {profile.publication_key}",
+        f"Voice: {profile.voice_name}",
+        f"Audience: {profile.audience}",
+        f"Tone:\n{tone}",
+        f"Sentence style:\n{sentence_style}",
+    ]
+    if profile.voice_patterns:
+        voice_patterns = "\n".join(f"- {item}" for item in profile.voice_patterns)
+        lines.append(f"Voice patterns:\n{voice_patterns}")
+    lines.extend(
+        [
+            f"Structure:\n{structure}",
+            f"Prefer lexicon: {prefer}",
+            f"Avoid lexicon: {avoid}",
+            f"Evidence rules:\n{evidence}",
+        ]
     )
+    return "\n".join(lines) + "\n"
+
+
+def build_judge_user_prompt(draft_text: str, style_profile: LoadedStyleProfile) -> str:
+    voice_section = _voice_config_section(style_profile.profile)
+    references = _reference_excerpts_section(style_profile.samples)
+    return (
+        f"{voice_section}"
+        f"{references}"
+        f"---\nDraft ({len(draft_text)} characters):\n{draft_text}"
+    )
+
+
+def judge_system_prompt() -> str:
+    return _system_prompt()
 
 
 def _system_prompt() -> str:
@@ -146,6 +201,9 @@ def _system_prompt() -> str:
         "profile lane may miss. Do not rewrite the draft. Return only JSON matching the schema. "
         "Findings must cite exact character spans in the draft (start inclusive, end exclusive). "
         "Use kinds such as vague_claim, unsupported_certainty, voice_mismatch, or generic issues. "
+        "When judging voice, use sentence style, voice patterns, structure, and reference sample "
+        "excerpts as register anchors only; do not copy reference prose. Do not optimize for "
+        "detector scores or synthetic imperfection. "
         "Rubric scores are integers from 1 (weak) to 5 (strong) with brief evidence spans."
     )
 
@@ -185,10 +243,7 @@ def _call_openai_judge(
     judge_config: JudgeConfig,
 ) -> JudgeLaneResult:
     model = resolved_judge_model(judge_config)
-    user_prompt = (
-        f"{_profile_summary(style_profile)}\n"
-        f"---\nDraft ({len(draft_text)} characters):\n{draft_text}"
-    )
+    user_prompt = build_judge_user_prompt(draft_text, style_profile)
     payload = call_structured_responses_api(
         model=model,
         system_prompt=_system_prompt(),

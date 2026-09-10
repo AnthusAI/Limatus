@@ -1,6 +1,30 @@
 # CHANGELOG
 
 
+## v0.12.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Authorize LIM-d895df canary implementation
+  ([`2adc561`](https://github.com/AnthusAI/Limatus/commit/2adc5611c7b04a251785f8336e1f5577ec56294e))
+
+- **kanbus**: Close LIM-d895df and LIM-df9d58 after PR #6
+  ([`d4a4262`](https://github.com/AnthusAI/Limatus/commit/d4a4262877f6863ad193cc7bda8afc346304b886))
+
+- **kanbus**: Lim-d895df PR #6 opened; acceptance in flight
+  ([`c91a4a0`](https://github.com/AnthusAI/Limatus/commit/c91a4a05a7f0f77425e6bdb761cfe02599fbaf9d))
+
+### Features
+
+- **canary**: Add judge calibration fixture runner (LIM-ca93ca)
+  ([#6](https://github.com/AnthusAI/Limatus/pull/6),
+  [`4a2634b`](https://github.com/AnthusAI/Limatus/commit/4a2634be3ac3bd73b7aac9411ac0cd31e2842810))
+
+Introduce limatus canary with a small checked-in manifest, fixture judge resolver, and calibration
+  pins for JUDGE_PROMPT_VERSION and Terra default model. Complements the offline eval harness
+  without replacing it.
+
+
 ## v0.11.0 (2026-09-10)
 
 ### Chores

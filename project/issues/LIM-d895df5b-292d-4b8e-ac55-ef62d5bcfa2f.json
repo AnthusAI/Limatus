@@ -3,7 +3,7 @@
   "title": "Gold-set canary and calibration",
   "description": "# Gold-set canary and calibration\n\n## Intent\n\nAs a publication operator, I want a versioned canary of drafts with human (or agreed fixture) judgments, so we can see when a judge prompt or model change disagrees with the voice we care about.\n\n## Done when\n\n- A small fixture canary exists (excellent house voice, fluff, over-polished AI, factual-drift pair, short draft).\n- Runner records scan/compare outputs keyed by promptVersion + model.\n- Changing judge prompt or default model without updating the canary is visible in eval (fail or report drift).\n- Complements `LIM-66c047` (eval harness); does not replace it.\n\n## Out of scope\n\n500-item production gold set in this stage. Fine-tuning on preference pairs.\n",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -38,11 +38,18 @@
       "text": "PR #6 up. No project/ in the product diff. Acceptance running on /tmp/limatus-LIM-d895df-canary.",
       "created_at": "2026-09-10T19:32:11.206469Z",
       "comment_type": "default"
+    },
+    {
+      "id": "d8ee7825-fd1c-4fee-9c5b-479ec7e5676d",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Acceptance passed. PR #6 squash-merged to main.",
+      "created_at": "2026-09-10T19:33:09.433195Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.951877Z",
-  "updated_at": "2026-09-10T19:32:11.206488Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:33:09.516973Z",
+  "closed_at": "2026-09-10T19:33:09.516954Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

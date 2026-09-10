@@ -3,7 +3,7 @@
   "title": "Agent copy-edit: scan, judge, and compare",
   "description": "# Agent copy-edit: scan, judge, and compare\n\n## Intent\n\nAs a **copy-editing agent** (or a human using the same CLI), I want one scan of a draft against the publication's voice config plus an A/B compare tool, so I can find pertinent problems, rank my own rewrite candidates, and check that tweaks do not regress quality — then a human still chooses what lands.\n\nThis initiative **reimagines** the diagnose → steer → options → weighted-`verify` loop (`LIM-9d14e6`). The old loop shipped. The successor is agent-first, mixed-signal scan, and compare — not a single quality score and not a silent editor.\n\n## Product shape\n\n```mermaid\nflowchart TD\n  draft[Draft + style profile]\n  scan[limatus scan]\n  always[Always lane: profile heuristics]\n  judge[Judge lane: configured OpenAI, Terra default]\n  findings[Union of findings + optional rubric]\n  agent[Agent records skip/rewrite/delete/keep]\n  options[Generate 2-3 patch options]\n  compare[limatus compare]\n  human[Human chooses]\n  apply[Apply to working copy]\n  draft --> scan\n  scan --> always\n  scan --> judge\n  always --> findings\n  judge --> findings\n  findings --> agent --> options --> compare --> human --> apply\n  apply --> compare\n```\n\n- **Scan** — invoke on text + voice config → pertinent, steer-able suggestions. Always-lane runs without a network. Judge-lane runs when OpenAI is configured (default model: GPT-5.6 Terra). Stochastic judge output is accepted. Judge **adds** findings; it never drops always-lane hits.\n- **Prioritize** — the **agent or human**, not a hidden filter inside scan. Decisions are explicit and recorded.\n- **Compare** — rank 2–3 candidate texts, or original vs working copy for regression. Always-lane hard constraints (e.g. unsupported claims must not increase) can fail a candidate even if prose “sounds nicer.” All candidates stay visible; ranking does not hide losers.\n- **Human** still chooses. No auto-publish. No detector scores.\n\n## Guardrails\n\n- Quality loop, not detector evasion.\n- No single opaque `quality` score as a publish gate. No `should_accept_revision` as auto-apply.\n- Other LLM providers (Bedrock, Anthropic, Google, etc.) are **out of scope** this stage. Config is OpenAI-only; model id is per-project (Terra default).\n- Cost: Terra default for judge/compare, not Sol.\n\n## Milestones (epics)\n\n1. Unified scan surface\n2. Voice-local always-lane signals\n3. Configured OpenAI judge lane\n4. Compare candidates and regression\n5. Agent copy-edit loop\n6. Gold-set canary (calibration)\n\n## Supersedes\n\n- Weighted advisory verifier (`LIM-877130`) as the agent-facing “is this better?” tool — replaced by **compare** (deltas + optional rubric + ranking).\n- “Diagnose must be deterministic” as a product law — replaced by **lanes** (always vs configured judge).\n\nPapyrus remains a caller via the Limatus SDK (`LIM-3ff8d0`). New behavior is specified and shipped in **Limatus**.\n",
   "type": "initiative",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "519cb06d-2a9a-4e1c-be5d-2a69fe96d6d3",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Scan, always-lane, judge, compare, agent loop, and canary are on main (PRs #1–#6). Initiative complete.",
+      "created_at": "2026-09-10T19:33:09.542943Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T18:29:09.783760Z",
-  "updated_at": "2026-09-10T18:55:23.201255Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:33:09.567526Z",
+  "closed_at": "2026-09-10T19:33:09.567506Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

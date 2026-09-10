@@ -3,7 +3,7 @@
   "title": "Configured OpenAI judge lane",
   "description": "# Configured OpenAI judge lane\n\n## Intent\n\nAs a copy-editing agent with OpenAI configured, I want scan to add judge findings and dimension grades (Terra by default), so I see problems heuristics miss — without the judge silently editing the finding list.\n\n## Done when\n\n- Project/profile config can set `judge.provider: openai` and `judge.model` (default **gpt-5.6-terra** or the documented Terra id).\n- When configured and an API key is present, scan may emit extra findings and an optional `rubric` object (clarity, directness, specificity, voice, fidelity — anchored ordinals + evidence spans).\n- Judge findings use `source: judge` and record `model` and `promptVersion`.\n- Judge **adds** only. Always-lane findings remain even when the judge would skip them.\n- Behave/unit tests inject a fake judge resolver. No `LIMATUS_TEST_*` production env hooks.\n- Missing API key: always-lane still succeeds; judge lane is omitted (or a clear non-fatal notice), not a hard fail unless `--require-judge` is set.\n- Other providers are rejected or ignored with a clear error if named.\n\n## Out of scope\n\nBedrock, Anthropic, Google, Chinese providers. Fine-tuning a domain judge. Using Sol as default.\n",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -45,11 +45,18 @@
       "text": "Implementer registered Then judge findings are absent. PR #3 updated (39d1770). Re-acceptance started on /tmp/limatus-LIM-f233fb-judge.",
       "created_at": "2026-09-10T19:09:32.286763Z",
       "comment_type": "default"
+    },
+    {
+      "id": "6f112f17-385c-4c28-9927-3e3c9f077240",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Acceptance passed. PR #3 squash-merged to main. project/ two-dot diff was board commits already on main, not in the PR.",
+      "created_at": "2026-09-10T19:11:51.796725Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T18:29:09.868998Z",
-  "updated_at": "2026-09-10T19:09:32.286780Z",
-  "closed_at": null,
+  "updated_at": "2026-09-10T19:11:52.041180Z",
+  "closed_at": "2026-09-10T19:11:52.041162Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

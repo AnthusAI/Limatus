@@ -46,6 +46,14 @@ FINDING_SOURCE_PROFILE = "profile"
 FINDING_SOURCE_JUDGE = "judge"
 ALLOWED_FINDING_SOURCES = frozenset({FINDING_SOURCE_PROFILE, FINDING_SOURCE_JUDGE})
 
+RUBRIC_DIMENSIONS = (
+    "clarity",
+    "directness",
+    "specificity",
+    "voice",
+    "fidelity",
+)
+
 
 class EditorialDiagnosisValidationError(ValueError):
     """Raised when diagnostic JSON fails schema validation."""
@@ -118,7 +126,59 @@ def validate_diagnosis(payload: dict[str, Any]) -> dict[str, Any]:
     if density is not None:
         _validate_density(density)
 
+    rubric = payload.get("rubric")
+    if rubric is not None:
+        _validate_rubric(rubric)
+
     return payload
+
+
+def coerce_rubric(rubric: Any) -> dict[str, Any] | None:
+    if rubric is None:
+        return None
+    try:
+        _validate_rubric(rubric)
+    except EditorialDiagnosisValidationError:
+        return None
+    return rubric
+
+
+def _validate_rubric(rubric: Any) -> None:
+    if not isinstance(rubric, dict):
+        raise EditorialDiagnosisValidationError("rubric must be a mapping.")
+    missing = [name for name in RUBRIC_DIMENSIONS if name not in rubric]
+    if missing:
+        raise EditorialDiagnosisValidationError(
+            f"rubric missing dimensions: {', '.join(missing)}"
+        )
+    for name in RUBRIC_DIMENSIONS:
+        dimension = rubric.get(name)
+        location = f"rubric.{name}"
+        if not isinstance(dimension, dict):
+            raise EditorialDiagnosisValidationError(f"{location} must be a mapping.")
+        score = dimension.get("score")
+        if not isinstance(score, int) or score < 1 or score > 5:
+            raise EditorialDiagnosisValidationError(f"{location}.score must be an integer from 1 to 5.")
+        evidence = dimension.get("evidence")
+        if not isinstance(evidence, list):
+            raise EditorialDiagnosisValidationError(f"{location}.evidence must be a list.")
+        for index, item in enumerate(evidence):
+            item_location = f"{location}.evidence[{index}]"
+            if not isinstance(item, dict):
+                raise EditorialDiagnosisValidationError(f"{item_location} must be a mapping.")
+            note = item.get("note")
+            if not isinstance(note, str) or not note.strip():
+                raise EditorialDiagnosisValidationError(f"{item_location}.note must be a non-empty string.")
+            for coord in ("start", "end"):
+                value = item.get(coord)
+                if not isinstance(value, int) or value < 0:
+                    raise EditorialDiagnosisValidationError(
+                        f"{item_location}.{coord} must be a non-negative integer."
+                    )
+            if item["end"] < item["start"]:
+                raise EditorialDiagnosisValidationError(
+                    f"{item_location} end must be >= start."
+                )
 
 
 def _validate_density(density: Any) -> None:

@@ -57,7 +57,11 @@ def diagnose(
 
 
 def scan(
-    draft_text: str, *, config: LoadedStyleProfile, surface: str | None = None
+    draft_text: str,
+    *,
+    config: LoadedStyleProfile,
+    surface: str | None = None,
+    require_judge: bool = False,
 ) -> dict[str, Any]:
     """Scan draft text with a loaded config (profile lane plus optional judge lane)."""
 
@@ -65,7 +69,12 @@ def scan(
         raise EditorialDiagnosisValidationError("config must be a loaded style profile.")
     if not isinstance(draft_text, str):
         raise EditorialDiagnosisValidationError("draft_text must be a string.")
-    return scan_draft(draft_text, style_profile=config, surface=surface)
+    return scan_draft(
+        draft_text,
+        style_profile=config,
+        surface=surface,
+        require_judge=require_judge,
+    )
 
 
 def check_rules(

@@ -49,13 +49,18 @@ pip install -e ".[dev]"
 ## Usage
 
 ```bash
-limatus diagnose --draft path/to/draft.md --profile path/to/style-profile.yml
+limatus scan --draft path/to/draft.md --profile path/to/style-profile.yml
 limatus options --draft path/to/draft.md --profile path/to/style-profile.yml \
   --diagnosis path/to/diagnosis.json --decisions path/to/decisions.json \
   --skill path/to/rewrite-skill.yml
-limatus verify --original path/to/original.md --working-copy path/to/working.md \
-  --profile path/to/style-profile.yml
+limatus compare --profile path/to/style-profile.yml --baseline path/to/draft.md \
+  --candidate path/to/candidate-a.md --candidate path/to/candidate-b.md
+limatus apply --original path/to/original.md --working-copy path/to/working.md \
+  --options path/to/options.json --finding-id finding-... --option-id option-... \
+  --anchor "exact span text"
 ```
+
+For a copy-editing agent, the intended loop is: **scan** (findings only, no steering decisions) → record **decisions** (`skip` / `rewrite` / `delete` / `keep` / `add`, via SDK or a decisions JSON file) → **options** for rewrite findings only → **compare** full-draft previews of each patch option (or regression compare after a trial edit) → **apply** exactly one human-chosen option to a working copy. Nothing auto-applies a compare winner.
 
 Run `limatus --help` for the full command reference.
 

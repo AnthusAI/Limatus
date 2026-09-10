@@ -29,6 +29,13 @@ from .editorial_compare import compare_candidates, compare_regression
 from .editorial_compare_schema import validate_compare_report
 from .editorial_judge import JudgeResolver
 from .editorial_verifier import verify_revision
+from .editorial_apply import preview_patch_text as _preview_patch_text
+from .editorial_loop import (
+    EditorialLoopValidationError,
+    assert_scan_has_no_steering_decisions,
+    candidates_from_options as _candidates_from_options,
+    compose_loop_record as _compose_loop_record,
+)
 
 
 class AnnotationFormatError(ValueError):
@@ -241,6 +248,39 @@ def check_standfirst(
     )
 
 
+def preview_patch_text(draft_text: str, patch: dict[str, Any]) -> str:
+    """Apply one patch in memory without changing any file."""
+
+    return _preview_patch_text(draft_text, patch)
+
+
+def candidates_from_options(draft_text: str, options: dict[str, Any]) -> list[dict[str, str]]:
+    """Build full-draft compare candidates from a validated options payload."""
+
+    return _candidates_from_options(draft_text, options)
+
+
+def compose_loop_record(
+    scan: dict[str, Any],
+    decisions: list[dict[str, Any]],
+    options: dict[str, Any],
+    compare_report: dict[str, Any],
+    *,
+    options_model: str = "",
+    skill_path: str = "",
+) -> dict[str, Any]:
+    """Assemble scan, decisions, options, and compare output for audit (no I/O)."""
+
+    return _compose_loop_record(
+        scan,
+        decisions,
+        options,
+        compare_report,
+        options_model=options_model,
+        skill_path=skill_path,
+    )
+
+
 def render_annotations(
     draft_text: str,
     diagnosis: dict[str, Any],
@@ -260,11 +300,15 @@ def render_annotations(
 __all__ = [
     "AnnotationFormatError",
     "EditorialDiagnosisValidationError",
+    "EditorialLoopValidationError",
     "EditorialOptionsValidationError",
     "LoadedStyleProfile",
     "StyleProfileValidationError",
+    "candidates_from_options",
     "compare",
+    "compose_loop_record",
     "diagnose",
+    "preview_patch_text",
     "scan",
     "verify",
     "check_rules",

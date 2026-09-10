@@ -13,6 +13,11 @@
 
 ### Features
 
+- **editorial**: Agent copy-edit loop wiring (LIM-e9176a)
+  Add read-only `preview_patch_text`, `candidates_from_options`, and `compose_loop_record` for
+  scan → decisions → options → compare → human apply. Behave stories LIM-63e974 and LIM-3e89d9 plus
+  loop provenance coverage.
+
 - **compare**: Rank candidates with always-lane deltas (LIM-0e3f4e)
   ([#4](https://github.com/AnthusAI/Limatus/pull/4),
   [`c64d3fd`](https://github.com/AnthusAI/Limatus/commit/c64d3fd23cf5fc4949b37d03e730acbabc245bd5))

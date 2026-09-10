@@ -31,10 +31,17 @@
       "text": "Plan (Grok): Composer 2.5 implements. Worktree `/tmp/limatus-LIM-0129cf-cli-loop` branch `cursor/feature/LIM-0129cf-cli-loop` off origin/main.\n\n1. `__main__.py` so `python -m limatus` equals `limatus.cli:main`. CLI Behave helpers use `-m limatus`.\n2. `limatus decide --finding-id --decision skip|rewrite|delete|keep|add [--note] --decisions FILE` — append via `record_decision`; create `[]` if missing; does not touch drafts.\n3. `editorial-apply.feature` must shell `python -m limatus apply` / `diff`, not import `apply_patch`.\n4. Behave: scan (no key) + decide on a fixture finding id; draft unchanged.\n5. Help/docstring lists decide, apply, diff, compare. No live OpenAI, no LIMATUS_TEST_*, no project/.\n",
       "created_at": "2026-09-10T23:22:59.005866Z",
       "comment_type": "default"
+    },
+    {
+      "id": "b687caf1-f04c-4c79-a831-8af7a33d21b1",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "PR https://github.com/AnthusAI/Limatus/pull/10. Review ACCEPT on wiring (`__main__`, decide, apply/diff via CLI, no project/). Live CLI acceptance started on the worktree before merge.\n",
+      "created_at": "2026-09-10T23:25:35.322083Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:39:19.470819Z",
-  "updated_at": "2026-09-10T23:22:59.005883Z",
+  "updated_at": "2026-09-10T23:25:35.322097Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

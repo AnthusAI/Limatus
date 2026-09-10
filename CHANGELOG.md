@@ -1,6 +1,31 @@
 # CHANGELOG
 
 
+## v0.7.0 (2026-09-10)
+
+### Features
+
+- Add uncontractedForms check for stated-but-unchecked contraction rules
+  ([`f3a62a3`](https://github.com/AnthusAI/Limatus/commit/f3a62a35ce347a5e05d1216d13692a04c4fda0d6))
+
+Caught dogfooding: "That is the same thrift family" shipped in an Anth.us post despite the profile's
+  own sentenceStyle explicitly saying "Use contractions and active voice." A prose rule that isn't
+  checked gets violated by default, since uncontracted phrasing is exactly what a careful, formal
+  draft reaches for without anyone noticing.
+
+checks.uncontractedForms (on by default) flags formal two-word constructions (that is, it is, do
+  not, cannot, ...) against their common contraction. Skips the appositive/clarifying "that is,"
+  (the "i.e." sense), where contracting would change the meaning.
+
+This needs to vary by publication, not just by individual judgment call: Pilobolus's own VOICE.md
+  says the impersonal narrator deliberately avoids contracting ("the narrator stays cool and
+  strange"), confirmed against all five of its published articles, so its profile now sets
+  uncontractedForms: false. That's a deterministic, profile-level switch -- not left to an agent to
+  decide per piece.
+
+Co-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>
+
+
 ## v0.6.0 (2026-09-09)
 
 ### Features

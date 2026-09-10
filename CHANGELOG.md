@@ -1,6 +1,50 @@
 # CHANGELOG
 
 
+## v0.14.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Close LIM-0129cf after PR #10
+  ([`8682d94`](https://github.com/AnthusAI/Limatus/commit/8682d94b4e62a2b19a2fcd06749138e2bbc602a7))
+
+CLI scan → decide → apply/diff is on main.
+
+- **kanbus**: Close LIM-79c9b2 and LIM-447936
+  ([`478f49e`](https://github.com/AnthusAI/Limatus/commit/478f49e8941f08e2bdefbaf6405b2cb37f98a3f9))
+
+Judge budget landed; scan packets include live Terra judge output.
+
+- **kanbus**: Lim-0129cf Grok plan for CLI loop
+  ([`38bcd46`](https://github.com/AnthusAI/Limatus/commit/38bcd46b6fdb9073d6f79b66d553878788650f65))
+
+Composer 2.5 implements decide, __main__, and CLI apply Behave.
+
+- **kanbus**: Lim-0129cf PR #10 opened
+  ([`ba4efc1`](https://github.com/AnthusAI/Limatus/commit/ba4efc1e7e4a2d7d864d796dee041d8924daa8d3))
+
+CLI loop review ACCEPT; merge waits on worktree acceptance.
+
+- **kanbus**: Lim-30ca2a blocked on Ryan option choice
+  ([`bedde01`](https://github.com/AnthusAI/Limatus/commit/bedde0109b92fff9c67ab8f4f363cb0c4c0ec5d9))
+
+HITL packets ready; no apply until a chosen option id.
+
+- **kanbus**: Park HITL dogfood; start LIM-0129cf CLI
+  ([`ba23f97`](https://github.com/AnthusAI/Limatus/commit/ba23f97dab13e8c4e4cf791213b7bd2f3f0d5c38))
+
+Ryan will test after scan → decide → options → compare → apply works as a CLI.
+
+### Features
+
+- **cli**: Python -m limatus entry, decide subcommand, and CLI loop tests
+  ([#10](https://github.com/AnthusAI/Limatus/pull/10),
+  [`48675ad`](https://github.com/AnthusAI/Limatus/commit/48675ad8f3f2745e7bcb34bf46926816a81dd7d2))
+
+Add __main__ and limatus decide for offline steering decisions; route Behave apply/scan/compare
+  steps through python -m limatus and document decide in README.
+
+
 ## v0.13.1 (2026-09-10)
 
 ### Bug Fixes

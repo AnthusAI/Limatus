@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from .editorial_compare import compare_regression
 from .editorial_diagnosis import _mask_yaml_frontmatter, diagnose_draft
 from .editorial_style import LoadedStyleProfile
 from .editorial_text import sentences, tokenize
@@ -51,6 +52,12 @@ def verify_revision(
         raise TypeError("style_profile must be a loaded style profile")
     if not isinstance(threshold, (int, float)) or not 0 <= threshold <= 1:
         raise ValueError("threshold must be between 0 and 1")
+
+    compare_regression(
+        original_text,
+        working_text,
+        style_profile=style_profile,
+    )
 
     # A leading YAML frontmatter block is metadata, not prose -- an edited
     # title or date should never register as a deleted claim or a factual

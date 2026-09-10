@@ -1,6 +1,6 @@
 """Limatus: a diagnose-and-steer quality loop for AI-generated content."""
 
-__version__ = "0.12.1"
+__version__ = "0.13.0"
 
 from .sdk import (
     AnnotationFormatError,

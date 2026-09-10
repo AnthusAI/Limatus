@@ -9,6 +9,7 @@ from .editorial_diagnosis_schema import validate_diagnosis
 from .editorial_markup import render_annotated_markus, render_annotated_xml
 from .editorial_scan import scan_draft
 from .editorial_options_schema import validate_decisions
+from .sdk import record_decision
 from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
 from .editorial_apply import apply_patch, render_diff
@@ -88,6 +89,42 @@ def editorial_scan(flags: list[str]) -> None:
 
 def editorial_diagnose(flags: list[str]) -> None:
     _run_scan_command(flags, prog="limatus diagnose")
+
+
+def editorial_decide(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus decide")
+    parser.add_argument("--finding-id", required=True, help="Stable finding id from scan JSON.")
+    parser.add_argument(
+        "--decision",
+        required=True,
+        help="Steering decision: skip, rewrite, delete, keep, or add.",
+    )
+    parser.add_argument("--note", default="", help="Optional note for the decision record.")
+    parser.add_argument(
+        "--decisions",
+        required=True,
+        help="Path to decisions JSON list (created as [] when missing).",
+    )
+    args = parser.parse_args(flags)
+
+    decisions_path = Path(args.decisions).resolve()
+    if decisions_path.is_file():
+        decisions_payload = json.loads(decisions_path.read_text(encoding="utf-8"))
+        if not isinstance(decisions_payload, list):
+            raise ValueError("Decisions JSON must be a list.")
+    else:
+        decisions_payload = []
+
+    updated = record_decision(
+        decisions_payload,
+        args.finding_id,
+        args.decision,
+        note=args.note,
+    )
+    rendered = json.dumps(updated, indent=2) + "\n"
+    decisions_path.parent.mkdir(parents=True, exist_ok=True)
+    decisions_path.write_text(rendered, encoding="utf-8")
+    sys.stdout.write(rendered)
 
 
 def editorial_options(flags: list[str]) -> None:

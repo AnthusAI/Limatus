@@ -62,7 +62,7 @@ def _run_compare_cli(command: list[str]) -> subprocess.CompletedProcess[str]:
     env["PYTHONPATH"] = f"{SRC_ROOT}:{REPO_ROOT}"
     env.pop("OPENAI_API_KEY", None)
     return subprocess.run(
-        [sys.executable, "-m", "limatus.cli", "compare", *command],
+        [sys.executable, "-m", "limatus", "compare", *command],
         cwd=REPO_ROOT,
         env=env,
         text=True,

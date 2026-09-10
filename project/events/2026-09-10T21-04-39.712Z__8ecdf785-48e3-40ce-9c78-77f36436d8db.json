@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "8ecdf785-48e3-40ce-9c78-77f36436d8db",
+  "issue_id": "LIM-c31ac34e-4f1f-4abd-b3e8-6be4c6e05e1f",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-10T21:04:39.712Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nLive OpenAI structured output rejects the judge schema.\n\n## Repro\n\n`limatus scan --require-judge` against a profile with `judge.provider: openai` returns:\n\nInvalid schema for response_format `editorial_judge_scan`: `required` must include every key in properties. Missing `rubric`.\n\n`_judge_output_schema` in editorial_judge.py lists `rubric` in properties but `required` is only `findings`.\n\n## Gherkin\n\n```gherkin\nFeature: Judge schema is OpenAI-strict\n  As a copy-editing agent\n  I want the judge Responses API schema to list every property in required\n  So live Terra judge can run\n\n  Scenario: Schema includes rubric\n    Given the judge output schema\n    Then required includes findings and rubric\n```",
+    "issue_type": "bug",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+    "priority": 0,
+    "status": "open",
+    "title": "OpenAI judge schema 400: rubric not in required"
+  }
+}

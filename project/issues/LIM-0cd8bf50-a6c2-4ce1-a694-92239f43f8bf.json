@@ -19,10 +19,17 @@
       "text": "Plan approved. Worktree /tmp/limatus-judge-voice-prompt. Implementation authorized. 500-char sample cap. Bump JUDGE_PROMPT_VERSION to 2 and canary pin. No live OpenAI in CI. No project/.",
       "created_at": "2026-09-10T21:06:30.285046Z",
       "comment_type": "default"
+    },
+    {
+      "id": "17d8e012-b6dc-4507-99b4-a3b8f90b2ff2",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Limatus PR #8 is dirty against origin/main (3 behind including v0.12.1). Sent back to rebase: drop Unreleased CHANGELOG (semantic-release owns it), keep product+tests only, no project/.\n",
+      "created_at": "2026-09-10T21:11:43.704Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T21:03:55.365950Z",
-  "updated_at": "2026-09-10T21:06:30.285060Z",
+  "updated_at": "2026-09-10T21:11:43.704016Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

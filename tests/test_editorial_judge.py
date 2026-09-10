@@ -13,6 +13,7 @@ sys.path.insert(0, str(SRC))
 from limatus.editorial_diagnosis_schema import FINDING_SOURCE_JUDGE  # noqa: E402
 from limatus.editorial_judge import (  # noqa: E402
     JudgeUnavailableError,
+    _judge_output_schema,
     run_default_judge_lane,
 )
 from limatus.editorial_scan import scan_draft  # noqa: E402
@@ -31,6 +32,14 @@ _SAMPLE_RUBRIC = {
 
 
 class EditorialJudgeTests(unittest.TestCase):
+    def test_judge_output_schema_root_required_matches_properties(self):
+        schema = _judge_output_schema()
+        props = schema["properties"]
+        required = schema["required"]
+        self.assertEqual(set(required), set(props.keys()))
+        self.assertIn("rubric", required)
+        self.assertIn("findings", required)
+
     def test_openai_judge_lane_mocked(self):
         config = load_style_profile(JUDGE_PROFILE)
         draft_text = BANNED_DRAFT.read_text(encoding="utf-8")

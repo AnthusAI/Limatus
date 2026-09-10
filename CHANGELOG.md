@@ -1,6 +1,31 @@
 # CHANGELOG
 
 
+## v0.13.0 (2026-09-10)
+
+### Chores
+
+- **kanbus**: Close LIM-0cd8bf after PR #8 merge
+  ([`eb01e90`](https://github.com/AnthusAI/Limatus/commit/eb01e909bb2b3e72d5ca2782367cea4874efba61))
+
+Judge prompt v2 landed on main; HITL re-scan can use house voice.
+
+- **kanbus**: Close LIM-6a6da3 after Papyrus PR #75
+  ([`a468483`](https://github.com/AnthusAI/Limatus/commit/a468483786d6902da99d62f7f5463ba4fa415ff8))
+
+Judge enabled on the Pilobolus style profile via develop merge.
+
+### Features
+
+- **judge**: Send full voice config in judge prompt (v2)
+  ([#8](https://github.com/AnthusAI/Limatus/pull/8),
+  [`3aa6441`](https://github.com/AnthusAI/Limatus/commit/3aa6441cd747bffaece624f08e9af16dbd90af98))
+
+Extend build_judge_user_prompt with sentenceStyle, voicePatterns, structure, and 500-character
+  reference excerpts. Bump JUDGE_PROMPT_VERSION and canary pin; add Behave and unit tests without
+  live OpenAI.
+
+
 ## v0.12.1 (2026-09-10)
 
 ### Bug Fixes

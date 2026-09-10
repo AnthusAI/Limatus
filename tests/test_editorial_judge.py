@@ -18,6 +18,7 @@ from limatus.editorial_judge import (  # noqa: E402
     JudgeUnavailableError,
     _judge_output_budget,
     _judge_output_schema,
+    _map_openai_findings,
     build_judge_user_prompt,
     run_default_judge_lane,
 )
@@ -38,6 +39,29 @@ _SAMPLE_RUBRIC = {
 
 
 class EditorialJudgeTests(unittest.TestCase):
+    def test_map_openai_findings_skips_mid_word_spans(self):
+        draft = "We are staying alert."
+        word_start = draft.index("staying")
+        mid_start = word_start + 2
+        mid_end = word_start + 5
+        raw = [
+            {
+                "kind": "vague_claim",
+                "start": mid_start,
+                "end": mid_end,
+                "rationale": "Mid-word cut.",
+            },
+            {
+                "kind": "vague_claim",
+                "start": draft.index("."),
+                "end": draft.index(".") + 1,
+                "rationale": "Punctuation span.",
+            },
+        ]
+        mapped = _map_openai_findings(raw, draft, model="test-model")
+        self.assertEqual(len(mapped), 1)
+        self.assertEqual(mapped[0]["excerpt"], ".")
+
     def test_judge_output_budget_bounds(self):
         self.assertEqual(_judge_output_budget(""), DEFAULT_JUDGE_OUTPUT_TOKENS)
         tiny = "ab"
@@ -83,7 +107,7 @@ class EditorialJudgeTests(unittest.TestCase):
                 {
                     "kind": "vague_claim",
                     "start": 0,
-                    "end": 8,
+                    "end": 4,
                     "rationale": "Judge signal.",
                 }
             ],

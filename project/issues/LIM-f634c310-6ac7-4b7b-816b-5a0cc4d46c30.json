@@ -1,0 +1,23 @@
+{
+  "id": "LIM-f634c310-6ac7-4b7b-816b-5a0cc4d46c30",
+  "title": "Options retry when prefix-skipping replacements leave fewer than two",
+  "description": "## Intent\n\nAfter LIM-073443, `limatus options` on the wiki-janitor rewrite finding fails with `Finding finding-abe57b9a455db41d requires at least two rewrite options` because every model candidate skipped the span prefix and was dropped. Working copy and published file were unchanged (hash `60f0d280…`). Fail-closed is correct; leaving the editor with **no** patches is not done.\n\n## Gherkin\n\n```gherkin\nFeature: Options retry when prefix-skipping candidates are dropped\n  Scenario: One retry asks for full-span replacements\n    Given rewrite options whose replacements start later in the excerpt\n    When those candidates are dropped as prefix skips\n    And fewer than two options remain\n    Then Limatus retries option generation once with an instruction to rewrite from the excerpt start\n    And it still fails closed if the retry also cannot supply two valid options\n    And the draft is not modified\n```\n\n## Out of scope\n\nPublished-file apply. Changing the two-option minimum. Papyrus adapter.",
+  "type": "bug",
+  "status": "open",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+  "labels": [
+    "editorial",
+    "dogfood"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-10T23:52:14.619970Z",
+  "updated_at": "2026-09-10T23:52:14.619999Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

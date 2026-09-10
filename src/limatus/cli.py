@@ -26,6 +26,7 @@ from .editorial_commands import (
     editorial_standfirst,
     editorial_verify,
 )
+from .editorial_canary import main as editorial_canary
 from .editorial_eval import main as editorial_eval
 
 COMMANDS = {
@@ -38,6 +39,7 @@ COMMANDS = {
     "verify": editorial_verify,
     "standfirst": editorial_standfirst,
     "eval": editorial_eval,
+    "canary": editorial_canary,
 }
 
 

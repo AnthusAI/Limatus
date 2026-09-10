@@ -181,6 +181,12 @@ Limatus's test suite is written in Gherkin and run with [Behave](https://behave.
 behave
 ```
 
+Judge calibration canary (fixture judge, no API key):
+
+```bash
+PYTHONPATH=src python -m limatus.cli canary --manifest features/fixtures/editorial-canary/manifest.yml
+```
+
 ## License
 
 MIT — see [LICENSE](LICENSE).

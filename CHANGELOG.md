@@ -1,6 +1,20 @@
 # CHANGELOG
 
 
+## v0.19.0 (2026-09-11)
+
+### Chores
+
+- **kanbus**: Close LIM-fc61e8; start preferredPhrasing LIM-74d5fb
+  ([`31fe252`](https://github.com/AnthusAI/Limatus/commit/31fe252b8e41fcb161728f95fabfd55cb6e09192))
+
+### Features
+
+- **style**: Preferredphrasing from/to profile reword hints
+  ([#29](https://github.com/AnthusAI/Limatus/pull/29),
+  [`a498f22`](https://github.com/AnthusAI/Limatus/commit/a498f22660910dc946d738e4637412534017a840))
+
+
 ## v0.18.0 (2026-09-11)
 
 ### Chores

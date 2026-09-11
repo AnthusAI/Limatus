@@ -3,7 +3,7 @@
   "title": "Run VOICE.md/AGENTS.md coverage audit for Anth.us and Chattic.us",
   "description": "",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -31,11 +31,18 @@
       "text": "Chattic.us style-profile already encodes VOICE.md mechanics (noEmojis, contrastCap 1/2/legal, banned intensifiers, Chattic.us rename, the-pull coinages, standfirst). Gap is Anth.us: PPY-cc58ab noEmojis + contrastCap.",
       "created_at": "2026-09-11T20:37:00.579728Z",
       "comment_type": "default"
+    },
+    {
+      "id": "60cdfbc8-0631-4019-8d4a-0a2eca5c1a25",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closed. Chattic.us profile already matched VOICE.md mechanically. Anth.us: noEmojis via PPY-cc58ab/#81. contrastCap would false-positive published Anth.us (maximize-value-not-intelligence and others); left unset, documented.",
+      "created_at": "2026-09-11T20:40:09.862372Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T11:49:38.082971Z",
-  "updated_at": "2026-09-11T20:37:00.579753Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T20:40:09.862399Z",
+  "closed_at": "2026-09-11T20:40:09.825036Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "f212ba21-3b07-4aaa-87df-07c60a673786",
+  "issue_id": "LIM-565ba8d6-c680-4ed4-8453-c13dfb7139a1",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-11T00:30:10.599Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "# Headline pass runs after body HITL\n\n## Intent\n\nAs a copy-editing agent, I want title and standfirst (subtitle/dek) treated as a **final** pass on the working copy, so the article can be titled after body edits have settled the piece's direction.\n\n## Loop (body first)\n\n1. `scan` body (YAML title/standfirst/description stay masked from body-prose rules).\n2. Agent `decide` + `options` + `compare` + human pick + `apply` on a working copy.\n3. Repeat body passes if the working copy still needs them.\n4. **Then** headline: dedicated title + standfirst checks and rewrite options against the **current working copy**, not the original published file.\n5. Apply headline patches only to the working copy. Original/published unchanged.\n\n## Why last\n\nBody rewrites can change what the piece is. Titling first, or in the same scan as body findings, locks a headline to an earlier draft.\n\n## Done when\n\n- First-pass `limatus scan` of a YAML article does **not** emit title/standfirst findings mixed into the body finding list.\n- A later headline command or scan mode reads `title` and `standfirst` from the working copy and reports dedicated findings with spans in those YAML fields.\n- Headline `options` rewrite only the title or standfirst value; YAML keys and fences stay intact.\n- Apply still never writes `--original`.\n\n## Out of scope\n\nSEO `description` as a third field unless it is the on-page subtitle. Auto-titling without a human pick. Running headline checks during the first body scan.\n\n```gherkin\nFeature: Title the working copy last\n  As a copy-editing agent\n  I want title and standfirst checked only after body edits are applied\n  So the headline matches the article we actually have\n\n  Scenario: First scan ignores YAML title and standfirst as body prose\n    Given a draft with YAML title and standfirst and a body that needs a rewrite\n    When I run limatus scan\n    Then the diagnosis has no title or standfirst findings\n    And no cadence finding span lands inside the YAML block\n\n  Scenario: Headline pass after a working-copy apply\n    Given a working copy whose body has already been applied\n    When I run the headline pass on that working copy\n    Then findings cite the title and standfirst field values\n    And applying a title option changes only the title line\n    And the original draft is unchanged\n```",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-0b9d813a-9169-4381-8fdc-be162d9d617e",
+    "priority": 1,
+    "status": "open",
+    "title": "Title and standfirst after body HITL, not in the first scan"
+  }
+}

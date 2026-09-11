@@ -1,6 +1,53 @@
 # CHANGELOG
 
 
+## v0.17.1 (2026-09-11)
+
+### Bug Fixes
+
+- **diagnosis**: Lim-ed02c3 ignore image alts and blockquote redundancy
+  ([#26](https://github.com/AnthusAI/Limatus/pull/26),
+  [`e80298d`](https://github.com/AnthusAI/Limatus/commit/e80298d05902d068cb137121b844f7844fba8267))
+
+* fix(diagnosis): ignore image markdown and blockquote refrain in redundancy
+
+Mask Markdown/HTML image markup before 4-gram shingling and skip redundancy groups whose members all
+  start on blockquote lines (LIM-ed02c3).
+
+* fix(diagnosis): skip redundancy when all n-gram hits are quoted material
+
+Per-occurrence quoted context: blockquote lines, emphasis spans, and Markus pull-quote bodies
+  (LIM-ed02c3 revision).
+
+### Chores
+
+- **kanbus**: Close HITL apply gate, park usability epic, start LIM-ed02c3
+  ([`661db44`](https://github.com/AnthusAI/Limatus/commit/661db44b7ef92f694ed9cab52560b2688a6f228d))
+
+LIM-2d43b1 stays closed. LIM-30ca2a closed (CLI apply gate). LIM-e872b1 returned to open. LIM-ed02c3
+  in progress as the last HITL WIP child. LIM-3ff8d0 left open, not started.
+
+- **kanbus**: Close LIM-2d43b1 portable CLI+SDK epic
+  ([`84d6818`](https://github.com/AnthusAI/Limatus/commit/84d681805d9d18a3b8ea3802b380a923a20a03b1))
+
+Children are done on main. Papyrus adapter remains LIM-209793 under LIM-3ff8d0.
+
+- **kanbus**: Close LIM-ed02c3 and HITL packets epic
+  ([`30bb8c2`](https://github.com/AnthusAI/Limatus/commit/30bb8c2a07b6ecb991e367902e7ff6da9c5bddb1))
+
+#26 landed on main. LIM-0b9d81 children are all closed.
+
+- **kanbus**: Lim-ed02c3 revision for italic and pull-quote refrain
+  ([`1f461d9`](https://github.com/AnthusAI/Limatus/commit/1f461d9b2f0efb22eb72c190019128ae55690ef5))
+
+PR #26 image mask stands; live confession liturgy still flagged.
+
+- **kanbus**: Record LIM-ed02c3 worktree
+  ([`72bda03`](https://github.com/AnthusAI/Limatus/commit/72bda03004c5fdcbe014dc6f14f6f16327c3d8b6))
+
+Composer worktree /tmp/limatus-ed02c3-redundancy on fix/LIM-ed02c3-redundancy-alts.
+
+
 ## v0.17.0 (2026-09-11)
 
 ### Features

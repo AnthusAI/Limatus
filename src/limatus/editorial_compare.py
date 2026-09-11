@@ -1,7 +1,7 @@
 """Read-only comparison and ranking of editorial draft candidates."""
 from __future__ import annotations
 
-from typing import Any
+from typing import Any, Callable
 
 from .editorial_diagnosis_schema import (
     FINDING_ARRAY_KEYS,
@@ -10,11 +10,20 @@ from .editorial_diagnosis_schema import (
 )
 from .editorial_judge import JudgeResolver
 from .editorial_scan import scan_draft
-from .editorial_style import LoadedStyleProfile
+from .editorial_style import (
+    COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE,
+    LoadedStyleProfile,
+    StyleProfile,
+)
 
 COMPARE_SCHEMA_VERSION = 1
 RANKING_METHOD = "always_lane_lexicographic_v1"
-HARD_CONSTRAINT_UNSUPPORTED_INCREASE = "unsupported_claims_increase"
+HARD_CONSTRAINT_UNSUPPORTED_INCREASE = COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE
+
+AlignmentResolver = Callable[
+    [str, list[dict[str, str]], LoadedStyleProfile],
+    dict[str, Any],
+]
 
 _ARRAY_KEYS_FOR_DELTA = tuple(FINDING_ARRAY_KEYS) + ("repetition_groups",)
 
@@ -27,6 +36,7 @@ def compare_candidates(
     surface: str | None = None,
     mode: str = "rank",
     judge_resolver: JudgeResolver | None = None,
+    alignment_resolver: AlignmentResolver | None = None,
 ) -> dict[str, Any]:
     """Rank candidates against a baseline using inspectable always-lane deltas."""
     if not isinstance(baseline_text, str):
@@ -48,6 +58,8 @@ def compare_candidates(
     if mode == "rank" and len(candidates) < 2:
         raise ValueError("rank mode requires at least two candidates")
 
+    hard_constraints = style_profile.profile.compare_hard_constraints
+
     baseline_scan = scan_draft(
         baseline_text,
         style_profile=style_profile,
@@ -64,7 +76,7 @@ def compare_candidates(
             judge_resolver=judge_resolver,
         )
         always_lane_deltas = _always_lane_deltas(baseline_scan, candidate_scan)
-        violations = _hard_constraint_violations(always_lane_deltas)
+        violations = _hard_constraint_violations(always_lane_deltas, hard_constraints)
         rubric_deltas = _rubric_deltas(baseline_scan, candidate_scan)
         sort_key = _sort_key(always_lane_deltas, rubric_deltas, entry["id"])
         scored.append(
@@ -80,7 +92,7 @@ def compare_candidates(
 
     ordered = _assign_ranks(scored)
 
-    return {
+    report: dict[str, Any] = {
         "schemaVersion": COMPARE_SCHEMA_VERSION,
         "mode": mode,
         "baseline": {"id": "baseline"},
@@ -100,6 +112,14 @@ def compare_candidates(
             for item in ordered
         ],
     }
+    if alignment_resolver is not None:
+        alignment = alignment_resolver(baseline_text, candidates, style_profile)
+        report["guidelineAlignment"] = {
+            "question": _guideline_alignment_question(style_profile.profile),
+            "winnerId": alignment.get("winnerId"),
+            "rationale": alignment.get("rationale"),
+        }
+    return report
 
 
 def compare_regression(
@@ -180,7 +200,21 @@ def _count_kinds(diagnosis: dict[str, Any]) -> dict[str, int]:
     return counts
 
 
-def _hard_constraint_violations(always_lane_deltas: dict[str, Any]) -> list[dict[str, Any]]:
+def _guideline_alignment_question(profile: StyleProfile) -> str:
+    tone = "; ".join(profile.tone)
+    aim_text = profile.editorial_aim if profile.editorial_aim else "(not specified)"
+    return (
+        f"Which candidate better matches this profile's audience ({profile.audience}), "
+        f"tone ({tone}), and editorial aim ({aim_text})?"
+    )
+
+
+def _hard_constraint_violations(
+    always_lane_deltas: dict[str, Any],
+    constraints: tuple[str, ...],
+) -> list[dict[str, Any]]:
+    if HARD_CONSTRAINT_UNSUPPORTED_INCREASE not in constraints:
+        return []
     unsupported = always_lane_deltas["arrays"]["unsupported_claims"]
     delta = unsupported["delta"]
     if delta > 0:
@@ -259,6 +293,7 @@ def _assign_ranks(scored: list[dict[str, Any]]) -> list[dict[str, Any]]:
 
 
 __all__ = [
+    "AlignmentResolver",
     "COMPARE_SCHEMA_VERSION",
     "HARD_CONSTRAINT_UNSUPPORTED_INCREASE",
     "RANKING_METHOD",

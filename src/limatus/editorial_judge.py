@@ -178,6 +178,8 @@ def _voice_config_section(profile: StyleProfile) -> str:
         f"Tone:\n{tone}",
         f"Sentence style:\n{sentence_style}",
     ]
+    if profile.editorial_aim:
+        lines.append(f"Editorial aim: {profile.editorial_aim}")
     if profile.voice_patterns:
         voice_patterns = "\n".join(f"- {item}" for item in profile.voice_patterns)
         lines.append(f"Voice patterns:\n{voice_patterns}")

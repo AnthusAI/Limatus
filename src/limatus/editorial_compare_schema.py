@@ -32,6 +32,24 @@ def validate_compare_report(payload: dict[str, Any]) -> dict[str, Any]:
             raise EditorialCompareValidationError(f"candidates[{index}] missing alwaysLaneDeltas.")
     if sorted(ranks) != list(range(1, len(ranks) + 1)):
         raise EditorialCompareValidationError("candidate ranks must be a permutation of 1..N.")
+    alignment = payload.get("guidelineAlignment")
+    if alignment is not None:
+        if not isinstance(alignment, dict):
+            raise EditorialCompareValidationError("guidelineAlignment must be a mapping when present.")
+        required_keys = {"question", "winnerId", "rationale"}
+        if set(alignment.keys()) != required_keys:
+            raise EditorialCompareValidationError(
+                "guidelineAlignment must contain exactly question, winnerId, and rationale."
+            )
+        if not isinstance(alignment["question"], str) or not alignment["question"].strip():
+            raise EditorialCompareValidationError("guidelineAlignment.question must be a non-empty string.")
+        winner_id = alignment["winnerId"]
+        if winner_id is not None and (not isinstance(winner_id, str) or not winner_id.strip()):
+            raise EditorialCompareValidationError(
+                "guidelineAlignment.winnerId must be a non-empty string or null."
+            )
+        if not isinstance(alignment["rationale"], str):
+            raise EditorialCompareValidationError("guidelineAlignment.rationale must be a string.")
     return payload
 
 

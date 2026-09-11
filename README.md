@@ -168,6 +168,18 @@ rules. `density` is optional and defaults to `minWords: 400`,
 `minLexicalDensity: 0.45`, and `maxGzipRatio: 0.35`. Unknown control names and
 invalid values fail profile validation before a draft is analyzed.
 
+Optional `editorialAim` is a non-empty string describing how the publication
+balances priorities (for example, cite-first versus ordinary-language clarity).
+When set, judge and rewrite-option prompts include it so steering can reflect
+that tradeoff.
+
+Optional `compare` controls candidate ranking hard disqualifiers. If `compare` is
+omitted, `compare.hardConstraints` defaults to
+`unsupported_claims_increase` (candidates that add unsupported claims cannot
+rank first). Set `compare.hardConstraints` to an empty list to disable hard
+disqualification on those axes. Only constraint names listed in the profile are
+applied; unknown names fail validation at load time.
+
 Limatus is style-focused, not an AI detector. Profile documents must not
 contain detector scores or detector-related fields; the loader rejects those
 keys, including nested keys.

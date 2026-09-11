@@ -3,7 +3,7 @@
   "title": "Limatus evaluations harness",
   "description": "# Limatus evaluations harness\n\n## Intent\n\nRegression evaluations so Limatus diagnose findings and rewrite-option quality can improve safely.\n\n## Done when\n\n- Fixture corpus of drafts + expected finding classes / acceptable option properties.\n- Offline-friendly eval runner (deterministic where possible; LLM judges gated and versioned).\n- Metrics: precision/recall on finding types, unsupported-claim rate in options, human-accept proxies.\n- CI smoke subset without Papyrus.\n- Documented how Ryan rejects become new fixtures.\n\nMigrated from PPY-89827a.",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -27,11 +27,18 @@
       "text": "Continuing: LIM-c1a014 already shipped the offline runner. Remaining P1 child is LIM-81ecb1 (CI smoke + fixture-from-reject docs + corpus beyond two cases).",
       "created_at": "2026-09-11T20:29:07.705900Z",
       "comment_type": "default"
+    },
+    {
+      "id": "2aef22c1-fe12-4e2e-9bba-b37be60bffd6",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closed: corpus, offline runner, CI (#27), metrics (#28), reject→fixture docs. Human accept/delete rates have no production log to mine.",
+      "created_at": "2026-09-11T20:35:41.932286Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:36:21.608712Z",
-  "updated_at": "2026-09-11T20:29:07.705913Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T20:35:41.932303Z",
+  "closed_at": "2026-09-11T20:35:41.899906Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

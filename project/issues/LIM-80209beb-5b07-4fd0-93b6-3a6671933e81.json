@@ -48,10 +48,17 @@
       "text": "HITL order is now: body on the working copy, then title, then subtitle. Subtitle options must see the applied title plus the body. Frontmatter keys are profile-bound (not hardcoded standfirst). LIM-565ba8.\n",
       "created_at": "2026-09-11T00:32:09.241918Z",
       "comment_type": "default"
+    },
+    {
+      "id": "1499b6d1-0e3e-4324-9d02-65a103e69313",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Engineering epic LIM-0b9d81 closed. CLI loop is on main (v0.17.0 + #26). Initiative stays blocked only if Ryan still wants more published-article HITL; not engineering WIP.",
+      "created_at": "2026-09-11T19:37:18.389873Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-11T00:32:09.241938Z",
+  "updated_at": "2026-09-11T19:37:18.389888Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

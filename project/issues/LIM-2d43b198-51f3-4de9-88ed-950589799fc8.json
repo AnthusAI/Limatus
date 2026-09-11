@@ -3,7 +3,7 @@
   "title": "Limatus: portable CLI + Python SDK",
   "description": "# Limatus: portable CLI + Python SDK\n\n## Intent\n\nExtract the editorial diagnose / rewrite-options / markup tooling from `papyrus_content` into the **Limatus** package. Simple, well organized, **no Papyrus imports**.\n\n## Deliverables\n\n### CLI\n- Diagnose a draft against local style rules → structured findings JSON.\n- Propose constrained rewrite options for steered findings (redline-style suggestions).\n- Diff-oriented apply helpers for interactive use.\n\n### Python SDK / module\n- Same capabilities as importable APIs (not just subprocess wrapping).\n- Callers (Papyrus, Tactus procedures, other pubs) pass draft + style config + decisions programmatically.\n\n### Local style-rules config\n- Standalone config for voice/style rules and reference samples.\n- No Papyrus corpora paths or Amplify/GraphQL.\n\n## Done when\n\n- Limatus installs and runs with zero Papyrus checkout.\n- CLI and SDK share one core library.\n- Papyrus in-tree modules become a thin adapter or are deleted after cutover.\n- README documents config schema + CLI + SDK examples.\n\nMigrated from PPY-639fb3.",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -27,11 +27,18 @@
       "text": "All children closed (including LIM-906fc9, LIM-c32c24). CLI+SDK+README on main. Remaining epic \"Done when\" bullet is Papyrus thin adapter — tracked as LIM-209793 under LIM-3ff8d0. Not closing this epic until that cutover is honest or the DoD is rewritten.\n",
       "created_at": "2026-09-10T23:42:19.031223Z",
       "comment_type": "default"
+    },
+    {
+      "id": "96ce9d10-a6d8-420b-8702-08303277236e",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closing: all children closed. CLI, SDK, style-profile schema, and README are on main (v0.17.0). Papyrus cutover is LIM-3ff8d0 / LIM-209793, not this epic.",
+      "created_at": "2026-09-11T18:53:15.788779Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:36:15.498353Z",
-  "updated_at": "2026-09-10T23:42:19.031239Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T18:53:15.825164Z",
+  "closed_at": "2026-09-11T18:53:15.825139Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

@@ -143,6 +143,25 @@ def _generate_headline_options_with_llm(
     ]
     if profile.editorial_aim:
         lines.append(f"- Editorial aim: {profile.editorial_aim}")
+    if job == "title":
+        lines.extend(
+            [
+                "",
+                "This field names the piece. Return a title, not a summary paragraph.",
+            ]
+        )
+    if job == "subtitle":
+        role = "articleSummary"
+        if profile.headline is not None:
+            role = profile.headline.subtitle.role
+        lines.extend(
+            [
+                "",
+                f"This field is the subtitle ({role}): a short summary of the entire article.",
+                "It must sit under the title already chosen. Do not return another title or headline.",
+                "Do not copy the title. Summarize the body in a few sentences the reader can use as a dek.",
+            ]
+        )
     lines.extend(
         [
             "",
@@ -158,7 +177,7 @@ def _generate_headline_options_with_llm(
         lines.extend(
             [
                 "",
-                f"Current title ({title_key}):",
+                f"Current title ({title_key}) — already applied; the subtitle must follow it:",
                 current_title,
             ]
         )

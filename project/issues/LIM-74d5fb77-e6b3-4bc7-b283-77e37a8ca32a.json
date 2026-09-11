@@ -3,7 +3,7 @@
   "title": "Register-aware phrasing: bare noun-compound density vs pithy/accessible dial",
   "description": "",
   "type": "story",
-  "status": "open",
+  "status": "in_progress",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -17,10 +17,17 @@
       "text": "Prompted by a real catch: 'thrift family' shipped in an Anth.us post where\n'family of thrift' would have read more natural/accessible. Ryan asked\nwhether the underlying pattern is deterministically detectable and whether\nregister preference (pithy/insider vs accessible/explainer) could be a\nper-profile toggle that shapes what the scanner surfaces, rather than left\nto agent judgment each time.\n\nTHE PATTERN: bare noun-compound premodification (\"thrift family,\" \"cost\nbasis,\" \"risk profile\") vs. of-genitive postmodification (\"family of\nthrift\"). English uses both constantly and correctly -- \"data center,\"\n\"style guide,\" \"product manager\" are fine bare compounds nobody wants\nflagged. Dense STACKS of bare compounding read as jargony/insider; the\n\"of\" form spells out the relationship, reading slower but more accessible.\n\nWHY THIS ISN'T A SIMPLE REGEX: unlike bannedPhrases/bannedIntensifiers\n(exact strings), telling \"fine compound\" from \"insider-dense compound\"\napart in general requires actually knowing which words are nouns and how\nthey're chunking -- i.e. real POS tagging / noun-phrase chunking. Limatus\nhas deliberately stayed dependency-light (PyYAML only); this would be the\nfirst real NLP dependency.\n\nTWO PATHS, not one:\n\n1. Near-term, zero new dependencies: generalize the mechanism already used\n   for this exact fix into a reusable profile field -- `preferredPhrasing:\n   [{from, to}]` per style-profile.yml, mechanically identical to\n   bannedPatterns but framed as reword-not-ban. Catches known repeat\n   offenders (a publication's own list of insider shorthand it wants\n   unpacked), zero false-positive risk, but doesn't generalize to novel\n   compounds it hasn't seen before.\n\n2. Real capability, real epic: a compound-noun density heuristic (POS\n   tagging + noun-phrase chunking), scored per paragraph/document, with a\n   profile-level register dial (e.g. `checks.compoundNounDensity: pithy |\n   neutral | accessible` or a numeric threshold) that changes what fires as\n   a finding. Bigger lift: new dependency choice (spaCy is heavy; something\n   lighter -- a small rule-based POS tagger -- might be enough for\n   English-only noun-compound detection), needs a real fixture corpus of\n   \"insider-dense\" vs \"accessible\" paragraphs to tune against, and needs to\n   not fight existing checks (uniformCadence, vagueClaim) that already\n   touch related territory.\n\nRECOMMENDATION: do (1) now, cheaply, next time a specific compound repeats\nacross a publication's drafts (same pattern as how bannedPhrases/lexicon\nentries get added -- reactively, from real catches). Scope (2) as its own\nepic under this one, gated on someone actually wanting the general\nregister-dial capability badly enough to justify the new dependency --\ndon't build the POS-tagging machinery speculatively.\n\nFiled as LIM-74d5fb under the quality-first editorial rewrite loop epic\n(LIM-9d14e6) rather than as its own top-level epic, since it's squarely a\nnew *kind* of check within that existing scope, not a new capability area.",
       "created_at": "2026-09-10T11:49:19.103361Z",
       "comment_type": "default"
+    },
+    {
+      "id": "a3d282a5-e38a-4e25-99d5-8e3cb5da71ef",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Starting near-term path (1): preferredPhrasing from/to in Limatus, seed Anth.us thrift family → family of thrift. No POS/NLP.",
+      "created_at": "2026-09-11T20:40:09.929730Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T11:48:57.563841Z",
-  "updated_at": "2026-09-10T11:49:19.103376Z",
+  "updated_at": "2026-09-11T20:40:09.929747Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

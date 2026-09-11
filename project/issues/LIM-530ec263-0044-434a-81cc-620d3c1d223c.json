@@ -1,0 +1,28 @@
+{
+  "id": "LIM-530ec263-0044-434a-81cc-620d3c1d223c",
+  "title": "Judge body scan must ignore YAML title/standfirst",
+  "description": "## Intent\n\n`limatus scan` is the article-body pass. Title and subtitle are a later HITL pass (`limatus headline options`). The OpenAI judge currently sees the raw file, so rubric evidence cites the YAML title and body findings stay empty.\n\n## DoD\n\n- Judge user prompt blanks leading YAML the same way the profile lane does (same-length mask; offsets stay valid).\n- System prompt states this is the body pass; do not score title/standfirst/description.\n- Findings and rubric evidence whose spans fall inside frontmatter are dropped.\n- `JUDGE_PROMPT_VERSION` and canary pin bump together.\n- Unit (and Gherkin if a scenario exists) cover: title string is not in the judge prompt; a mocked finding inside YAML is dropped.\n\nOut of scope: changing headline HITL; Papyrus adapter.",
+  "type": "bug",
+  "status": "closed",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-2d43b198-51f3-4de9-88ed-950589799fc8",
+  "labels": [],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "e405865a-563a-4254-aa99-dac5a71ee5f4",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged to main as https://github.com/AnthusAI/Limatus/pull/20. Judge blanks YAML; title and subtitle stay a later headline pass.",
+      "created_at": "2026-09-11T01:05:35.100640Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-11T01:01:16.648801Z",
+  "updated_at": "2026-09-11T01:05:35.143116Z",
+  "closed_at": "2026-09-11T01:05:35.143092Z",
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

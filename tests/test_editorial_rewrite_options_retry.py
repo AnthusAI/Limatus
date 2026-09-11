@@ -63,8 +63,38 @@ class GenerateRewriteOptionsPrefixSkipRetryTests(unittest.TestCase):
             }
         ]
 
-    def test_retries_resolver_after_prefix_skip_drops_options(self) -> None:
-        prefix_skip = "It ended the way it started."
+    def test_suffix_start_replacements_coalesce_without_resolver_retry(self) -> None:
+        suffix_start = "It ended the way it started."
+        call_count = 0
+
+        def resolver(**_kwargs):
+            nonlocal call_count
+            call_count += 1
+            return [
+                _patch_option(suffix_start, "Suffix start A.", self.span),
+                _patch_option(suffix_start, "Suffix start B.", self.span),
+            ]
+
+        draft = self.body
+        payload = generate_rewrite_options(
+            draft,
+            style_profile=PROFILE,
+            diagnosis=self.diagnosis,
+            decisions=self.decisions,
+            skill_path=SKILL_PATH,
+            llm_resolver=resolver,
+        )
+        self.assertEqual(draft, self.body)
+        self.assertEqual(call_count, 1)
+        self.assertEqual(len(payload["findings"]), 1)
+        self.assertEqual(len(payload["findings"][0]["options"]), 2)
+        coalesced = EXCERPT
+        replacements = [
+            option["patch"]["replacement"] for option in payload["findings"][0]["options"]
+        ]
+        self.assertEqual(replacements, [coalesced, coalesced])
+
+    def test_retries_when_normalization_drops_below_two_options(self) -> None:
         full_a = "gap in a wall. It ended differently."
         full_b = "gap in a wall.\n\nIt closed the way it opened."
         call_count = 0
@@ -74,8 +104,8 @@ class GenerateRewriteOptionsPrefixSkipRetryTests(unittest.TestCase):
             call_count += 1
             if call_count == 1:
                 return [
-                    _patch_option(prefix_skip, "Skip prefix A.", self.span),
-                    _patch_option(prefix_skip, "Skip prefix B.", self.span),
+                    _patch_option(full_a, "Only valid option on first attempt.", self.span),
+                    _patch_option(full_b, "", self.span),
                 ]
             return [
                 _patch_option(full_a, "Full span rewrite A.", self.span),
@@ -96,16 +126,16 @@ class GenerateRewriteOptionsPrefixSkipRetryTests(unittest.TestCase):
         self.assertEqual(len(payload["findings"]), 1)
         self.assertEqual(len(payload["findings"][0]["options"]), 2)
 
-    def test_raises_when_retry_still_has_prefix_skips(self) -> None:
-        prefix_skip = "It ended the way it started."
+    def test_raises_when_retry_still_insufficient_options(self) -> None:
+        full_a = "gap in a wall. It ended differently."
         call_count = 0
 
         def resolver(**_kwargs):
             nonlocal call_count
             call_count += 1
             return [
-                _patch_option(prefix_skip, f"Skip prefix attempt {call_count} A.", self.span),
-                _patch_option(prefix_skip, f"Skip prefix attempt {call_count} B.", self.span),
+                _patch_option(full_a, "Valid rewrite.", self.span),
+                _patch_option(full_a, "", self.span),
             ]
 
         draft = self.body

@@ -3,7 +3,7 @@
   "title": "Run VOICE.md/AGENTS.md coverage audit for Anth.us and Chattic.us",
   "description": "",
   "type": "story",
-  "status": "open",
+  "status": "in_progress",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -17,10 +17,17 @@
       "text": "Only Pilobolus has had the full read-VOICE.md-line-by-line audit so far\n(this session), which found real gaps (noEmojis unset, incomplete\nself-naming bans, missing jargon words, missing Sources-list pattern --\nsee prior comments on LIM-a482f8). Same methodology needs to run for:\n\n- Anth.us: AGENTS.md (now mostly a pointer after this session's DRY\n  cleanup) + src/site-content/README.md's Voice section, against\n  publications/anthus/style-profile.yml.\n- Chattic.us: content/VOICE.md against\n  .claude/skills/publication-writing/style-profile.yml (the migrated\n  profile from this session) -- especially worth checking since that\n  profile was translated from the old bespoke rules.yml rather than\n  audited fresh against VOICE.md's full prose, so it may have inherited\n  the same kind of gap (stated-in-prose, not mechanically checked) that\n  the bespoke script itself might already have had.\n\nApproach that worked: read the whole VOICE.md, list every sentence that\nsounds like a rule (not just the ones already in bulleted 'banned' lists),\ncheck each against style-profile.yml, and sanity-check any new\nbanned-phrase/lexicon additions against ALL currently published content\nfor that publication before shipping (caught what would have been false\npositives twice this session).",
       "created_at": "2026-09-10T11:49:54.868059Z",
       "comment_type": "default"
+    },
+    {
+      "id": "2fed51b3-48d4-4041-9a8e-2cc180ff9894",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Starting VOICE/AGENTS coverage audit for Anth.us and Chattic.us after evals epic closed.",
+      "created_at": "2026-09-11T20:35:42.079797Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T11:49:38.082971Z",
-  "updated_at": "2026-09-10T11:49:54.868076Z",
+  "updated_at": "2026-09-11T20:35:42.079812Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

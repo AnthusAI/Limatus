@@ -1,0 +1,22 @@
+{
+  "id": "LIM-54c503ad-1038-4c76-9acb-c074c7247038",
+  "title": "CLI compare emits guidelineAlignment when OPENAI_API_KEY is set",
+  "description": "# CLI compare emits guidelineAlignment when OpenAI is configured\n\n## Intent\n\nAs a copy-editing agent, I want `limatus compare` to emit `guidelineAlignment` when `OPENAI_API_KEY` is set, so publication `editorialAim` can pick a winner without injecting a Python resolver.\n\n## Done when\n\n- Rank and regression `limatus compare` pass `openai_guideline_alignment` (or equivalent) when `OPENAI_API_KEY` is set.\n- With the key unset, `guidelineAlignment` is omitted (Behave already pops the key).\n- Offline tests inject/mock the API; no live network in unit tests.\n- SDK `compare()` accepts optional `alignment_resolver` and uses the same default-when-key-set behavior as the CLI.\n\n## Out of scope\n\nAuto-applying the alignment winner. Hidden weights.\n\n```gherkin\nFeature: CLI compare guideline alignment\n  Scenario: Key unset omits guidelineAlignment\n    Given OPENAI_API_KEY is unset\n    When I run limatus compare with two candidates\n    Then the report has no guidelineAlignment key\n\n  Scenario: Injected resolver on CLI path\n    When compare runs with a test alignment resolver\n    Then guidelineAlignment has question, winnerId, and rationale\n```",
+  "type": "bug",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-0e3f4e03-cdb1-44f0-9ca0-f8fb47648667",
+  "labels": [
+    "editorial"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-11T00:33:25.109345Z",
+  "updated_at": "2026-09-11T00:34:18.950413Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

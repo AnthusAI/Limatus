@@ -14,8 +14,10 @@
                              --skill <editorial-rewrite-skill.yml> [...]
     limatus eval --manifest <editorial-corpus/manifest.yml>
     limatus canary --manifest <editorial-canary/manifest.yml>
+    limatus skill   (print the packaged copy-edit Agent Skill for agents)
     limatus diagnose  (alias for scan)
 
+Agents should run `limatus skill` for the full copy-edit workflow skill.
 See editorial_commands.py for each subcommand's full flag set.
 """
 from __future__ import annotations
@@ -39,6 +41,15 @@ from .editorial_commands import (
 )
 from .editorial_canary import main as editorial_canary
 from .editorial_eval import main as editorial_eval
+from .skill import load_skill_bytes
+
+
+def editorial_skill(flags: list[str]) -> None:
+    if flags and flags[0] in {"-h", "--help"}:
+        print("limatus skill — print the packaged copy-edit Agent Skill (SKILL.md)")
+        return
+    sys.stdout.buffer.write(load_skill_bytes())
+
 
 COMMANDS = {
     "scan": editorial_scan,
@@ -53,6 +64,7 @@ COMMANDS = {
     "standfirst": editorial_standfirst,
     "eval": editorial_eval,
     "canary": editorial_canary,
+    "skill": editorial_skill,
 }
 
 

@@ -634,21 +634,108 @@ def _mask_for_redundancy_shingling(text: str) -> str:
     return _mask_image_markup(_mask_jsx_components(text))
 
 
+def _range_within_spans(spans: list[tuple[int, int]], start: int, end: int) -> bool:
+    return any(span_start <= start and end <= span_end for span_start, span_end in spans)
+
+
+def _markdown_emphasis_spans(text: str) -> list[tuple[int, int]]:
+    """Character spans of text wrapped in single *...* or _..._ emphasis (not ** bold)."""
+    spans: list[tuple[int, int]] = []
+    for delimiter in ("*", "_"):
+        index = 0
+        while index < len(text):
+            if text[index] != delimiter:
+                index += 1
+                continue
+            if index + 1 < len(text) and text[index + 1] == delimiter:
+                index += 2
+                continue
+            close = index + 1
+            while close < len(text):
+                if text[close] != delimiter:
+                    close += 1
+                    continue
+                if close + 1 < len(text) and text[close + 1] == delimiter:
+                    close += 1
+                    continue
+                break
+            if close >= len(text) or text[close] != delimiter:
+                index += 1
+                continue
+            if close > index + 1:
+                spans.append((index + 1, close))
+            index = close + 1
+    return spans
+
+
+def _markus_directive_body_spans(text: str) -> list[tuple[int, int]]:
+    """Inner prose between a Markus block directive open line and its closing `:::`."""
+    spans: list[tuple[int, int]] = []
+    line_start = 0
+    body_start: int | None = None
+    while line_start <= len(text):
+        line_end = text.find("\n", line_start)
+        if line_end < 0:
+            line_end = len(text)
+        line = text[line_start:line_end]
+        if body_start is not None:
+            if _MARKUS_DIRECTIVE_CLOSE_RE.match(line):
+                if body_start < line_start:
+                    spans.append((body_start, line_start))
+                body_start = None
+        elif _MARKUS_DIRECTIVE_OPEN_RE.match(line):
+            body_start = line_end + 1 if line_end < len(text) else line_end
+        if line_end == len(text):
+            break
+        line_start = line_end + 1
+    return spans
+
+
+def _is_quoted_redundancy_ngram(
+    text: str,
+    gram_start: int,
+    gram_end: int,
+    emphasis_spans: list[tuple[int, int]],
+    markus_body_spans: list[tuple[int, int]],
+) -> bool:
+    """True when a four-gram's character range sits in quoted material (redundancy only)."""
+    if _is_blockquote_line(text, gram_start) and _is_blockquote_line(text, max(gram_start, gram_end - 1)):
+        return True
+    if _range_within_spans(emphasis_spans, gram_start, gram_end):
+        return True
+    if _range_within_spans(markus_body_spans, gram_start, gram_end):
+        return True
+    return False
+
+
 def _check_redundancy(text: str) -> list[dict[str, Any]]:
     masked = _mask_for_redundancy_shingling(text)
-    shingles: dict[str, list[tuple[int, int]]] = {}
+    emphasis_spans = _markdown_emphasis_spans(text)
+    markus_body_spans = _markus_directive_body_spans(text)
+    shingles: dict[str, list[tuple[int, int, int, int]]] = {}
+    token_pattern = re.compile(r"[A-Za-z0-9']+")
     for _masked_sentence, start, end in sentence_spans(masked):
-        words = re.findall(r"[A-Za-z0-9']+", masked[start:end].lower())
-        for index in range(len(words) - 3):
-            shingle = " ".join(words[index : index + 4])
-            shingles.setdefault(shingle, []).append((start, end))
+        token_spans = [
+            (match.group().lower(), start + match.start(), start + match.end())
+            for match in token_pattern.finditer(masked[start:end])
+        ]
+        for index in range(len(token_spans) - 3):
+            shingle = " ".join(token[0] for token in token_spans[index : index + 4])
+            gram_start = token_spans[index][1]
+            gram_end = token_spans[index + 3][2]
+            shingles.setdefault(shingle, []).append((start, end, gram_start, gram_end))
 
     groups: list[dict[str, Any]] = []
     seen_group_ids: set[str] = set()
     for occurrences in shingles.values():
         if len(occurrences) < 2:
             continue
-        unique_spans = list(dict.fromkeys(occurrences))
+        if all(
+            _is_quoted_redundancy_ngram(text, gram_start, gram_end, emphasis_spans, markus_body_spans)
+            for _, _, gram_start, gram_end in occurrences
+        ):
+            continue
+        unique_spans = list(dict.fromkeys((start, end) for start, end, _, _ in occurrences))
         if len(unique_spans) < 2:
             continue
         members = []
@@ -665,8 +752,6 @@ def _check_redundancy(text: str) -> list[dict[str, Any]]:
                 }
             )
         if _is_rhetorical_refrain(members):
-            continue
-        if all(_is_blockquote_line(text, member["span"]["start"]) for member in members):
             continue
         group_id = stable_repetition_group_id([member["id"] for member in members])
         if group_id in seen_group_ids:

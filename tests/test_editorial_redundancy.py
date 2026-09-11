@@ -46,6 +46,11 @@ class EditorialRedundancyTests(unittest.TestCase):
         diagnosis = diagnose(draft, config=self.config)
         self.assertEqual(_redundancy_groups(diagnosis), [])
 
+    def test_italic_formula_and_pull_quote_refrain_is_not_redundancy(self) -> None:
+        draft = (FIXTURE_ROOT / "redundancy-italic-pull-quote.md").read_text(encoding="utf-8")
+        diagnosis = diagnose(draft, config=self.config)
+        self.assertEqual(_redundancy_groups(diagnosis), [])
+
     def test_repeated_body_prose_still_reports_redundancy(self) -> None:
         draft = (FIXTURE_ROOT / "redundancy-body-prose.md").read_text(encoding="utf-8")
         diagnosis = diagnose(draft, config=self.config)

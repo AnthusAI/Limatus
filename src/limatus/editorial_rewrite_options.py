@@ -21,6 +21,7 @@ from .editorial_options_schema import (
 )
 from .editorial_apply import _coalesce_span_prefix, _replacement_skips_span_prefix
 from .editorial_style import LoadedStyleProfile
+from .editorial_yaml import restore_leading_frontmatter
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 DEFAULT_SUGGESTION_OUTPUT_TOKENS = 8000
@@ -228,6 +229,7 @@ def generate_rewrite_suggestions(
         rationale = str(entry.get("rationale", entry.get("reason", ""))).strip()
         if not candidate_text or not rationale:
             continue
+        candidate_text = restore_leading_frontmatter(draft_text, candidate_text)
         warnings = [str(item) for item in (entry.get("factualVerificationWarnings") or []) if str(item).strip()]
         fact_required = bool(entry.get("factVerificationRequired", warnings))
         candidates.append({
@@ -287,6 +289,7 @@ def _generate_suggestions_with_llm(**kwargs: Any) -> list[dict[str, Any]]:
         [
             "Create cohesive, document-level rewrite candidates for editorial review.",
             "Rewrite the whole draft when useful; do not return finding-sized patches.",
+            "When the draft begins with YAML frontmatter (--- ... ---), copy that block byte-for-byte and rewrite only the body after it.",
             f"Skill constraints: {'; '.join(skill.constraints)}",
             f"Audience: {profile.audience}",
             f"Tone: {'; '.join(profile.tone)}",

@@ -18,6 +18,7 @@ from .editorial_guideline_alignment import default_alignment_resolver
 from .editorial_compare_schema import validate_compare_report
 from .editorial_verifier import verify_revision
 from .editorial_standfirst import check_standfirst
+from .editorial_headline import generate_headline_options
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
 
@@ -324,6 +325,51 @@ def editorial_verify(flags: list[str]) -> None:
         Path(args.output).resolve().write_text(rendered, encoding="utf-8")
     else:
         sys.stdout.write(rendered)
+
+
+def editorial_headline_options(flags: list[str]) -> None:
+    parser = argparse.ArgumentParser(prog="limatus headline options")
+    parser.add_argument("--job", required=True, choices=["title", "subtitle"], help="Headline pass job.")
+    parser.add_argument("--working-copy", required=True, help="Working copy path (read-only).")
+    parser.add_argument("--profile", required=True, help="Path to the style profile YAML.")
+    parser.add_argument(
+        "--skill",
+        required=True,
+        help="Path to editorial rewrite skill YAML.",
+    )
+    parser.add_argument("--output", default="", help="Optional path to write options JSON.")
+    parser.add_argument("--model", default=DEFAULT_EDITORIAL_REWRITE_MODEL, help="OpenAI model id.")
+    args = parser.parse_args(flags)
+
+    working_path = Path(args.working_copy).resolve()
+    if not working_path.is_file():
+        raise ValueError(f"Working copy file not found: {working_path}")
+    working_copy_text = working_path.read_text(encoding="utf-8")
+    style_profile = load_style_profile(Path(args.profile).resolve())
+    options = generate_headline_options(
+        working_copy_text,
+        job=args.job,
+        style_profile=style_profile,
+        skill_path=args.skill,
+        model=args.model,
+    )
+    rendered = json.dumps(options, indent=2) + "\n"
+    if args.output:
+        Path(args.output).resolve().write_text(rendered, encoding="utf-8")
+        return
+    sys.stdout.write(rendered)
+
+
+def editorial_headline(flags: list[str]) -> None:
+    if not flags or flags[0] in {"-h", "--help"}:
+        print(
+            "limatus headline options --job title|subtitle --working-copy PATH "
+            "--profile PATH --skill PATH [--output PATH] [--model MODEL]"
+        )
+        return
+    if flags[0] != "options":
+        raise ValueError(f"Unknown headline subcommand '{flags[0]}'. Supported: options")
+    editorial_headline_options(flags[1:])
 
 
 def editorial_standfirst(flags: list[str]) -> None:

@@ -4,6 +4,7 @@ import json
 import os
 import subprocess
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from limatus.usability_profile import (  # noqa: E402
 )
 from limatus.usability_scan import (  # noqa: E402
     USABILITY_FORBIDDEN_OUTPUT_KEYS,
+    parse_css_color,
     scan_html_page,
     validate_usability_findings,
 )
@@ -50,18 +52,33 @@ class UsabilityScanTests(unittest.TestCase):
         self.assertEqual(payload["findings"], [])
 
     def test_profile_rejects_unknown_keys(self):
-        bad_path = FIXTURE_ROOT / "bad-profile.yml"
-        bad_path.write_text("contrast:\n  minRatio: 4.5\nunknown: true\n", encoding="utf-8")
-        try:
+        with tempfile.TemporaryDirectory() as tmp:
+            bad_path = Path(tmp) / "bad-profile.yml"
+            bad_path.write_text(
+                "contrast:\n  minRatio: 4.5\nunknown: true\n",
+                encoding="utf-8",
+            )
             with self.assertRaises(UsabilityProfileValidationError):
                 load_usability_profile(bad_path)
-        finally:
-            bad_path.unlink(missing_ok=True)
+
+    def test_void_img_does_not_swallow_following_siblings(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html>
+<html><head><style>.muted { color: #777777; background-color: #888888; }</style></head>
+<body><img src="x"><p class="muted">Low contrast</p></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        missing = next(entry for entry in payload["findings"] if entry["kind"] == "missing_alt")
+        low = next(entry for entry in payload["findings"] if entry["kind"] == "low_contrast")
+        self.assertEqual(missing["selector"], "img")
+        self.assertEqual(low["selector"], "p.muted")
+
+    def test_invalid_three_digit_hex_color_returns_none(self):
+        self.assertIsNone(parse_css_color("#ggg"))
 
     def test_cli_usability_scan_writes_json(self):
         env = {**os.environ, "PYTHONPATH": str(SRC)}
-        output_path = FIXTURE_ROOT / "_cli-out.json"
-        try:
+        with tempfile.TemporaryDirectory() as tmp:
+            output_path = Path(tmp) / "findings.json"
             completed = subprocess.run(
                 [
                     sys.executable,
@@ -86,8 +103,36 @@ class UsabilityScanTests(unittest.TestCase):
             payload = json.loads(output_path.read_text(encoding="utf-8"))
             validate_usability_findings(payload)
             self.assertEqual(len(payload["findings"]), 2)
-        finally:
-            output_path.unlink(missing_ok=True)
+
+    def test_cli_scan_does_not_modify_page_file(self):
+        env = {**os.environ, "PYTHONPATH": str(SRC)}
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            page_copy = tmp_path / "page.html"
+            page_copy.write_bytes(BOTH_PAGE.read_bytes())
+            before = page_copy.read_bytes()
+            output_path = tmp_path / "findings.json"
+            subprocess.run(
+                [
+                    sys.executable,
+                    "-m",
+                    "limatus",
+                    "usability",
+                    "scan",
+                    "--page",
+                    str(page_copy),
+                    "--profile",
+                    str(PROFILE),
+                    "--output",
+                    str(output_path),
+                ],
+                cwd=ROOT,
+                env=env,
+                capture_output=True,
+                text=True,
+                check=True,
+            )
+            self.assertEqual(page_copy.read_bytes(), before)
 
 
 if __name__ == "__main__":

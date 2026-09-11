@@ -35,6 +35,24 @@ CSS_NAMED_COLORS: dict[str, tuple[int, int, int]] = {
     "grey": (128, 128, 128),
 }
 
+VOID_HTML_ELEMENTS = frozenset(
+    {
+        "area",
+        "base",
+        "br",
+        "col",
+        "embed",
+        "hr",
+        "img",
+        "input",
+        "link",
+        "meta",
+        "source",
+        "track",
+        "wbr",
+    }
+)
+
 TEXT_CONTAINER_TAGS = frozenset(
     {
         "p",
@@ -329,15 +347,20 @@ class _PageParser(HTMLParser):
         self._capture_style = False
         self._style_chunks: list[str] = []
 
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        self.handle_starttag(tag, attrs)
+
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         normalized = tag.lower()
         attr_map = {name.lower(): (value if value is not None else "") for name, value in attrs}
         node = _DomNode(tag=normalized, attrs=attr_map)
         self._stack[-1].children.append(node)
-        self._stack.append(node)
         if normalized == "style" and self._style_text is None:
             self._capture_style = True
             self._style_chunks = []
+        if normalized in VOID_HTML_ELEMENTS:
+            return
+        self._stack.append(node)
 
     def handle_endtag(self, tag: str) -> None:
         normalized = tag.lower()
@@ -390,11 +413,14 @@ def parse_css_color(value: str) -> tuple[int, int, int] | None:
 def _parse_hex_color(value: str) -> tuple[int, int, int] | None:
     hex_body = value[1:]
     if len(hex_body) == 3:
-        return (
-            int(hex_body[0] * 2, 16),
-            int(hex_body[1] * 2, 16),
-            int(hex_body[2] * 2, 16),
-        )
+        try:
+            return (
+                int(hex_body[0] * 2, 16),
+                int(hex_body[1] * 2, 16),
+                int(hex_body[2] * 2, 16),
+            )
+        except ValueError:
+            return None
     if len(hex_body) == 6:
         try:
             return (

@@ -218,6 +218,25 @@ limatus eval --manifest features/fixtures/editorial-diagnosis/editorial-corpus/m
 
 CI runs the same command on every pull request (see `.github/workflows/ci.yml`).
 
+### Aggregate metrics
+
+After each row, `limatus eval` prints kind-level **precision** and **recall** by
+comparing diagnosis finding kinds to each manifest row's `expectKinds` (gold positives
+for that draft). True positives are expected kinds present in the diagnosis; false
+negatives are expected kinds missing (those still fail the row); false positives are
+extra diagnosis kinds not listed in `expectKinds` (they do not fail sloppy `mustFail`
+rows, but they lower precision). On `mustPass` rows with empty `expectKinds`, every
+surfaced kind counts as a false positive. Micro-averaged ratios use the usual
+TP/(TP+FP) and TP/(TP+FN) formulas; when both numerator and denominator are zero,
+the metric is reported as `1.0` (a clean negative with zero findings is perfect).
+
+When the manifest includes an `options` list pointing at checked-in options JSON,
+the summary also reports **unsupportedClaimRate**: the fraction of rewrite option
+candidates with `factVerificationRequired: true`. Those fixtures are validated
+with the same option-safety forbidden-key checks as diagnosis output. The summary
+line `judgePromptVersion=…` pins the editorial judge prompt revision used elsewhere
+in the product, even though offline eval never calls a live judge.
+
 ### Turning a reject into a fixture
 
 When copy-edit is rejected or a false positive is confirmed in production:

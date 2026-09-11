@@ -50,3 +50,10 @@ mustPass:
       forbidKeys:
         - revised_text
         - options
+options:
+  - id: eval-synthetic-claim-flags
+    path: ../../editorial-options/eval-corpus-options.json
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options

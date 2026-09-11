@@ -20,10 +20,17 @@
       "text": "Starting: last open child of LIM-0b9d81. Mask image markdown and quoted refrain from redundancy 4-grams so HITL is not spent on alts/liturgy.",
       "created_at": "2026-09-11T19:30:32.845597Z",
       "comment_type": "default"
+    },
+    {
+      "id": "eb7d836e-eb00-4380-b9e0-6110213d7db7",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Worktree /tmp/limatus-ed02c3-redundancy on fix/LIM-ed02c3-redundancy-alts off origin/main. Composer implementing image-markdown + blockquote redundancy skip.",
+      "created_at": "2026-09-11T19:32:15.842395Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:39:31.745798Z",
-  "updated_at": "2026-09-11T19:30:32.887324Z",
+  "updated_at": "2026-09-11T19:32:15.842414Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

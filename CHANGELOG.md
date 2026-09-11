@@ -1,6 +1,15 @@
 # CHANGELOG
 
 
+## v0.16.1 (2026-09-11)
+
+### Bug Fixes
+
+- **headline**: Subtitle options must summarize the article under the title
+  ([#19](https://github.com/AnthusAI/Limatus/pull/19),
+  [`cb68fc3`](https://github.com/AnthusAI/Limatus/commit/cb68fc3f6ca1d29957eadb529b26e6cb930866b6))
+
+
 ## v0.16.0 (2026-09-11)
 
 ### Chores

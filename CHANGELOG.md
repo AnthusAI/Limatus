@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.20.0 (2026-09-11)
+
+### Chores
+
+- **kanbus**: Close rewrite-loop epic; start LIM-3863ed skill CLI
+  ([`5bca7dd`](https://github.com/AnthusAI/Limatus/commit/5bca7dd29318258d79ec5e7540e47cc106233dde))
+
+### Features
+
+- **cli**: Print packaged SKILL.md via limatus skill
+  ([#30](https://github.com/AnthusAI/Limatus/pull/30),
+  [`6c60b3d`](https://github.com/AnthusAI/Limatus/commit/6c60b3d8406bde1fb8a87e875291b945e542cc25))
+
+LIM-3863ed — Package copy-edit Agent Skill in the wheel and expose it through a
+  progressive-disclosure `limatus skill` subcommand.
+
+
 ## v0.19.0 (2026-09-11)
 
 ### Chores

@@ -19,7 +19,7 @@ from .editorial_options_schema import (
     validate_options,
     validate_suggestions,
 )
-from .editorial_apply import _replacement_skips_span_prefix
+from .editorial_apply import _coalesce_span_prefix, _replacement_skips_span_prefix
 from .editorial_style import LoadedStyleProfile
 from ._util import DEFAULT_EDITORIAL_REWRITE_MODEL
 
@@ -524,7 +524,10 @@ def _normalize_options_for_finding(
     for entry in options:
         if not isinstance(entry, dict):
             continue
-        replacement = str(entry.get("patch", {}).get("replacement", entry.get("replacement", "")))
+        replacement = _coalesce_span_prefix(
+            finding["excerpt"],
+            str(entry.get("patch", {}).get("replacement", entry.get("replacement", ""))),
+        )
         reason = str(entry.get("reason") or "").strip()
         if not reason:
             continue

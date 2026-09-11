@@ -90,4 +90,41 @@ def load_editorial_corpus_manifest(path: str | Path) -> dict[str, list[dict[str,
                     normalized_entry["sourceSample"] = source_sample.strip()
             normalized.append(normalized_entry)
         manifest[section] = normalized
+    options_entries = raw.get("options")
+    manifest["options"] = []
+    if options_entries is not None:
+        if not isinstance(options_entries, list):
+            raise StyleProfileValidationError(f"options must be a list in {manifest_path}")
+        normalized_options: list[dict[str, Any]] = []
+        for index, entry in enumerate(options_entries):
+            if not isinstance(entry, dict):
+                raise StyleProfileValidationError(f"options[{index}] must be a mapping in {manifest_path}")
+            entry_id = str(entry.get("id", "")).strip()
+            rel_path = str(entry.get("path", "")).strip()
+            if not entry_id or not rel_path:
+                raise StyleProfileValidationError(
+                    f"options[{index}] requires id and path in {manifest_path}"
+                )
+            options_path = (manifest_path.parent / rel_path).resolve()
+            if not options_path.is_file():
+                raise StyleProfileValidationError(f"Corpus options JSON not found: {options_path}")
+            option_safety = entry.get("optionSafety", {})
+            if not isinstance(option_safety, dict):
+                raise StyleProfileValidationError(
+                    f"options[{index}].optionSafety must be a mapping in {manifest_path}"
+                )
+            forbidden_keys = option_safety.get("forbidKeys", [])
+            if not isinstance(forbidden_keys, list) or any(not str(key).strip() for key in forbidden_keys):
+                raise StyleProfileValidationError(
+                    f"options[{index}].optionSafety.forbidKeys must be a list of non-empty strings in {manifest_path}"
+                )
+            normalized_options.append(
+                {
+                    "id": entry_id,
+                    "path": rel_path,
+                    "optionsPath": str(options_path),
+                    "optionSafety": {"forbidKeys": [str(key).strip() for key in forbidden_keys]},
+                }
+            )
+        manifest["options"] = normalized_options
     return manifest

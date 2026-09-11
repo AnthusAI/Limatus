@@ -63,7 +63,10 @@ def step_then_eval_coverage(context):
     assert "PASS mustPass/latency-and-repo" in context.eval_result.stdout
     assert "PASS mustPass/clean-image-alts" in context.eval_result.stdout
     assert "PASS mustPass/italic-pull-quote-only" in context.eval_result.stdout
-    assert "offline eval: 5 passed, 0 failed" in context.eval_result.stdout
+    assert "offline eval: 6 passed, 0 failed" in context.eval_result.stdout
+    assert "finding metrics: precision=" in context.eval_result.stdout
+    assert "option metrics: unsupportedClaimRate=" in context.eval_result.stdout
+    assert "judgePromptVersion=" in context.eval_result.stdout
 
 
 @then("the offline eval exits with a regression failure")

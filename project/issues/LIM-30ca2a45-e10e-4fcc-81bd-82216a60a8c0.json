@@ -3,7 +3,7 @@
   "title": "Human choose-and-apply gate for rewrite options",
   "description": "## Intent\n\nHuman chooses; nothing applies until then.\n\n## Gherkin\n\n```gherkin\nFeature: Human apply gate\n  As the Pilobolus editor\n  I want to pick among ranked options\n  So published copy changes only when I apply\n\n  Scenario: No auto-apply\n    Given rewrite decisions and generated options for one article\n    When I run limatus compare on those option texts\n    Then I obtain a ranking of all options\n    And the published article is unchanged\n    And apply happens only after I record a chosen option id\n```",
   "type": "story",
-  "status": "blocked",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -34,11 +34,18 @@
       "text": "Not blocked on Ryan picking /tmp packets. Dogfood parked until `limatus` CLI loop is proven (LIM-0129cf): decide subcommand, `python -m limatus`, apply/diff via CLI, original unchanged.\n",
       "created_at": "2026-09-10T23:18:18.089583Z",
       "comment_type": "default"
+    },
+    {
+      "id": "511b3aa6-08dc-4da7-bbeb-07c9bccf096d",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Unblocking and closing: limatus compare ranks without mutating files; limatus apply writes only --working-copy after an option id. Published originals stay untouched. The old /tmp packet 'Ryan picks option ids' gate is obsolete.",
+      "created_at": "2026-09-11T19:30:20.951273Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:51.684739Z",
-  "updated_at": "2026-09-10T23:18:18.089596Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T19:30:32.738650Z",
+  "closed_at": "2026-09-11T19:30:32.738624Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

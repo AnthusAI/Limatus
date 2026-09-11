@@ -3,7 +3,7 @@
   "title": "Redundancy 4-grams misfire on image alts and quoted refrain",
   "description": "## Intent\n\nDogfood: 4-gram redundancy flags image markdown, quoted liturgy, and house motifs that are not slop.\n\n## Gherkin\n\n```gherkin\nFeature: Redundancy ignores non-prose and intentional refrain\n  As a Pilobolus editor\n  I do not want image alts or quoted absolution treated as slop\n  So I can spend HITL time on real voice problems\n\n  Scenario: Image markdown\n    Given a published article whose only repeated four-gram is in image markdown\n    When I run limatus scan\n    Then those image spans are not redundancy findings\n```",
   "type": "story",
-  "status": "open",
+  "status": "in_progress",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -13,9 +13,17 @@
     "dogfood"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "7b8dab47-ae8c-4517-85a2-24f303a2cc90",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Starting: last open child of LIM-0b9d81. Mask image markdown and quoted refrain from redundancy 4-grams so HITL is not spent on alts/liturgy.",
+      "created_at": "2026-09-11T19:30:32.845597Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-10T20:39:31.745798Z",
-  "updated_at": "2026-09-10T20:39:39.783427Z",
+  "updated_at": "2026-09-11T19:30:32.887324Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

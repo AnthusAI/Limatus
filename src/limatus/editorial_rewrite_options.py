@@ -70,6 +70,12 @@ _EVASION_INSTRUCTION_PATTERNS = tuple(
     )
 )
 
+_PREFIX_SKIP_RETRY_INSTRUCTION = (
+    "Each replacement must rewrite the entire excerpt from its first character; "
+    "do not start at a later sentence. Previous candidates were dropped because "
+    "they skipped the beginning of the flagged span."
+)
+
 _LLM_OPTION_SCHEMA: dict[str, Any] = {
     "type": "object",
     "additionalProperties": False,
@@ -157,15 +163,19 @@ def generate_rewrite_options(
 
     findings_payload: list[dict[str, Any]] = []
     for finding in rewrite_findings:
-        raw_options = resolver(
-            draft_text=draft_text,
-            finding=finding,
-            style_profile=style_profile,
-            skill=skill,
-            model=model,
+        resolver_kwargs = {
+            "draft_text": draft_text,
+            "finding": finding,
+            "style_profile": style_profile,
+            "skill": skill,
+            "model": model,
+        }
+        options = _resolve_rewrite_options_for_finding(
+            finding,
+            resolver,
+            resolver_kwargs,
+            use_llm_retry_instruction=llm_resolver is None,
         )
-        options = _normalize_options_for_finding(finding, raw_options)
-        options = _ensure_empty_leadin_deletion_option(finding, options)
         findings_payload.append({"findingId": finding["id"], "options": options})
 
     return validate_options({"schemaVersion": SCHEMA_VERSION, "findings": findings_payload})
@@ -324,6 +334,27 @@ def _generate_suggestions_with_llm(**kwargs: Any) -> list[dict[str, Any]]:
     return list(result.get("candidates") or [])
 
 
+def _resolve_rewrite_options_for_finding(
+    finding: dict[str, Any],
+    resolver: OptionsResolver,
+    resolver_kwargs: dict[str, Any],
+    *,
+    use_llm_retry_instruction: bool,
+) -> list[dict[str, Any]]:
+    raw_options = resolver(**resolver_kwargs)
+    try:
+        options = _normalize_options_for_finding(finding, raw_options)
+    except ValueError as exc:
+        if "requires at least two rewrite options" not in str(exc):
+            raise
+        retry_kwargs = dict(resolver_kwargs)
+        if use_llm_retry_instruction:
+            retry_kwargs["extra_instruction"] = _PREFIX_SKIP_RETRY_INSTRUCTION
+        raw_options = resolver(**retry_kwargs)
+        options = _normalize_options_for_finding(finding, raw_options)
+    return _ensure_empty_leadin_deletion_option(finding, options)
+
+
 def _generate_options_with_llm(
     *,
     draft_text: str,
@@ -331,14 +362,15 @@ def _generate_options_with_llm(
     style_profile: LoadedStyleProfile,
     skill: EditorialRewriteSkill,
     model: str,
+    extra_instruction: str | None = None,
 ) -> list[dict[str, Any]]:
     span = finding["span"]
-    excerpt = finding["excerpt"]
     prompt = _build_rewrite_prompt(
         draft_text=draft_text,
         finding=finding,
         style_profile=style_profile,
         skill=skill,
+        extra_instruction=extra_instruction,
     )
     system_prompt = (
         f"You are a {skill.role} for a technical publication. "
@@ -407,6 +439,7 @@ def _build_rewrite_prompt(
     finding: dict[str, Any],
     style_profile: LoadedStyleProfile,
     skill: EditorialRewriteSkill,
+    extra_instruction: str | None = None,
 ) -> str:
     profile = style_profile.profile
     span = finding["span"]
@@ -474,6 +507,8 @@ def _build_rewrite_prompt(
                 "At least one option must delete the empty lead-in by using an empty replacement string.",
             ]
         )
+    if extra_instruction:
+        lines.extend(["", extra_instruction])
     return "\n".join(lines)
 
 

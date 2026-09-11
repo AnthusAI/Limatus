@@ -371,6 +371,11 @@ def run_default_judge_lane(
             raise JudgeUnavailableError(
                 "OpenAI judge is configured but OPENAI_API_KEY is not set."
             )
+        print(
+            "limatus: judge lane skipped (OPENAI_API_KEY is not set) -- "
+            "voice, tone, and other judge-dependent findings were not checked",
+            file=sys.stderr,
+        )
         return JudgeLaneResult(findings=[], rubric=None)
     try:
         return _call_openai_judge(draft_text, style_profile, judge_config)

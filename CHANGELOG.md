@@ -1,6 +1,37 @@
 # CHANGELOG
 
 
+## v0.14.3 (2026-09-11)
+
+### Bug Fixes
+
+- **cli**: Retry rewrite options after prefix-skip drops (LIM-f634c3)
+  ([#14](https://github.com/AnthusAI/Limatus/pull/14),
+  [`7745d68`](https://github.com/AnthusAI/Limatus/commit/7745d688fbd9532e3bf7b0d770cb4081722b072c))
+
+When normalization filters prefix-skipping replacements below the two-option minimum, call the
+  options resolver once more. The default LLM path adds an extra prompt instruction on retry;
+  injected resolvers are invoked again with the same kwargs.
+
+- **cli**: Treat apostrophes as word characters in judge spans (LIM-ce41d9)
+  ([#13](https://github.com/AnthusAI/Limatus/pull/13),
+  [`ba1e790`](https://github.com/AnthusAI/Limatus/commit/ba1e7902a1862e0e241248d9d9e90631de9ea0f2))
+
+### Chores
+
+- **kanbus**: Close LIM-ce41d9 after PR #13
+  ([`36dc655`](https://github.com/AnthusAI/Limatus/commit/36dc655f70cda27d1bbf6064756a0ccc3e861187))
+
+- **kanbus**: Close LIM-f634c3 after PR #14
+  ([`4f4317f`](https://github.com/AnthusAI/Limatus/commit/4f4317ffc731fc4d14d2a9b17e4c65fbcb11cb98))
+
+- **kanbus**: Start LIM-ce41d9 apostrophe word-boundary
+  ([`2cc746d`](https://github.com/AnthusAI/Limatus/commit/2cc746dba3d9b0a3e157807266f6378b4d751c03))
+
+- **kanbus**: Start LIM-f634c3; file apostrophe span bug
+  ([`6810052`](https://github.com/AnthusAI/Limatus/commit/6810052dec1e9e5d2dea512257ede5c7d5fed30b))
+
+
 ## v0.14.2 (2026-09-10)
 
 ### Bug Fixes

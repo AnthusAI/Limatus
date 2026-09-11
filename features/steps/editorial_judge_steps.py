@@ -190,3 +190,34 @@ def step_when_read_judge_system_prompt(context):
 @then("the judge system prompt forbids rewriting the draft")
 def step_then_system_prompt_forbids_rewrite(context):
     assert "Do not rewrite the draft" in context.judge_system_prompt_text
+
+
+@when('I build the OpenAI judge user prompt for a YAML draft titled "{title}"')
+def step_when_build_judge_user_prompt_yaml(context, title):
+    loaded = load_style_profile(context.profile_path)
+    draft = (
+        "---\n"
+        f"title: {title}\n"
+        "standfirst: A standfirst the judge must not score.\n"
+        "---\n\n"
+        "Body prose here.\n"
+    )
+    context.judge_user_prompt = build_judge_user_prompt(draft, loaded)
+    context.yaml_title = title
+
+
+@then('the judge user prompt does not include "{token}"')
+def step_then_judge_prompt_omits_token(context, token):
+    assert token not in context.judge_user_prompt, context.judge_user_prompt[:500]
+
+
+@then('the judge user prompt includes the body sentence "{sentence}"')
+def step_then_judge_prompt_includes_body(context, sentence):
+    assert sentence in context.judge_user_prompt
+
+
+@then("the judge system prompt says title and subtitle are a later pass")
+def step_then_system_prompt_later_headline(context):
+    text = context.judge_system_prompt_text.lower()
+    assert "later pass" in text
+    assert "title" in text

@@ -1,7 +1,7 @@
 schemaVersion: 1
 profile: canary-profile.yml
 calibration:
-  judgePromptVersion: "2"
+  judgePromptVersion: "3"
   judgeModel: gpt-5.6-terra
 entries:
   - id: house-voice

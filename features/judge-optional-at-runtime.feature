@@ -10,3 +10,4 @@ Feature: Judge optional at runtime
     When I run limatus scan without require-judge
     Then always-lane findings are present
     And judge findings are absent
+    And a stderr warning names the missing judge key

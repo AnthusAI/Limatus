@@ -1,6 +1,62 @@
 # CHANGELOG
 
 
+## v0.16.3 (2026-09-11)
+
+### Bug Fixes
+
+- Three quiet correctness gaps found using Limatus on a real draft
+  ([#21](https://github.com/AnthusAI/Limatus/pull/21),
+  [`2b60c8a`](https://github.com/AnthusAI/Limatus/commit/2b60c8ad164ea9d772db4a0d878d63ccb077cb34))
+
+Found while copy-editing a real Pilobolus article and diagnosed with the help of an Explore agent,
+  which pinned exact file/line references for each before any change was made.
+
+1. Silent judge skip. `run_default_judge_lane` returned an empty `JudgeLaneResult` with zero output
+  when `OPENAI_API_KEY` was unset and `--require-judge` wasn't passed -- every voice/tone check that
+  needs the judge silently did not run, and a diagnosis JSON from that path was indistinguishable
+  from "the judge ran and found nothing." The sibling API-error branch already prints a stderr
+  notice in this situation; the no-key branch now does too. Closes a real test gap:
+  `judge-optional-at-runtime.feature`'s "No key" scenario captured stderr but never asserted on it
+  -- it now does.
+
+2. Blockquoted text treated as the narrator's own claim. A Markdown blockquote (quoted human speech,
+  e.g. a Reddit comment reproduced in an article) was checked by `_check_unsupported_certainty` and
+  `_check_required_facts` as if the *narrator* had asserted it. Added `_is_blockquote_line`, wired
+  into both checks -- quoted material is never the narrator's certainty claim.
+
+3. `verify`'s findings were unreadable. `duplication` findings always had `evidence: ""` because
+  `_findings` read a `group["excerpt"]` key that repetition groups never set (only each `members[]`
+  entry carries one) -- now pulls the actual repeated phrase and notes the repeat count.
+  `deleted_claim` and `factual_change_risk` findings had no `rationale` at all, and
+  `factual_change_risk`'s evidence was a bare token like "new factual token: 1993" with no context
+  -- both now explain themselves, and the latter quotes the sentence that introduced the token when
+  one is found.
+
+Also: declares `pytest` in `dev` extras. `tests/` is a pytest suite (bare `assert`, `test_*`
+  functions) with no way to run it from a fresh `pip install -e ".[dev]"` today.
+
+Deliberately not touched, and written up separately as design decisions rather than bugs: `verify`'s
+  exact-string diff treats every reworded sentence as delete-plus-new-claim (a real algorithm
+  change, not a fix); `judge.provider` accepts only "openai" (an existing feature,
+  `openai-only-judge-this-stage.feature`, tests specifically that other providers are *rejected* --
+  "so we do not pretend multi-provider support exists"); and the `density` block in a diagnosis
+  never states a pass/fail verdict, only raw numbers (a schema addition, not a defect).
+
+Verified against the article that surfaced these: 0 findings changed except the three classes above
+  (blockquote sentence dropped from `unsupported_claims`; stderr warning now printed; `verify`'s
+  duplication findings now show the real repeated phrase).
+
+76 pytest tests pass (1 pre-existing, unrelated failure in test_compare.py -- a fixture resolves
+  reference-sample paths against a tempdir that doesn't contain them -- present before this change
+  and untouched by it). Behave: 30 features / 64 scenarios / 256 steps, all passing (was 255 steps;
+  the new stderr assertion is the added one).
+
+Claude-Session: https://claude.ai/code/session_01VXT47sZM5anEmz8PmN8mbf
+
+Co-authored-by: Claude <noreply@anthropic.com>
+
+
 ## v0.16.2 (2026-09-11)
 
 ### Bug Fixes

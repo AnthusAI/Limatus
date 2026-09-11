@@ -20,7 +20,10 @@ from limatus.editorial_judge import (  # noqa: E402
     _judge_output_schema,
     _map_openai_findings,
     build_judge_user_prompt,
+    drop_frontmatter_findings,
+    judge_system_prompt,
     run_default_judge_lane,
+    scrub_rubric_frontmatter,
 )
 from limatus.editorial_scan import scan_draft  # noqa: E402
 from limatus.editorial_style import load_style_profile  # noqa: E402
@@ -204,6 +207,56 @@ class EditorialJudgeTests(unittest.TestCase):
                         config.profile.judge,
                         require_judge=True,
                     )
+
+    def test_build_judge_user_prompt_blanks_yaml_title(self):
+        config = load_style_profile(VOICE_PROMPT_PROFILE)
+        draft = (
+            "---\n"
+            "title: Secret Title Token\n"
+            "standfirst: Standfirst must not leak.\n"
+            "---\n\n"
+            "Body prose here.\n"
+        )
+        prompt = build_judge_user_prompt(draft, config)
+        self.assertNotIn("Secret Title Token", prompt)
+        self.assertNotIn("Standfirst must not leak.", prompt)
+        self.assertIn("Body prose here.", prompt)
+        self.assertIn("judge the article body", prompt)
+
+    def test_judge_system_prompt_is_body_pass(self):
+        text = judge_system_prompt()
+        self.assertIn("later pass", text)
+        self.assertIn("article-body pass", text)
+
+    def test_drop_frontmatter_findings_and_rubric_evidence(self):
+        draft = "---\ntitle: Hello World Title\n---\n\nBody after yaml.\n"
+        yaml_end = draft.index("Body")
+        title_start = draft.index("Hello")
+        findings = [
+            {
+                "id": "finding-yaml",
+                "span": {"start": title_start, "end": title_start + 5},
+            },
+            {
+                "id": "finding-body",
+                "span": {"start": yaml_end, "end": yaml_end + 4},
+            },
+        ]
+        kept = drop_frontmatter_findings(findings, draft)
+        self.assertEqual([f["id"] for f in kept], ["finding-body"])
+        rubric = {
+            "clarity": {
+                "score": 3,
+                "evidence": [
+                    {"start": 7, "end": 12, "note": "title"},
+                    {"start": yaml_end, "end": yaml_end + 4, "note": "body"},
+                ],
+            }
+        }
+        scrubbed = scrub_rubric_frontmatter(rubric, draft)
+        self.assertEqual(scrubbed["clarity"]["evidence"], [
+            {"start": yaml_end, "end": yaml_end + 4, "note": "body"},
+        ])
 
 
 if __name__ == "__main__":

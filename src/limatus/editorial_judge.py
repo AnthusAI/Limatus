@@ -5,6 +5,7 @@ import sys
 from dataclasses import dataclass
 from typing import Any, Callable, Protocol
 
+from .editorial_diagnosis import _YAML_FRONTMATTER_RE, _mask_yaml_frontmatter
 from .editorial_diagnosis_schema import (
     FINDING_SOURCE_JUDGE,
     RUBRIC_DIMENSIONS,
@@ -19,7 +20,7 @@ from .editorial_style import (
     StyleProfile,
 )
 
-JUDGE_PROMPT_VERSION = "2"
+JUDGE_PROMPT_VERSION = "3"
 
 JUDGE_REFERENCE_EXCERPT_CHARS = 500
 
@@ -194,13 +195,66 @@ def _voice_config_section(profile: StyleProfile) -> str:
     return "\n".join(lines) + "\n"
 
 
+def yaml_frontmatter_end(draft_text: str) -> int:
+    """Return the exclusive end offset of a leading YAML block, or 0."""
+    match = _YAML_FRONTMATTER_RE.match(draft_text.replace("\r\n", "\n"))
+    return match.end() if match else 0
+
+
+def drop_frontmatter_findings(
+    findings: list[dict[str, Any]], draft_text: str
+) -> list[dict[str, Any]]:
+    yaml_end = yaml_frontmatter_end(draft_text)
+    if yaml_end <= 0:
+        return findings
+    kept: list[dict[str, Any]] = []
+    for finding in findings:
+        span = finding.get("span") or {}
+        start = span.get("start")
+        if isinstance(start, int) and start < yaml_end:
+            continue
+        kept.append(finding)
+    return kept
+
+
+def scrub_rubric_frontmatter(rubric: dict[str, Any] | None, draft_text: str) -> dict[str, Any] | None:
+    if rubric is None:
+        return None
+    yaml_end = yaml_frontmatter_end(draft_text)
+    if yaml_end <= 0:
+        return rubric
+    scrubbed: dict[str, Any] = {}
+    for name, dimension in rubric.items():
+        if not isinstance(dimension, dict):
+            scrubbed[name] = dimension
+            continue
+        evidence = dimension.get("evidence")
+        if not isinstance(evidence, list):
+            scrubbed[name] = dimension
+            continue
+        kept_evidence = []
+        for item in evidence:
+            if not isinstance(item, dict):
+                continue
+            start = item.get("start")
+            if isinstance(start, int) and start < yaml_end:
+                continue
+            kept_evidence.append(item)
+        scrubbed[name] = {**dimension, "evidence": kept_evidence}
+    return scrubbed
+
+
 def build_judge_user_prompt(draft_text: str, style_profile: LoadedStyleProfile) -> str:
     voice_section = _voice_config_section(style_profile.profile)
     references = _reference_excerpts_section(style_profile.samples)
+    masked = _mask_yaml_frontmatter(draft_text.replace("\r\n", "\n"))
     return (
         f"{voice_section}"
         f"{references}"
-        f"---\nDraft ({len(draft_text)} characters):\n{draft_text}"
+        "---\n"
+        f"Draft ({len(draft_text)} characters). Leading YAML frontmatter is blanked; "
+        "judge the article body. Character offsets still refer to the original file.\n"
+        f"{masked}"
     )
 
 
@@ -217,6 +271,8 @@ def _system_prompt() -> str:
         "When judging voice, use sentence style, voice patterns, structure, and reference sample "
         "excerpts as register anchors only; do not copy reference prose. Do not optimize for "
         "detector scores or synthetic imperfection. "
+        "This scan is the article-body pass. Do not score or cite the title, standfirst, "
+        "description, or other YAML fields; title and subtitle are a later pass. "
         "Rubric scores are integers from 1 (weak) to 5 (strong) with brief evidence spans."
     )
 
@@ -296,9 +352,10 @@ def _call_openai_judge(
     rubric = payload.get("rubric")
     if rubric is not None and not isinstance(rubric, dict):
         rubric = None
+    mapped = _map_openai_findings(raw_findings, draft_text, model=model)
     return JudgeLaneResult(
-        findings=_map_openai_findings(raw_findings, draft_text, model=model),
-        rubric=rubric,
+        findings=drop_frontmatter_findings(mapped, draft_text),
+        rubric=scrub_rubric_frontmatter(rubric, draft_text),
     )
 
 

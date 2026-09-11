@@ -454,6 +454,8 @@ def _build_rewrite_prompt(
         f"- Tone: {'; '.join(profile.tone)}",
         f"- Sentence style: {'; '.join(profile.sentence_style)}",
     ]
+    if profile.editorial_aim:
+        lines.append(f"- Editorial aim: {profile.editorial_aim}")
     if profile.voice_patterns:
         lines.append(f"- Voice patterns: {'; '.join(profile.voice_patterns)}")
     lines.extend(

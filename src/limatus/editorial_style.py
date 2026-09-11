@@ -51,6 +51,14 @@ STANDFIRST_FIELD_NAMES = frozenset(
     }
 )
 
+COMPARE_SECTION_FIELD_NAMES = frozenset({"hardConstraints"})
+
+COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE = "unsupported_claims_increase"
+
+ALLOWED_COMPARE_HARD_CONSTRAINT_NAMES = frozenset({COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE})
+
+DEFAULT_COMPARE_HARD_CONSTRAINTS: tuple[str, ...] = (COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE,)
+
 
 class StyleProfileValidationError(ValueError):
     """Raised when a style profile document or linked samples fail validation."""
@@ -116,6 +124,8 @@ class StyleProfile:
     density: DensityThresholds
     standfirst: StandfirstRules | None
     judge: JudgeConfig | None
+    editorial_aim: str | None
+    compare_hard_constraints: tuple[str, ...]
 
 
 @dataclass(frozen=True)
@@ -220,6 +230,8 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     density = _parse_density(raw.get("density"), profile_path)
     standfirst = _parse_standfirst(raw.get("standfirst"), profile_path)
     judge = _parse_judge(raw.get("judge"), profile_path)
+    editorial_aim = _parse_editorial_aim(raw.get("editorialAim"), profile_path)
+    compare_hard_constraints = _parse_compare_section(raw.get("compare"), profile_path)
 
     return StyleProfile(
         publication_key=publication_key,
@@ -238,7 +250,49 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         density=density,
         standfirst=standfirst,
         judge=judge,
+        editorial_aim=editorial_aim,
+        compare_hard_constraints=compare_hard_constraints,
     )
+
+
+def _parse_editorial_aim(value: Any, profile_path: Path) -> str | None:
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise StyleProfileValidationError(
+            f"editorialAim must be a non-empty string when set in {profile_path}"
+        )
+    return value.strip()
+
+
+def _parse_compare_section(value: Any, profile_path: Path) -> tuple[str, ...]:
+    if value is None:
+        return DEFAULT_COMPARE_HARD_CONSTRAINTS
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"compare must be a mapping in {profile_path}")
+    unknown = set(value) - COMPARE_SECTION_FIELD_NAMES
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise StyleProfileValidationError(f"Unknown compare keys in {profile_path}: {joined}")
+    hard_constraints = value.get("hardConstraints")
+    if hard_constraints is None:
+        return DEFAULT_COMPARE_HARD_CONSTRAINTS
+    if not isinstance(hard_constraints, list):
+        raise StyleProfileValidationError(f"compare.hardConstraints must be a list in {profile_path}")
+    names: list[str] = []
+    for index, entry in enumerate(hard_constraints):
+        if not isinstance(entry, str) or not entry.strip():
+            raise StyleProfileValidationError(
+                f"compare.hardConstraints[{index}] must be a non-empty string in {profile_path}"
+            )
+        name = entry.strip()
+        if name not in ALLOWED_COMPARE_HARD_CONSTRAINT_NAMES:
+            raise StyleProfileValidationError(
+                f"Unknown compare.hardConstraints name '{name}' in {profile_path}; "
+                f"allowed: {', '.join(sorted(ALLOWED_COMPARE_HARD_CONSTRAINT_NAMES))}"
+            )
+        names.append(name)
+    return tuple(names)
 
 
 def _parse_judge(value: Any, profile_path: Path) -> JudgeConfig | None:

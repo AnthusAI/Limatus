@@ -1,0 +1,31 @@
+{
+  "id": "LIM-274a812e-ebf5-4bfb-8d2a-7c912067cfe4",
+  "title": "Read-only HTML usability scan (missing alt + inline contrast)",
+  "description": "# Read-only HTML usability scan (missing alt + inline contrast)\n\nFirst slice of LIM-e872b1. Sibling of the editorial loop: diagnose only. Never rewrite the page.\n\n## DoD\n\n- CLI: `limatus usability scan --page FILE.html --profile FILE.yml [--output findings.json]`\n- Top-level `--help` lists `usability` (and `limatus usability scan`).\n- JSON findings use `finding-<16 hex>` ids (reuse `hash_short`).\n- Kinds this slice: `missing_alt`, `low_contrast`.\n- Scan is read-only: do not write the HTML file; JSON must not include rewrite/patch/options/decisions fields (same forbidden-key idea as editorial scan).\n- New YAML profile schema for usability — do **not** overload `style-profile.yml`.\n- Contrast: WCAG 2 relative-luminance formula. Resolve `color` and `background-color` only from (1) inline styles and (2) a single `<style>` block of simple `tag { ... }` / `.class { ... }` / `#id { ... }` rules. No full cascade, no computed-style browser, no screenshots, no live URL, no axe-core/Lighthouse subprocess.\n- `missing_alt`: flag `<img>` with **no** `alt` attribute. Empty `alt=\"\"` is decorative — do not flag.\n- Flag `low_contrast` only when both fg and bg colors are resolvable and the ratio is below the profile threshold (default 4.5). Skip elements where either color is unknown rather than inventing a white/black default that creates false positives.\n- pytest fixtures: one page that should find both kinds; one that should find none.\n- `PYTHONPATH=src python -m pytest tests -q` passes.\n\n## Out of scope\n\n- tap-targets, overflow, template-tells, decide/options/apply/verify\n- live URLs, screenshots, mutating CSS\n- documenting this in SKILL.md (still editorial-only until a later slice)\n- folding usability findings into editorial diagnosis arrays\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-html-scan` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-html-scan`\n- PR target: **main** (Limatus has no develop). Prefix LIM.\n\n## Inversion\n\n- A sparse/minimal page must not be punished.\n- Unknown CSS must not become fake contrast findings.\n- Editorial `limatus scan` must keep working unchanged.",
+  "type": "task",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "78c16f64-573f-427c-806c-9dfc4b8a1622",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Started. Worktree /tmp/limatus-e872b1-html-scan branch feat/LIM-274a81-usability-html-scan from origin/main.",
+      "created_at": "2026-09-11T20:48:08.667447Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-11T20:48:02.910828Z",
+  "updated_at": "2026-09-11T20:48:08.667460Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

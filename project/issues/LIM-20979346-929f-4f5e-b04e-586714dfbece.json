@@ -26,10 +26,17 @@
       "text": "Papyrus issue PPY-a1762a. Worktree /tmp/papyrus-a1762a-limatus-adapter.",
       "created_at": "2026-09-11T20:04:08.434716Z",
       "comment_type": "default"
+    },
+    {
+      "id": "8bf2b753-0a55-4462-9930-15030d10ee2a",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Papyrus PR https://github.com/AnthusAI/Papyrus/pull/80 — revision for lockfile Tactus path before merge.",
+      "created_at": "2026-09-11T20:10:01.581347Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:39:41.810552Z",
-  "updated_at": "2026-09-11T20:04:08.434737Z",
+  "updated_at": "2026-09-11T20:10:01.581375Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

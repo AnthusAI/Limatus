@@ -97,16 +97,19 @@ def test_unknown_compare_hard_constraint_rejected():
 
 def test_editorial_aim_loaded_from_profile():
     source = PORTABLE_PROFILE.read_text(encoding="utf-8")
-    with tempfile.TemporaryDirectory() as tmp:
-        path = Path(tmp) / "profile.json"
-        path.write_text(
-            source.replace(
-                '"publicationKey"',
-                '"editorialAim": "Prefer citations over casual certainty.",\n  "publicationKey"',
-            ),
-            encoding="utf-8",
-        )
-        loaded = load_style_profile(path)
+    mutated = source.replace(
+        '"publicationKey"',
+        '"editorialAim": "Prefer citations over casual certainty.",\n  "publicationKey"',
+    )
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        suffix=".json",
+        dir=PORTABLE_PROFILE.parent,
+        encoding="utf-8",
+    ) as handle:
+        handle.write(mutated)
+        handle.flush()
+        loaded = load_style_profile(handle.name)
         assert loaded.profile.editorial_aim == "Prefer citations over casual certainty."
 
 

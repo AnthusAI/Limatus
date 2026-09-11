@@ -1,0 +1,33 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install package and dev dependencies
+        run: pip install -e ".[dev]"
+
+      - name: Pytest
+        run: python -m pytest tests -q
+
+      - name: Offline editorial eval corpus
+        run: python -m limatus eval --manifest features/fixtures/editorial-diagnosis/editorial-corpus/manifest.yml
+
+      - name: Behave editorial eval smoke
+        run: behave features/editorial-eval.feature

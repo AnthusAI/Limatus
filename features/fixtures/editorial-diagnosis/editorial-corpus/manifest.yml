@@ -12,10 +12,38 @@ mustFail:
       forbidKeys:
         - revised_text
         - options
+  - id: empty-leadin
+    path: ../must-fail/empty-leadin.md
+    expectKinds:
+      - empty_leadin
+    expectTerms:
+      - today's world
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
 mustPass:
   - id: latency-and-repo
     path: ../engineering-vocab-draft.md
     sourceSample: synthetic-fixture
+    expectKinds: []
+    maxFindings: 0
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+  - id: clean-image-alts
+    path: redundancy-image-alts.md
+    sourceSample: redundancy-image-alts
+    expectKinds: []
+    maxFindings: 0
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+  - id: italic-pull-quote-only
+    path: redundancy-italic-pull-quote.md
+    sourceSample: redundancy-italic-pull-quote
     expectKinds: []
     maxFindings: 0
     optionSafety:

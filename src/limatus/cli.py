@@ -12,6 +12,8 @@
     limatus verify --original <file> --working-copy <file> --profile <style-profile.yml> [...]
     limatus headline options --job title|subtitle --working-copy <file> --profile <style-profile.yml> \\
                              --skill <editorial-rewrite-skill.yml> [...]
+    limatus eval --manifest <editorial-corpus/manifest.yml>
+    limatus canary --manifest <editorial-canary/manifest.yml>
     limatus diagnose  (alias for scan)
 
 See editorial_commands.py for each subcommand's full flag set.

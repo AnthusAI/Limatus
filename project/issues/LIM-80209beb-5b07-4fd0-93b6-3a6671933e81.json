@@ -41,10 +41,17 @@
       "text": "Title and standfirst are a **final** pass, not part of the first body scan.\n\nBody HITL first (scan with YAML masked → decide → options → compare → apply on a working copy). Headline/dek only after that working copy’s body has settled, so the title matches the article we actually have. Tracked as LIM-565ba8.\n",
       "created_at": "2026-09-11T00:30:15.998585Z",
       "comment_type": "default"
+    },
+    {
+      "id": "2a042d16-46c7-4e93-8db4-985b1d4e5d43",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "HITL order is now: body on the working copy, then title, then subtitle. Subtitle options must see the applied title plus the body. Frontmatter keys are profile-bound (not hardcoded standfirst). LIM-565ba8.\n",
+      "created_at": "2026-09-11T00:32:09.241918Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-11T00:30:15.998602Z",
+  "updated_at": "2026-09-11T00:32:09.241938Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

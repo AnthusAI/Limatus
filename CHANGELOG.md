@@ -1,6 +1,84 @@
 # CHANGELOG
 
 
+## v0.17.0 (2026-09-11)
+
+### Features
+
+- Explicit pass/fail verdict on the density block
+  ([#24](https://github.com/AnthusAI/Limatus/pull/24),
+  [`c9b7447`](https://github.com/AnthusAI/Limatus/commit/c9b744756e9ed54a78aa3f2d56f0bd990178b25e))
+
+A diagnosis's `density` block reported raw numbers (wordCount, lexicalDensity, gzipRatio) with no
+  verdict. A caller had to already know the profile's thresholds and cross-reference
+  `generic_passages` by finding kind to know whether density actually passed.
+
+Adds `skippedTooShort` and `withinThresholds` to `density_summary_as_dict`'s output.
+  `withinThresholds` is deliberately `None`, not `True`, when the document is under the profile's
+  `minWords` -- `analyze_density` suppresses both real checks in that case, so "too short to judge"
+  and "judged and passed" need to stay distinguishable rather than collapsing into one boolean.
+
+`density_summary_as_dict` now takes the profile's `DensityThresholds` and the analysis's findings
+  alongside the summary; its one call site (editorial_diagnosis.py) is updated. No other code or
+  test in the repo called this function directly, so nothing else needed touching.
+
+Verified: a 2-word draft reports `skippedTooShort: true,
+
+withinThresholds: null`; the real article this whole feedback pass came
+
+from reports `skippedTooShort: false, withinThresholds: true`.
+
+73 pytest tests pass (the same 1 pre-existing, unrelated fixture-path failure as PR #21). Behave: 30
+  features / 64 scenarios / 256 steps, all passing, unchanged from #21.
+
+Claude-Session: https://claude.ai/code/session_01VXT47sZM5anEmz8PmN8mbf
+
+Co-authored-by: Claude <noreply@anthropic.com>
+
+- Verify recognizes a reworded claim as preserved, not deleted
+  ([#25](https://github.com/AnthusAI/Limatus/pull/25),
+  [`0a322c1`](https://github.com/AnthusAI/Limatus/commit/0a322c14fba40313db734e8ba581c58c2703afe7))
+
+verify's diff was exact-string matching: any sentence whose normalized text didn't appear
+  byte-for-byte in the working copy was flagged deleted_claim, and any new fact-pattern token
+  (including a bare URL) was flagged factual_change_risk -- unconditionally. Every legitimate
+  rewrite that touches a fact-bearing sentence looked identical to deleting a claim and inventing a
+  new one, whether or not the claim actually survived.
+
+Concretely, this is what motivated the fix: rewording a sentence to add a citation -- exactly what
+  this profile's own evidenceRules ask writers to do -- registered as both a deleted_claim (old
+  wording gone) and a factual_change_risk (the new URL is a new token). The tool was penalizing the
+  edit it was supposed to encourage.
+
+`_claim_preserved` now checks, for a sentence whose exact wording changed: does some working
+  sentence contain almost all of the original's own concrete facts (numbers, years, links, absolute
+  words), and share enough of its general vocabulary that this isn't a coincidental match between
+  two unrelated claims. Both checks are containment (how much of the original survives in the
+  candidate), not symmetric Jaccard -- Jaccard penalizes a candidate for containing MORE than the
+  original, which is exactly what a citation-adding edit does, and exactly what sentence-merging
+  does (two short original sentences folded into one longer working sentence dilutes symmetric
+  overlap even when nearly every original word is still present). Verified on a real paragraph that
+  both adds nothing but a citation and merges two sentences into one: zero false-positive findings,
+  where the previous algorithm flagged it.
+
+`factual_change_risk` (both the score and the finding) now diffs against `_RISK_FACT_PATTERN`, which
+  is `_FACT_PATTERN` minus the bare-URL branch: adding a citation to an existing claim must never by
+  itself read as introducing a new, unverified fact. A newly added number, year, or absolute word
+  still does -- that is a real new claim.
+
+Three new tests lock in the distinction this fix exists to draw: a reworded sentence with an added
+  citation is not a deleted claim; adding a citation to an existing number is not a new risk; a
+  sentence whose claim is actually different (not just reworded) is still flagged. All four
+  pre-existing verifier tests are unchanged and still pass.
+
+76 pytest tests pass (7 in test_verifier.py, up from 4; same 1 pre-existing, unrelated fixture-path
+  failure as #21/#22). Behave: 30 features / 64 scenarios / 256 steps, all passing, unchanged.
+
+Claude-Session: https://claude.ai/code/session_01VXT47sZM5anEmz8PmN8mbf
+
+Co-authored-by: Claude <noreply@anthropic.com>
+
+
 ## v0.16.3 (2026-09-11)
 
 ### Bug Fixes

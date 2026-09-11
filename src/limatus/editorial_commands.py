@@ -14,6 +14,7 @@ from .editorial_rewrite_options import generate_rewrite_options
 from .editorial_style import load_style_profile
 from .editorial_apply import apply_patch, render_diff
 from .editorial_compare import compare_candidates, compare_regression
+from .editorial_guideline_alignment import default_alignment_resolver
 from .editorial_compare_schema import validate_compare_report
 from .editorial_verifier import verify_revision
 from .editorial_standfirst import check_standfirst
@@ -261,6 +262,7 @@ def editorial_compare(flags: list[str]) -> None:
             working_path.read_text(encoding="utf-8"),
             style_profile=style_profile,
             surface=surface,
+            alignment_resolver=default_alignment_resolver(),
         )
     else:
         baseline_path = Path(args.baseline).resolve()
@@ -288,6 +290,7 @@ def editorial_compare(flags: list[str]) -> None:
             style_profile=style_profile,
             surface=surface,
             mode="rank",
+            alignment_resolver=default_alignment_resolver(),
         )
 
     validate_compare_report(result)

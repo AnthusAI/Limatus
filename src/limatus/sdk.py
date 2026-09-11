@@ -25,7 +25,8 @@ from .editorial_options_schema import (
 from .editorial_rewrite_options import generate_rewrite_options, generate_rewrite_suggestions
 from .editorial_standfirst import check_standfirst as _check_standfirst
 from .editorial_style import LoadedStyleProfile, StyleProfileValidationError, load_style_profile
-from .editorial_compare import compare_candidates, compare_regression
+from .editorial_compare import AlignmentResolver, compare_candidates, compare_regression
+from .editorial_guideline_alignment import default_alignment_resolver
 from .editorial_compare_schema import validate_compare_report
 from .editorial_judge import JudgeResolver
 from .editorial_verifier import verify_revision
@@ -112,9 +113,12 @@ def compare(
     surface: str | None = None,
     mode: str = "rank",
     judge_resolver: JudgeResolver | None = None,
+    alignment_resolver: AlignmentResolver | None = None,
 ) -> dict[str, Any]:
     """Rank draft candidates against a baseline using inspectable always-lane deltas."""
 
+    if alignment_resolver is None:
+        alignment_resolver = default_alignment_resolver()
     report = compare_candidates(
         baseline_text,
         candidates,
@@ -122,6 +126,7 @@ def compare(
         surface=surface,
         mode=mode,
         judge_resolver=judge_resolver,
+        alignment_resolver=alignment_resolver,
     )
     return validate_compare_report(report)
 

@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.16.0 (2026-09-11)
+
+### Chores
+
+- **kanbus**: Close LIM-565ba8 after PR #18
+  ([`bc7346c`](https://github.com/AnthusAI/Limatus/commit/bc7346c3c8edd0b0bbcec2d573cffbba3ed83381))
+
+### Features
+
+- **headline**: Profile-bound title/subtitle HITL after body (LIM-565ba8)
+  ([#18](https://github.com/AnthusAI/Limatus/pull/18),
+  [`0e2a375`](https://github.com/AnthusAI/Limatus/commit/0e2a3754bdb84e5f9c97848e4e42e8f1a3650e4c))
+
+Add headline schema and CLI options pass, YAML scalar spans for frontmatter fields, and
+  suggest_rewrite frontmatter preservation for body-only candidates.
+
+
 ## v0.15.0 (2026-09-11)
 
 ### Bug Fixes

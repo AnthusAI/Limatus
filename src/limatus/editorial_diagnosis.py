@@ -52,6 +52,13 @@ _JSX_SELF_CLOSING_COMPONENT_RE = re.compile(r"<[A-Z][\w.]*(?:\s[\s\S]*?)?/>")
 _MARKUS_DIRECTIVE_OPEN_RE = re.compile(r"^:{2,3}[A-Za-z][\w-]*\{[^}\n]*\}[ \t]*$", re.MULTILINE)
 _MARKUS_DIRECTIVE_CLOSE_RE = re.compile(r"^:::[ \t]*$", re.MULTILINE)
 
+# Markdown/HTML image markup repeats alt text and path fragments across figures; mask before
+# redundancy shingling (length preserved). Linked images first so inner `![...](...)` is not
+# left partially unmasked. Ordinary `[label](url)` links are untouched (no leading `!`).
+_MARKDOWN_LINKED_IMAGE_RE = re.compile(r"\[![^\]]*\]\([^)]*\)\]\([^)]*\)")
+_MARKDOWN_IMAGE_RE = re.compile(r"!\[[^\]]*\]\([^)]*\)")
+_HTML_IMG_RE = re.compile(r"<img\b[^>]*>", re.IGNORECASE)
+
 # A leading YAML frontmatter block (title/date/description/standfirst/...) has its own
 # genre conventions -- a standfirst is deliberately terse by design -- that don't belong
 # under body-prose rules like cadence or redundancy. Anth.us drafts never had frontmatter,
@@ -615,8 +622,20 @@ def _mask_jsx_components(text: str) -> str:
     return text
 
 
+def _mask_image_markup(text: str) -> str:
+    """Blank image alt/url markup before redundancy shingling; spans stay aligned with original."""
+    text = _MARKDOWN_LINKED_IMAGE_RE.sub(_blank_match, text)
+    text = _MARKDOWN_IMAGE_RE.sub(_blank_match, text)
+    text = _HTML_IMG_RE.sub(_blank_match, text)
+    return text
+
+
+def _mask_for_redundancy_shingling(text: str) -> str:
+    return _mask_image_markup(_mask_jsx_components(text))
+
+
 def _check_redundancy(text: str) -> list[dict[str, Any]]:
-    masked = _mask_jsx_components(text)
+    masked = _mask_for_redundancy_shingling(text)
     shingles: dict[str, list[tuple[int, int]]] = {}
     for _masked_sentence, start, end in sentence_spans(masked):
         words = re.findall(r"[A-Za-z0-9']+", masked[start:end].lower())
@@ -646,6 +665,8 @@ def _check_redundancy(text: str) -> list[dict[str, Any]]:
                 }
             )
         if _is_rhetorical_refrain(members):
+            continue
+        if all(_is_blockquote_line(text, member["span"]["start"]) for member in members):
             continue
         group_id = stable_repetition_group_id([member["id"] for member in members])
         if group_id in seen_group_ids:

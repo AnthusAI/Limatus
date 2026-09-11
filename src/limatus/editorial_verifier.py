@@ -29,7 +29,32 @@ _FACT_PATTERN = re.compile(
     r"(?:\b\d+(?:\.\d+)?%?\b|\b20\d{2}\b|https?://\S+|\b(?:always|never|eliminates?|proves?|guarantees?)\b)",
     re.IGNORECASE,
 )
+# Same as _FACT_PATTERN minus the bare-URL branch. Used only for the
+# "did a brand-new risky claim appear" diff: a newly added citation link is
+# the encouraged edit under this profile's own evidenceRules ("link a
+# source in the sentence it supports"), so adding one must never by itself
+# read as introducing a new, unverified fact. A newly added number, year, or
+# absolute word still does -- that is a real new claim, not a citation.
+_RISK_FACT_PATTERN = re.compile(
+    r"(?:\b\d+(?:\.\d+)?%?\b|\b20\d{2}\b|\b(?:always|never|eliminates?|proves?|guarantees?)\b)",
+    re.IGNORECASE,
+)
 _NORMALIZE_PATTERN = re.compile(r"[^a-z0-9']+")
+
+# Two thresholds decide whether a working-copy sentence still carries the
+# same claim as an original sentence whose exact wording is gone.
+#
+# FACT_OVERLAP is checked first and is strict: the two sentences must share
+# almost all of the same concrete facts (numbers, years, links, absolute
+# words) -- this is what actually identifies "the same claim," and it is
+# what a citation-adding rewrite always preserves.
+#
+# WORD_OVERLAP is a lower-bar sanity check on top: it guards against two
+# sentences that coincidentally cite the same fact (two different claims
+# that both happen to mention "2018") being treated as one claim just
+# because they share that one token.
+_SIMILAR_CLAIM_FACT_OVERLAP = 0.75
+_SIMILAR_CLAIM_WORD_OVERLAP = 0.35
 
 
 def verify_revision(
@@ -150,6 +175,53 @@ def _total_score(specificity: float, clarity: float, audience_fit: float, voice_
     )
 
 
+def _fact_tokens(sentence: str) -> set[str]:
+    return set(_FACT_PATTERN.findall(sentence.lower()))
+
+
+def _claim_preserved(original_sentence: str, working_sentences: list[str]) -> bool:
+    """Whether some sentence in the working copy still carries the same claim
+    as `original_sentence`, even if no working sentence matches it exactly.
+
+    Exact match (after normalization) is checked first and is enough on its
+    own -- most of a draft is untouched between revisions, and this keeps the
+    common case cheap. Where the wording did change, a working sentence
+    counts as carrying the same claim only if it contains almost all of the
+    *original's own* facts -- containment, not symmetric overlap, because a
+    legitimate edit adds a citation alongside a kept fact, and a symmetric
+    measure would count that added fact against the match precisely when it
+    should not. Requiring enough general vocabulary overlap on top still
+    rules out a coincidental match between two unrelated claims that happen
+    to cite the same year or number.
+    """
+    normalized_original = _normalize(original_sentence)
+    if normalized_original in {_normalize(candidate) for candidate in working_sentences}:
+        return True
+
+    original_facts = _fact_tokens(original_sentence)
+    if not original_facts:
+        return False
+    original_words = set(tokenize(original_sentence))
+
+    for candidate in working_sentences:
+        candidate_facts = _fact_tokens(candidate)
+        if not candidate_facts:
+            continue
+        fact_containment = len(original_facts & candidate_facts) / len(original_facts)
+        if fact_containment < _SIMILAR_CLAIM_FACT_OVERLAP:
+            continue
+        # Containment here too, for the same reason as the fact check: a
+        # common legitimate edit merges two short sentences into one longer
+        # one (or the reverse), which shrinks symmetric Jaccard by inflating
+        # the union even when almost every word of the original is still
+        # present somewhere in the candidate.
+        candidate_words = set(tokenize(candidate))
+        word_containment = len(original_words & candidate_words) / len(original_words)
+        if word_containment >= _SIMILAR_CLAIM_WORD_OVERLAP:
+            return True
+    return False
+
+
 def _sentence_carrying_fact(working: str, fact: str) -> str | None:
     """The first sentence in the working copy that actually contains a newly
     introduced factual token, so a finding points at readable context instead
@@ -162,23 +234,24 @@ def _sentence_carrying_fact(working: str, fact: str) -> str | None:
 
 def _findings(original: str, working: str, original_diagnosis: dict[str, Any], working_diagnosis: dict[str, Any]) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
-    original_sentences = {_normalize(sentence) for sentence in sentences(original)}
-    working_sentences = {_normalize(sentence) for sentence in sentences(working)}
+    working_sentence_list = sentences(working)
     for sentence in sentences(original):
-        normalized = _normalize(sentence)
-        if normalized and normalized not in working_sentences and _FACT_PATTERN.search(sentence):
-            findings.append(
-                {
-                    "kind": "deleted_claim",
-                    "evidence": sentence,
-                    "rationale": (
-                        "This sentence from the original does not appear, in this or "
-                        "any reworded form, anywhere in the working copy."
-                    ),
-                }
-            )
-    original_facts = set(_FACT_PATTERN.findall(original.lower()))
-    working_facts = set(_FACT_PATTERN.findall(working.lower()))
+        if not _FACT_PATTERN.search(sentence):
+            continue
+        if _claim_preserved(sentence, working_sentence_list):
+            continue
+        findings.append(
+            {
+                "kind": "deleted_claim",
+                "evidence": sentence,
+                "rationale": (
+                    "This sentence's claim does not appear, in this or any "
+                    "sufficiently similar reworded form, anywhere in the working copy."
+                ),
+            }
+        )
+    original_facts = set(_RISK_FACT_PATTERN.findall(original.lower()))
+    working_facts = set(_RISK_FACT_PATTERN.findall(working.lower()))
     for fact in sorted(working_facts - original_facts):
         carrying_sentence = _sentence_carrying_fact(working, fact)
         findings.append(
@@ -205,12 +278,13 @@ def _findings(original: str, working: str, original_diagnosis: dict[str, Any], w
 
 
 def _factual_change_risk(original: str, working: str) -> float:
-    original_facts = set(_FACT_PATTERN.findall(original.lower()))
-    working_facts = set(_FACT_PATTERN.findall(working.lower()))
+    original_facts = set(_RISK_FACT_PATTERN.findall(original.lower()))
+    working_facts = set(_RISK_FACT_PATTERN.findall(working.lower()))
+    working_sentence_list = sentences(working)
     deleted_claims = sum(
         1
         for sentence in sentences(original)
-        if _FACT_PATTERN.search(sentence) and _normalize(sentence) not in {_normalize(item) for item in sentences(working)}
+        if _FACT_PATTERN.search(sentence) and not _claim_preserved(sentence, working_sentence_list)
     )
     return _clamp((len(working_facts - original_facts) + deleted_claims) / 4)
 

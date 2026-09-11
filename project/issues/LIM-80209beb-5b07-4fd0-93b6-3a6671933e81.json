@@ -3,7 +3,7 @@
   "title": "HITL dogfood: Limatus on published Pilobolus",
   "description": "# HITL dogfood: Limatus on published Pilobolus\n\n## Intent\n\nAs Ryan, I want Limatus (scan + OpenAI judge + options + compare) to copy-edit every published Pilobolus article. The **agent** handles finding-level skip/rewrite from the house voice profile and VOICE.md. I steer by picking among ranked options and commenting on the *feel* of the piece. I do not micro-manage rubric heuristics.\n\n## Loop\n\nscan (always-lane ∪ OpenAI Terra judge) → **agent** records skip/rewrite/delete/keep/add from voice → options for rewrite only → compare shortlist → **human** chooses option and/or comments → apply to working copy → human publish.\n\n## Guardrails\n\n- Source: latest Pilobol.us `origin/main` `web/content/articles/*.md` (not index).\n- Profile: Papyrus `publications/pilobolus/style-profile.yml` with `judge.provider: openai` (Terra default).\n- Scan does not invent decisions. The copy-editing agent does. The human does not sit on every finding id.\n- Working copies change only after an explicit human-chosen apply. No auto-publish.\n\n## Out of scope\n\nNewsroom UI. Auto-apply compare winners. Detector-score optimization. Unattended whole-document rewrite.",
   "type": "initiative",
-  "status": "blocked",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -55,11 +55,18 @@
       "text": "Engineering epic LIM-0b9d81 closed. CLI loop is on main (v0.17.0 + #26). Initiative stays blocked only if Ryan still wants more published-article HITL; not engineering WIP.",
       "created_at": "2026-09-11T19:37:18.389873Z",
       "comment_type": "default"
+    },
+    {
+      "id": "56040a6d-3d44-4431-bd0f-7d7d8987a7c5",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Unblocking by closing. There was no missing human decision. An old comment parked this until Ryan picked option ids or retested published articles. That gate is obsolete: the copy-editing agent steers from voice; the CLI loop is on main. Remaining published-article copy-edits are operator use of limatus, not a blocked engineering wait.",
+      "created_at": "2026-09-11T20:03:54.278124Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-11T19:37:18.389888Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T20:03:54.278141Z",
+  "closed_at": "2026-09-11T20:03:54.247796Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

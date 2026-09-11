@@ -4,6 +4,7 @@ import json
 import sys
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO_ROOT / "src"))
@@ -69,6 +70,43 @@ class EditorialHeadlineTests(unittest.TestCase):
         )
         self.assertEqual(len(payload["findings"]), 1)
         self.assertGreaterEqual(len(payload["findings"][0]["options"]), 2)
+
+    def test_subtitle_prompt_asks_for_article_summary_under_title(self):
+        working_copy = FIXTURE_ROOT / "working-copy.md"
+        text = working_copy.read_text(encoding="utf-8")
+        profile = load_style_profile(FIXTURE_ROOT / "style-profile.yml")
+        captured: dict = {}
+
+        def fake_api(**kwargs):
+            captured["user_prompt"] = kwargs["user_prompt"]
+            return {
+                "options": [
+                    {
+                        "replacement": "Summary one of the whole article.",
+                        "reason": "Dek under the title.",
+                        "factVerificationRequired": False,
+                        "unresolvedQuestions": [],
+                    },
+                    {
+                        "replacement": "Summary two of the whole article.",
+                        "reason": "Alternate dek.",
+                        "factVerificationRequired": False,
+                        "unresolvedQuestions": [],
+                    },
+                ]
+            }
+
+        with patch("limatus.editorial_llm.call_structured_responses_api", side_effect=fake_api):
+            generate_headline_options(
+                text,
+                job="subtitle",
+                style_profile=profile,
+                skill_path=SKILL_PATH,
+            )
+        prompt = captured["user_prompt"]
+        self.assertIn("short summary of the entire article", prompt)
+        self.assertIn("Do not return another title", prompt)
+        self.assertIn("Placeholder title for the article", prompt)
 
 
 class SuggestRewriteFrontmatterTests(unittest.TestCase):

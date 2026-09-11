@@ -855,6 +855,7 @@ def _check_profile_rules(
             rules.banned_phrases,
             rules.banned_intensifiers,
             rules.banned_patterns,
+            rules.preferred_phrasing,
             effective_contrast_cap is not None,
             rules.no_emojis,
         )
@@ -888,6 +889,31 @@ def _check_profile_rules(
                 f"banned phrase '{phrase}'",
             )
             profile_generic.append(finding)
+            occupied.append((start, end))
+            search_from = end
+
+    for from_phrase, to_phrase in rules.preferred_phrasing:
+        normalized_from = from_phrase.lower()
+        if normalized_from in lexicon_avoid:
+            continue
+        search_from = 0
+        while True:
+            index = lowered_text.find(normalized_from, search_from)
+            if index < 0:
+                break
+            start = index
+            end = index + len(normalized_from)
+            if _spans_overlap(start, end, occupied):
+                search_from = end
+                continue
+            profile_generic.append(
+                _profile_rule_finding(
+                    text,
+                    start,
+                    end,
+                    f'prefer "{to_phrase}" over "{from_phrase}"',
+                )
+            )
             occupied.append((start, end))
             search_from = end
 

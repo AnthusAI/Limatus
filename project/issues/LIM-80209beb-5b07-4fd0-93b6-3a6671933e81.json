@@ -34,10 +34,17 @@
       "text": "Parked. Ryan will test after the product loop works. Do not use published Pilobolus or Ryan as the test harness. Next: LIM-0129cf — CLI scan → decide → options → compare → apply on fixtures/working copies.\n",
       "created_at": "2026-09-10T23:18:18.020051Z",
       "comment_type": "default"
+    },
+    {
+      "id": "47828d88-17ae-4d23-aa89-61e1042e0002",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Title and standfirst are a **final** pass, not part of the first body scan.\n\nBody HITL first (scan with YAML masked → decide → options → compare → apply on a working copy). Headline/dek only after that working copy’s body has settled, so the title matches the article we actually have. Tracked as LIM-565ba8.\n",
+      "created_at": "2026-09-11T00:30:15.998585Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:43.634156Z",
-  "updated_at": "2026-09-10T23:18:18.049857Z",
+  "updated_at": "2026-09-11T00:30:15.998602Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

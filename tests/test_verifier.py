@@ -56,3 +56,36 @@ def test_verifier_has_no_detector_scores_in_input_or_output():
     rendered = repr(result).lower()
     assert "detector" not in rendered
     assert "ai_score" not in rendered
+
+def test_reworded_sentence_with_added_citation_is_not_a_deleted_claim():
+    original = "He had never spat in a tube."
+    working = (
+        "He had never spat in a tube, according to court records from the case."
+    )
+
+    result = verify_revision(original, working, style_profile=PROFILE)
+
+    kinds = {f["kind"] for f in result["findings"]}
+    assert "deleted_claim" not in kinds, result["findings"]
+
+
+def test_adding_a_citation_to_an_existing_number_is_not_a_new_risk():
+    original = "The study found an 85% recall rate."
+    working = "The study found an [85% recall rate](https://example.com/study)."
+
+    result = verify_revision(original, working, style_profile=PROFILE)
+
+    kinds = {f["kind"] for f in result["findings"]}
+    assert "factual_change_risk" not in kinds, result["findings"]
+    assert result["penalties"]["factual_change_risk"]["working"] == 0.0
+
+
+def test_genuinely_different_claim_is_still_a_deleted_claim():
+    original = "The report found a 68% recall rate at 90% precision."
+    working = "The team declined to publish a recall figure."
+
+    result = verify_revision(original, working, style_profile=PROFILE)
+
+    kinds = {f["kind"] for f in result["findings"]}
+    assert "deleted_claim" in kinds, result["findings"]
+

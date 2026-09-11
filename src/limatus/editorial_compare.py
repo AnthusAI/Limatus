@@ -129,6 +129,7 @@ def compare_regression(
     style_profile: LoadedStyleProfile,
     surface: str | None = None,
     judge_resolver: JudgeResolver | None = None,
+    alignment_resolver: AlignmentResolver | None = None,
 ) -> dict[str, Any]:
     return compare_candidates(
         original_text,
@@ -137,6 +138,7 @@ def compare_regression(
         surface=surface,
         mode="regression",
         judge_resolver=judge_resolver,
+        alignment_resolver=alignment_resolver,
     )
 
 

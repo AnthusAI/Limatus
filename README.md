@@ -64,6 +64,8 @@ limatus headline options --job title --working-copy path/to/working.md \
   --profile path/to/style-profile.yml --skill path/to/rewrite-skill.yml
 limatus headline options --job subtitle --working-copy path/to/working.md \
   --profile path/to/style-profile.yml --skill path/to/rewrite-skill.yml
+limatus eval --manifest features/fixtures/editorial-diagnosis/editorial-corpus/manifest.yml
+limatus canary --manifest features/fixtures/editorial-canary/manifest.yml
 ```
 
 From Python, the same read-only diagnose step is available without touching the draft file:
@@ -202,6 +204,36 @@ The command leaves the draft unchanged and writes validated diagnostic JSON.
 The same command works with a YAML profile by changing only the `--profile`
 path, for example `features/fixtures/editorial-diagnosis/style-profile.yml`.
 
+## Offline editorial eval corpus
+
+`limatus eval` runs a deterministic, network-free regression over checked-in drafts
+listed in a YAML manifest. Each row names a draft path, expected finding kinds
+(`expectKinds`), optional `maxFindings`, and option-safety checks so diagnose output
+never embeds rewrite payloads. The default smoke corpus lives at
+`features/fixtures/editorial-diagnosis/editorial-corpus/manifest.yml`.
+
+```bash
+limatus eval --manifest features/fixtures/editorial-diagnosis/editorial-corpus/manifest.yml
+```
+
+CI runs the same command on every pull request (see `.github/workflows/ci.yml`).
+
+### Turning a reject into a fixture
+
+When copy-edit is rejected or a false positive is confirmed in production:
+
+1. Copy the draft (or a minimized excerpt that still reproduces the behavior) into
+   `features/fixtures/editorial-diagnosis/` — for example `must-fail/` for drafts
+   that must surface specific findings, or beside the corpus under
+   `editorial-corpus/` for clean negatives.
+2. Add a `mustFail` or `mustPass` row to the manifest with `id`, `path`,
+   `expectKinds`, and for failures a non-empty `expectTerms` list that appears in
+   the diagnosis JSON. Set `maxFindings: 0` on `mustPass` rows that should stay clean.
+3. Run `limatus eval --manifest …` locally until the new row passes.
+4. Commit the draft and manifest change together.
+
+Agents should follow the same loop when editorial diagnosis regresses in the field.
+
 ## Testing
 
 Limatus's test suite is written in Gherkin and run with [Behave](https://behave.readthedocs.io/):
@@ -210,10 +242,16 @@ Limatus's test suite is written in Gherkin and run with [Behave](https://behave.
 behave
 ```
 
+Pytest unit tests:
+
+```bash
+python -m pytest tests -q
+```
+
 Judge calibration canary (fixture judge, no API key):
 
 ```bash
-PYTHONPATH=src python -m limatus canary --manifest features/fixtures/editorial-canary/manifest.yml
+limatus canary --manifest features/fixtures/editorial-canary/manifest.yml
 ```
 
 ## License

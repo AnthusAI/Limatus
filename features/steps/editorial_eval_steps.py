@@ -59,8 +59,11 @@ def step_then_eval_succeeds(context):
 @then("it reports pass and fail corpus coverage")
 def step_then_eval_coverage(context):
     assert "PASS mustFail/brochure-hedges" in context.eval_result.stdout
+    assert "PASS mustFail/empty-leadin" in context.eval_result.stdout
     assert "PASS mustPass/latency-and-repo" in context.eval_result.stdout
-    assert "offline eval: 2 passed, 0 failed" in context.eval_result.stdout
+    assert "PASS mustPass/clean-image-alts" in context.eval_result.stdout
+    assert "PASS mustPass/italic-pull-quote-only" in context.eval_result.stdout
+    assert "offline eval: 5 passed, 0 failed" in context.eval_result.stdout
 
 
 @then("the offline eval exits with a regression failure")

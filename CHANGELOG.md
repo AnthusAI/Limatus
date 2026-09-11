@@ -1,6 +1,26 @@
 # CHANGELOG
 
 
+## v0.14.4 (2026-09-11)
+
+### Bug Fixes
+
+- **cli**: Publication editorialAim and profile compare constraints (LIM-edbde2)
+  ([#15](https://github.com/AnthusAI/Limatus/pull/15),
+  [`dad38af`](https://github.com/AnthusAI/Limatus/commit/dad38af75801d185b2a9123e654cc24fbdbf5a21))
+
+### Chores
+
+- **kanbus**: Close LIM-edbde2 after PR #15
+  ([`c5abc21`](https://github.com/AnthusAI/Limatus/commit/c5abc21a30f85f2cfc85bbdac5d2431a61bdb7d0))
+
+- **kanbus**: File publication-owned editorialAim for compare
+  ([`3d1a902`](https://github.com/AnthusAI/Limatus/commit/3d1a90291d4c5484225bbb0dba48429e663c59e9))
+
+- **kanbus**: Start LIM-edbde2 editorialAim compare layer
+  ([`382eb11`](https://github.com/AnthusAI/Limatus/commit/382eb11750b912035ffbf508db62e0acc70e2914))
+
+
 ## v0.14.3 (2026-09-11)
 
 ### Bug Fixes

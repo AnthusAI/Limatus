@@ -62,6 +62,29 @@ class EditorialJudgeTests(unittest.TestCase):
         self.assertEqual(len(mapped), 1)
         self.assertEqual(mapped[0]["excerpt"], ".")
 
+    def test_map_openai_findings_skips_span_after_apostrophe(self):
+        draft = "Magnanti's door."
+        apostrophe = draft.index("'")
+        s_start = apostrophe + 1
+        self.assertEqual(draft[s_start], "s")
+        raw = [
+            {
+                "kind": "vague_claim",
+                "start": s_start,
+                "end": s_start + 3,
+                "rationale": "Inside possessive.",
+            },
+            {
+                "kind": "vague_claim",
+                "start": draft.index("."),
+                "end": draft.index(".") + 1,
+                "rationale": "Punctuation span.",
+            },
+        ]
+        mapped = _map_openai_findings(raw, draft, model="test-model")
+        self.assertEqual(len(mapped), 1)
+        self.assertEqual(mapped[0]["excerpt"], ".")
+
     def test_judge_output_budget_bounds(self):
         self.assertEqual(_judge_output_budget(""), DEFAULT_JUDGE_OUTPUT_TOKENS)
         tiny = "ab"

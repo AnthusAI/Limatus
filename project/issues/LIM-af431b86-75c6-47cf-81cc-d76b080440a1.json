@@ -3,7 +3,7 @@
   "title": "Coalesce unread span prefix so options can apply",
   "description": "# Coalesce unread span prefix so options can apply\n\n## Intent\n\nAs a copy-editing agent, I want rewrite options that start later in a flagged excerpt to keep the unread prefix, so wiki-janitor-style spans can still produce two valid options instead of fail-closing after retry.\n\n## Done when\n\n- `_coalesce_span_prefix` prepends unread excerpt bytes when a replacement aligns with a later substring.\n- Options normalization coalesces before the prefix-skip drop, so suffix-start LLM patches become full-span replacements.\n- Apply coalesces the selected replacement the same way, then still rejects if the result would skip the prefix.\n- Tests: suffix-start options succeed without requiring a retry; apply of a coalesced suffix replacement preserves the prefix on the working copy; original unchanged.\n- Existing retry remains for cases that still cannot meet two options after coalesce.\n\n## Out of scope\n\nSilently applying to `--original`. Changing published files.\n\n```gherkin\nFeature: Prefix-coalesced rewrite options\n  Scenario: Suffix-start replacements become full-span options\n    Given a finding excerpt that starts with unread prefix text\n    And a resolver returns replacements that start at a later sentence\n    When I generate rewrite options\n    Then at least two options remain\n    And each replacement begins with the unread prefix\n\n  Scenario: Apply keeps the unread prefix\n    Given a working copy and a coalesced option\n    When I apply that option\n    Then the working copy still contains the unread prefix\n    And the original file is unchanged\n```",
   "type": "bug",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "c3af5046-2c55-47e0-9bf1-9bf20f8d0793",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Accepted and squash-merged to main as PR #17 (d2a8006). Suffix-start rewrite options coalesce the unread prefix; apply keeps it; original unchanged.\n",
+      "created_at": "2026-09-11T00:38:11.078657Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-11T00:33:25.145947Z",
-  "updated_at": "2026-09-11T00:34:18.993208Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T00:38:11.122168Z",
+  "closed_at": "2026-09-11T00:38:11.122144Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

@@ -97,6 +97,7 @@ _STAT_COUNT_UNIT_PATTERN = re.compile(
     re.IGNORECASE,
 )
 _LIST_ORDINAL_LINE_PATTERN = re.compile(r"^\s*\d+\.\s")
+_BLOCKQUOTE_LINE_PATTERN = re.compile(r"^\s*>")
 _STICKER_NUMBER_PATTERN = re.compile(r"#\d+\b")
 
 _REFRAIN_MAX_WORDS = 12
@@ -496,6 +497,8 @@ def _check_unsupported_certainty(text: str) -> list[dict[str, Any]]:
     for sentence, start, end in sentence_spans(text):
         if not _sentence_has_unsupported_certainty(sentence):
             continue
+        if _is_blockquote_line(text, start):
+            continue
         if _CITATION_PATTERN.search(sentence):
             continue
         findings.append(
@@ -665,9 +668,18 @@ def _sentence_has_statistical_claim(sentence: str) -> bool:
     return False
 
 
+def _is_blockquote_line(text: str, start: int) -> bool:
+    """A Markdown blockquote is quoted material -- someone else's words, not
+    the narrator's own claim -- so it should never be checked as if the
+    narrator asserted it."""
+    return bool(_BLOCKQUOTE_LINE_PATTERN.match(line_at_offset(text, start)))
+
+
 def _sentence_excluded_from_attribution(text: str, sentence: str, start: int) -> bool:
     line = line_at_offset(text, start)
     if _LIST_ORDINAL_LINE_PATTERN.match(line):
+        return True
+    if _BLOCKQUOTE_LINE_PATTERN.match(line):
         return True
     if _STICKER_NUMBER_PATTERN.search(sentence) and not _STAT_PERCENT_PATTERN.search(sentence):
         return True

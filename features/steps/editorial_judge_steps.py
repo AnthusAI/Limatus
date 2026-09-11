@@ -130,6 +130,12 @@ def step_then_always_lane_findings_present(context):
     assert any(f.get("source") == FINDING_SOURCE_PROFILE for f in findings), findings
 
 
+@then("a stderr warning names the missing judge key")
+def step_then_stderr_names_missing_judge_key(context):
+    stderr = context.cli_result.stderr
+    assert "OPENAI_API_KEY" in stderr, stderr
+
+
 @given("a profile that sets judge provider to anthropic")
 def step_given_anthropic_judge_profile(context):
     context.profile_path = SCAN_FIXTURE_ROOT / "judge-anthropic-profile.yml"

@@ -150,6 +150,16 @@ def _total_score(specificity: float, clarity: float, audience_fit: float, voice_
     )
 
 
+def _sentence_carrying_fact(working: str, fact: str) -> str | None:
+    """The first sentence in the working copy that actually contains a newly
+    introduced factual token, so a finding points at readable context instead
+    of a bare token like "1993"."""
+    for sentence in sentences(working):
+        if fact in sentence.lower():
+            return sentence
+    return None
+
+
 def _findings(original: str, working: str, original_diagnosis: dict[str, Any], working_diagnosis: dict[str, Any]) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     original_sentences = {_normalize(sentence) for sentence in sentences(original)}
@@ -157,15 +167,37 @@ def _findings(original: str, working: str, original_diagnosis: dict[str, Any], w
     for sentence in sentences(original):
         normalized = _normalize(sentence)
         if normalized and normalized not in working_sentences and _FACT_PATTERN.search(sentence):
-            findings.append({"kind": "deleted_claim", "evidence": sentence})
+            findings.append(
+                {
+                    "kind": "deleted_claim",
+                    "evidence": sentence,
+                    "rationale": (
+                        "This sentence from the original does not appear, in this or "
+                        "any reworded form, anywhere in the working copy."
+                    ),
+                }
+            )
     original_facts = set(_FACT_PATTERN.findall(original.lower()))
     working_facts = set(_FACT_PATTERN.findall(working.lower()))
     for fact in sorted(working_facts - original_facts):
-        findings.append({"kind": "factual_change_risk", "evidence": f"new factual token: {fact}"})
+        carrying_sentence = _sentence_carrying_fact(working, fact)
+        findings.append(
+            {
+                "kind": "factual_change_risk",
+                "evidence": carrying_sentence or fact,
+                "rationale": f"Introduces '{fact}', a factual token not present in the original.",
+            }
+        )
     for finding in working_diagnosis.get("unsupported_claims", []):
         findings.append({"kind": "unsupported_claim", "evidence": finding["excerpt"], "rationale": finding["rationale"]})
     for group in working_diagnosis.get("repetition_groups", []):
-        findings.append({"kind": "duplication", "evidence": group.get("excerpt", ""), "rationale": group.get("rationale", "Repeated phrasing.")})
+        members = group.get("members") or []
+        excerpts = [member["excerpt"] for member in members if member.get("excerpt")]
+        evidence = excerpts[0] if excerpts else ""
+        rationale = group.get("rationale", "Repeated phrasing.")
+        if len(excerpts) > 1:
+            rationale = f"{rationale} Repeats {len(excerpts)} times, including: " + " / ".join(excerpts)
+        findings.append({"kind": "duplication", "evidence": evidence, "rationale": rationale})
     for finding in working_diagnosis.get("generic_passages", []):
         if finding.get("kind") in {"empty_leadin", "vague_claim", "list_shaped_prose"}:
             findings.append({"kind": "residual_boilerplate", "evidence": finding["excerpt"], "rationale": finding["rationale"]})

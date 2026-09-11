@@ -3,7 +3,7 @@
   "title": "Register-aware phrasing: bare noun-compound density vs pithy/accessible dial",
   "description": "",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -24,11 +24,18 @@
       "text": "Starting near-term path (1): preferredPhrasing from/to in Limatus, seed Anth.us thrift family → family of thrift. No POS/NLP.",
       "created_at": "2026-09-11T20:40:09.929730Z",
       "comment_type": "default"
+    },
+    {
+      "id": "c4ed6eb1-cca6-4f21-9c4a-772c6aa59908",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closed: #29 on main (a498f22). rules.preferredPhrasing from/to; not auto-applied. POS/density dial not in this story. Anth.us seed is a Papyrus follow-on (needs limatus >=0.18 after the feat release; Papyrus currently pins <0.18.0).",
+      "created_at": "2026-09-11T20:43:36.794347Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T11:48:57.563841Z",
-  "updated_at": "2026-09-11T20:40:09.929747Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T20:43:36.794363Z",
+  "closed_at": "2026-09-11T20:43:36.745481Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

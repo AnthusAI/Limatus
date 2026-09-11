@@ -1,6 +1,26 @@
 # CHANGELOG
 
 
+## v0.16.2 (2026-09-11)
+
+### Bug Fixes
+
+- **judge**: Body scan blanks YAML so title is a later pass
+  ([#20](https://github.com/AnthusAI/Limatus/pull/20),
+  [`0e26c24`](https://github.com/AnthusAI/Limatus/commit/0e26c24d8980a3d2b05f3f5e80493fa727812478))
+
+LIM-530ec2: the OpenAI judge was scoring the YAML title. Mask frontmatter the same way the profile
+  lane does, drop YAML-span findings/rubric evidence, and bump JUDGE_PROMPT_VERSION with the canary
+  pin.
+
+### Chores
+
+- **kanbus**: Close LIM-530ec2 after PR #20
+  ([`9db7d0b`](https://github.com/AnthusAI/Limatus/commit/9db7d0babce682d2c9b13b7aa81e7ef1c98749aa))
+
+Judge body scan blanks YAML on main; title and subtitle stay a later pass.
+
+
 ## v0.16.1 (2026-09-11)
 
 ### Bug Fixes

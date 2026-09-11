@@ -221,12 +221,30 @@ def analyze_density(text: str, thresholds: DensityThresholds) -> DensityAnalysis
     return DensityAnalysis(summary=summary, findings=tuple(findings))
 
 
-def density_summary_as_dict(summary: DensitySummary) -> dict[str, Any]:
+def density_summary_as_dict(
+    summary: DensitySummary,
+    *,
+    thresholds: DensityThresholds,
+    findings: tuple[dict[str, Any], ...],
+) -> dict[str, Any]:
+    """The raw numbers plus an explicit verdict.
+
+    A caller previously had to already know the profile's thresholds and
+    cross-reference the diagnosis's other finding lists to know whether
+    density was actually fine. `withinThresholds` is `None` -- not `True` --
+    when the document is too short for the density/compression checks to run
+    at all (`analyze_density` suppresses both in that case): "too short to
+    judge" and "judged and passed" are different things, and collapsing them
+    into one boolean would hide the first.
+    """
+    skipped_too_short = summary.word_count < thresholds.min_words
     return {
         "wordCount": summary.word_count,
         "sentenceCount": summary.sentence_count,
         "lexicalDensity": summary.lexical_density,
         "gzipRatio": summary.gzip_ratio,
+        "skippedTooShort": skipped_too_short,
+        "withinThresholds": None if skipped_too_short else len(findings) == 0,
     }
 
 

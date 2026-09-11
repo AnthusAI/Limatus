@@ -219,15 +219,19 @@ def _system_prompt() -> str:
     )
 
 
+def _is_word_char(ch: str) -> bool:
+    return ch.isalnum() or ch in ("'", "\u2019")
+
+
 def _index_is_word_boundary(text: str, index: int) -> bool:
     draft_len = len(text)
     if index <= 0 or index >= draft_len:
         return True
     inside = text[index]
     outside = text[index - 1]
-    if not inside.isalnum():
+    if not _is_word_char(inside):
         return True
-    if not outside.isalnum():
+    if not _is_word_char(outside):
         return True
     return False
 

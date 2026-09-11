@@ -173,7 +173,11 @@ def diagnose_draft(
     density_summary: dict[str, Any] | None = None
     if checks["informationDensity"]:
         density_analysis = analyze_density(text, style_profile.profile.density)
-        density_summary = density_summary_as_dict(density_analysis.summary)
+        density_summary = density_summary_as_dict(
+            density_analysis.summary,
+            thresholds=style_profile.profile.density,
+            findings=density_analysis.findings,
+        )
         generic_passages.extend(density_analysis.findings)
 
     rules_findings = _check_profile_rules(

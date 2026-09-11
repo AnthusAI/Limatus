@@ -1,0 +1,20 @@
+{
+  "schema_version": 1,
+  "event_id": "22b0f16e-d937-4881-a3bf-bd77ed694de6",
+  "issue_id": "LIM-edbde2e3-1eff-45a3-9a29-64bca33ad4f1",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-11T00:09:00.757Z",
+  "actor_id": "8458c498-f041-7092-e4e3-6418236765a7",
+  "payload": {
+    "assignee": null,
+    "description": "## Intent\n\nPublications disagree about the *same* rewrite. One wants cited quantifications. Pilobolus prefers accessibility and engagement. Limatus must not bake one house's tradeoff into compare.\n\nScan still reports missing attribution. Findings are signal, not verdicts. Preference lives at **compare / option choice**, in the style profile, in English.\n\n## Do not\n\n- A closed enum of axes (`accessibilityAndEngagement` vs `checkableSpecifics`) that becomes a second scoring system beside audience/tone/evidenceRules.\n- Hidden weights. Compare already forbids weight dumps.\n- Turning off `missingAttribution` for Pilobolus so the numbers never get flagged. The finding is real; the *choice* of rewrite is what differs.\n- Auto-applying a compare winner.\n\n## Do\n\n### 1. Optional `editorialAim` on the style profile\n\nTwo to four sentences, publication-authored, used **when guidelines conflict**. Omitted means: use audience, tone, lexicon, and evidenceRules as already written — no extra knob.\n\nPilobolus example:\n\n> When a checkable statistic and a plain image compete, prefer the sentence a non-technical reader will remember. Numbers that need a footnote more than they serve the scene should be cut or said in ordinary language. Link a source in the sentence when a figure stays.\n\nAn engineering pub example:\n\n> Keep the checkable number. Name the source in the sentence. Do not trade a cited figure for a vaguer accessible paraphrase.\n\n### 2. Compare layer: ask the question in English\n\n`limatus compare` (rank mode, including option previews) emits `guidelineAlignment`:\n\n- question: which candidate better matches **this** profile's audience, tone, and editorialAim\n- winner id (or tie)\n- decidingAxis in the profile's own words (not a global enum)\n- short rationale\n\nThis is a **layer**, not a replacement for always-lane deltas. The judge already sees audience/tone/evidenceRules; it is not asked this pairwise question today. Rubric deltas (clarity/voice on the hook-turn working copy) agreed with accessibility, then `unsupported_claims_increase` disqualified rank 1.\n\n### 3. Hard constraints are profile-owned\n\n`unsupported_claims_increase` is not a universal DQ. Profile lists which hard constraints apply. Default may keep today's constraint for engineering fixtures. Pilobolus can omit it so dropping unsourced stats is not treated as a worse draft.\n\n### 4. Options prompt sees editorialAim\n\nSo the set includes \"cite in the sentence\" and \"say it in ordinary language\" when that is the pub's conflict — not three grammar tweaks of the same numbers.\n\n## Gherkin\n\n```gherkin\nFeature: Publication-owned rewrite preference\n  Scenario: Pilobolus prefers the accessible sentence\n    Given a style profile whose editorialAim prefers a remembered image over an unsourced statistic\n    And two rewrite candidates for the same span, one with unsourced percentages and one in ordinary language\n    When limatus compare ranks those candidates\n    Then guidelineAlignment names the ordinary-language candidate\n    And missing_attribution remains on the scan of the numbered original\n    And nothing is applied to the original draft\n```\n\n## Out of scope\n\nDetector scores. Auto-apply. POS tagging / LIM-74d5fb noun compounds.",
+    "issue_type": "story",
+    "labels": [
+      "editorial"
+    ],
+    "parent": "LIM-9d14e6bf-f556-4ebf-a9a3-0ed8b0d92fce",
+    "priority": 1,
+    "status": "open",
+    "title": "Publication-owned editorial aim for compare and options"
+  }
+}

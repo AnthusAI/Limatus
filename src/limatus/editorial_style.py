@@ -35,7 +35,15 @@ DEFAULT_DENSITY_THRESHOLDS = {
 }
 
 RULES_FIELD_NAMES = frozenset(
-    {"bannedPhrases", "bannedIntensifiers", "bannedPatterns", "contrastCap", "noEmojis", "bySurface"}
+    {
+        "bannedPhrases",
+        "bannedIntensifiers",
+        "bannedPatterns",
+        "preferredPhrasing",
+        "contrastCap",
+        "noEmojis",
+        "bySurface",
+    }
 )
 
 STANDFIRST_FIELD_NAMES = frozenset(
@@ -77,6 +85,7 @@ class EditorialRules:
     banned_phrases: tuple[str, ...]
     banned_intensifiers: tuple[str, ...]
     banned_patterns: tuple[tuple[str, str], ...]
+    preferred_phrasing: tuple[tuple[str, str], ...]
     contrast_cap: int | None
     no_emojis: bool
     # Surface name -> contrast cap override for that surface (None means "off
@@ -366,6 +375,7 @@ def _empty_rules() -> EditorialRules:
         banned_phrases=(),
         banned_intensifiers=(),
         banned_patterns=(),
+        preferred_phrasing=(),
         contrast_cap=None,
         no_emojis=False,
         by_surface={},
@@ -388,6 +398,7 @@ def _parse_rules(value: Any, profile_path: Path) -> EditorialRules:
         value.get("bannedIntensifiers"), "rules.bannedIntensifiers", profile_path
     )
     banned_patterns = _parse_banned_patterns(value.get("bannedPatterns"), profile_path)
+    preferred_phrasing = _parse_preferred_phrasing(value.get("preferredPhrasing"), profile_path)
     contrast_cap = _parse_contrast_cap(value.get("contrastCap"), profile_path)
     no_emojis = _parse_no_emojis(value.get("noEmojis"), profile_path)
     by_surface = _parse_by_surface(value.get("bySurface"), profile_path)
@@ -396,6 +407,7 @@ def _parse_rules(value: Any, profile_path: Path) -> EditorialRules:
         banned_phrases=tuple(banned_phrases),
         banned_intensifiers=tuple(banned_intensifiers),
         banned_patterns=tuple(banned_patterns),
+        preferred_phrasing=tuple(preferred_phrasing),
         contrast_cap=contrast_cap,
         no_emojis=no_emojis,
         by_surface=by_surface,
@@ -532,6 +544,32 @@ def _optional_string_list(value: Any, field_name: str, profile_path: Path) -> li
     if value is None:
         return []
     return _require_string_list(value, field_name, profile_path)
+
+
+def _parse_preferred_phrasing(value: Any, profile_path: Path) -> list[tuple[str, str]]:
+    if value is None:
+        return []
+    if not isinstance(value, list):
+        raise StyleProfileValidationError(f"rules.preferredPhrasing must be a list in {profile_path}")
+
+    pairs: list[tuple[str, str]] = []
+    for index, entry in enumerate(value):
+        if not isinstance(entry, dict):
+            raise StyleProfileValidationError(
+                f"rules.preferredPhrasing[{index}] must be a mapping in {profile_path}"
+            )
+        from_phrase = entry.get("from")
+        to_phrase = entry.get("to")
+        if not isinstance(from_phrase, str) or not from_phrase.strip():
+            raise StyleProfileValidationError(
+                f"rules.preferredPhrasing[{index}].from must be a non-empty string in {profile_path}"
+            )
+        if not isinstance(to_phrase, str) or not to_phrase.strip():
+            raise StyleProfileValidationError(
+                f"rules.preferredPhrasing[{index}].to must be a non-empty string in {profile_path}"
+            )
+        pairs.append((from_phrase.strip(), to_phrase.strip()))
+    return pairs
 
 
 def _parse_banned_patterns(value: Any, profile_path: Path) -> list[tuple[str, str]]:

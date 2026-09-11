@@ -1,6 +1,45 @@
 # CHANGELOG
 
 
+## v0.15.0 (2026-09-11)
+
+### Bug Fixes
+
+- **editorial**: Coalesce unread span prefix onto suffix-start replacements (LIM-af431b)
+  ([#17](https://github.com/AnthusAI/Limatus/pull/17),
+  [`d2a8006`](https://github.com/AnthusAI/Limatus/commit/d2a80061cc63465c9ce5efda8c640672cedfb7ef))
+
+LLM rewrite options that align with a later substring of the span excerpt are prepended with the
+  unread prefix before normalization skip checks and apply, so wiki-janitor options succeed without
+  dropping below two options or failing closed at apply time.
+
+### Chores
+
+- **kanbus**: Article then title then subtitle (LIM-565ba8)
+  ([`c56dcba`](https://github.com/AnthusAI/Limatus/commit/c56dcbaf4a5d171c4b77e8fd85d40f09b0af27cb))
+
+- **kanbus**: Close LIM-54c503 after PR #16
+  ([`baab441`](https://github.com/AnthusAI/Limatus/commit/baab4414f312323430f9d501e6bc1ee6096a7baf))
+
+- **kanbus**: Close LIM-af431b after PR #17
+  ([`0183df2`](https://github.com/AnthusAI/Limatus/commit/0183df2cb05eac2462184d6f807b1ef29773ef15))
+
+- **kanbus**: Start headline, compare-CLI, and prefix-coalesce slices
+  ([`a14119a`](https://github.com/AnthusAI/Limatus/commit/a14119aa1df400fb9d86acafdd7d1c943d7abbaa))
+
+- **kanbus**: Title and standfirst after body HITL (LIM-565ba8)
+  ([`7b1671a`](https://github.com/AnthusAI/Limatus/commit/7b1671ad88167c970ac37ca1050ed81197df026d))
+
+### Features
+
+- **compare**: Wire default guideline alignment resolver (LIM-54c503)
+  ([#16](https://github.com/AnthusAI/Limatus/pull/16),
+  [`4fa8fa4`](https://github.com/AnthusAI/Limatus/commit/4fa8fa43bc9d10f169abab182ca9fd2e0e1a0145))
+
+Add OpenAI-backed alignment resolution when OPENAI_API_KEY is set, and pass it through limatus
+  compare CLI and SDK compare().
+
+
 ## v0.14.4 (2026-09-11)
 
 ### Bug Fixes

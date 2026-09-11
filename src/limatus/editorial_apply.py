@@ -20,6 +20,24 @@ SCHEMA_VERSION = 1
 _SPAN_PREFIX_PROBE_LEN = 40
 
 
+def _coalesce_span_prefix(excerpt: str, replacement: str) -> str:
+    """Prepend unread excerpt bytes when a replacement aligns with a suffix of the excerpt.
+
+    LLM options sometimes start at a later sentence inside the span; coalescing preserves
+    the unread prefix instead of fail-closing. Empty replacements are unchanged.
+    """
+
+    if not replacement:
+        return replacement
+    probe = replacement.lstrip()[:_SPAN_PREFIX_PROBE_LEN]
+    if not probe:
+        return replacement
+    index = excerpt.find(probe)
+    if index <= 0:
+        return replacement
+    return excerpt[:index] + replacement.lstrip()
+
+
 def _replacement_skips_span_prefix(excerpt: str, replacement: str) -> bool:
     """Return whether a non-empty replacement aligns with a suffix of the span excerpt.
 
@@ -123,7 +141,7 @@ def apply_patch(
     if working_text[start:end] != anchor:
         raise ValueError("Patch anchor is stale or conflicting with the current working copy.")
 
-    replacement = option["patch"]["replacement"]
+    replacement = _coalesce_span_prefix(anchor, option["patch"]["replacement"])
     if _replacement_skips_span_prefix(anchor, replacement):
         raise ValueError(
             "Patch replacement skips the start of the span excerpt; "

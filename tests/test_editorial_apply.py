@@ -4,8 +4,31 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from limatus.editorial_apply import _replacement_skips_span_prefix, apply_patch
+from limatus.editorial_apply import (
+    _coalesce_span_prefix,
+    _replacement_skips_span_prefix,
+    apply_patch,
+)
 from limatus.editorial_rewrite_options import _normalize_options_for_finding
+
+
+class CoalesceSpanPrefixTests(unittest.TestCase):
+    def test_prepends_unread_prefix_for_suffix_aligned_replacement(self):
+        excerpt = "gap in a wall.\n\nIt ended the way it started."
+        replacement = "It ended the way it started."
+        self.assertEqual(
+            _coalesce_span_prefix(excerpt, replacement),
+            excerpt,
+        )
+
+    def test_leaves_replacement_unchanged_when_aligned_at_start(self):
+        excerpt = "gap in a wall.\n\nIt ended the way it started."
+        replacement = "gap in a wall. It ended differently."
+        self.assertEqual(_coalesce_span_prefix(excerpt, replacement), replacement)
+
+    def test_empty_replacement_unchanged(self):
+        excerpt = "gap in a wall.\n\nIt ended the way it started."
+        self.assertEqual(_coalesce_span_prefix(excerpt, ""), "")
 
 
 class ReplacementSkipsSpanPrefixTests(unittest.TestCase):
@@ -58,7 +81,7 @@ class ApplyPatchSpanPrefixTests(unittest.TestCase):
             ],
         }
 
-    def test_apply_rejects_replacement_that_skips_prefix(self):
+    def test_apply_coalesces_suffix_start_replacement_and_keeps_prefix(self):
         prefix = "gap in a wall.\n\n"
         suffix = "It ended the way it started."
         excerpt = prefix + suffix
@@ -73,22 +96,21 @@ class ApplyPatchSpanPrefixTests(unittest.TestCase):
             working = Path(tmp) / "working.md"
             original.write_text(body, encoding="utf-8")
             working.write_text(body, encoding="utf-8")
-            before = working.read_bytes()
-            with self.assertRaisesRegex(ValueError, "skips the start of the span"):
-                apply_patch(
-                    original_path=original,
-                    working_copy_path=working,
-                    options=self._options_payload(
-                        finding_id=finding_id,
-                        option_id=option_id,
-                        span={"start": start, "end": end},
-                        replacement=replacement,
-                    ),
+            apply_patch(
+                original_path=original,
+                working_copy_path=working,
+                options=self._options_payload(
                     finding_id=finding_id,
-                    anchor=excerpt,
                     option_id=option_id,
-                )
-            self.assertEqual(working.read_bytes(), before)
+                    span={"start": start, "end": end},
+                    replacement=replacement,
+                ),
+                finding_id=finding_id,
+                anchor=excerpt,
+                option_id=option_id,
+            )
+            expected = body[:start] + excerpt + body[end:]
+            self.assertEqual(working.read_text(encoding="utf-8"), expected)
 
     def test_apply_allows_replacement_from_span_start(self):
         excerpt = "gap in a wall.\n\nIt ended the way it started."
@@ -121,7 +143,7 @@ class ApplyPatchSpanPrefixTests(unittest.TestCase):
 
 
 class NormalizeOptionsSpanPrefixTests(unittest.TestCase):
-    def test_normalize_drops_option_that_skips_prefix(self):
+    def test_normalize_coalesces_option_that_started_mid_span(self):
         excerpt = "gap in a wall.\n\nIt ended the way it started."
         finding = {
             "id": "finding-0123456789abcdef",
@@ -133,7 +155,7 @@ class NormalizeOptionsSpanPrefixTests(unittest.TestCase):
             [
                 {
                     "patch": {"replacement": "It ended the way it started."},
-                    "reason": "Bad: starts mid-span.",
+                    "reason": "Suffix-aligned; coalesce prefix.",
                 },
                 {
                     "patch": {"replacement": "gap in a wall. It ended cleanly."},
@@ -146,8 +168,8 @@ class NormalizeOptionsSpanPrefixTests(unittest.TestCase):
             ],
         )
         replacements = [option["patch"]["replacement"] for option in options]
-        self.assertEqual(len(replacements), 2)
-        self.assertNotIn("It ended the way it started.", replacements)
+        self.assertEqual(len(replacements), 3)
+        self.assertIn(excerpt, replacements)
         self.assertIn("gap in a wall. It ended cleanly.", replacements)
 
 

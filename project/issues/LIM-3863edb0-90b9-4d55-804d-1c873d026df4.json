@@ -3,7 +3,7 @@
   "title": "Progressive-disclosure skills documentation within the CLI",
   "description": "# Progressive-disclosure skills documentation within the CLI\n\n## Intent\n\nShip Limatus's own documentation the way the Agent Skills ecosystem itself\nnow recommends: a real CLI subcommand that prints the package's `SKILL.md`\ncontent, so agents discover workflows/disambiguation live from the\ninstalled tool instead of only through `--help`, and the installed skill\nand the CLI's own docs can never drift apart (single source of truth).\n\nThis converges with a broader pattern that's formed since Anthropic\npublished the Agent Skills open standard in late 2025: MemNexus's `mx\nagent-help`, the community-proposed `mycli skills` / `mycli skills <id>`\nprotocol, Mintlify serving `skill.md` on every docs site, and multiple\n\"AI-friendly CLI\" writeups converging on the same shape -- a docs\nsubcommand an agent can call directly, distinct from `--help`.\n\n## Why this over just good `--help`\n\n`--help` is freeform and human-oriented -- it can't express command order,\nprerequisites, which flags are required vs. optional, or \"when you're\nstuck between two similar commands, do X.\" Field data cited in the source\nresearch (CLIWatch's benchmark) found agents forced to discover a complex\nCLI through progressive `--help` alone completed 33% of tasks; a\nskills-style subcommand mechanism recovered that to 50% and cut discovery\ntokens roughly in half.\n\n## Design, per the pattern's own field-tested lessons\n\n- **A real subcommand, not a flag.** `limatus skill` (or similar), not\n  `--agent-help`. Agents scan the command list; a flag is invisible to\n  that scan the way a subcommand isn't.\n- **Single source of truth.** The subcommand reads and prints the actual\n  packaged `SKILL.md` (via `importlib.resources`, not a duplicated string\n  literal) -- the installed skill and the CLI's live output are always the\n  same file. Keep the YAML frontmatter intact when printing; agents\n  tolerate it fine and it's what makes the identical file work whether\n  it's read from a Claude Code skill install or piped from the CLI.\n- **Advertise it explicitly.** A one-line pointer in the top-level\n  `--help`/epilog, naming specific tools by name where that's shown to\n  outperform a generic \"AI agents:\" phrasing.\n- **Keep it lean.** Match the Agent Skills standard's own progressive-\n  disclosure shape: a short name/description surfaced up front, full body\n  on demand, SKILL.md itself under roughly 5,000 tokens.\n- **Don't strip cross-references from regular `--help`.** Field data\n  suggests agents use the skill dump for disambiguation/getting-unstuck,\n  not first-pass discovery for a clear task -- `--help` still needs to\n  carry enough to handle the common case on its own.\n\n## Open questions\n\n- Where does `limatus`'s own `SKILL.md` live once this exists -- is it the\n  same file that gets installed as an actual Claude Code / Codex / Gemini\n  CLI skill for *using* Limatus, or a separate CLI-reference doc? (The\n  source material's implementation sketch assumes they're the same file --\n  that's the whole point of the pattern, worth confirming it holds once\n  Limatus has two capabilities (diagnose/options + the web usability\n  loop) rather than one.)\n- Does this ship as `limatus skill` (singular, whole-package dump) or\n  `limatus skills` / `limatus skills <id>` (drill-down per capability),\n  given Limatus will have at least two distinct capabilities once\n  PPY-1cae29's web-usability loop lands?\n\n## Relationship to the rest of Limatus\n\nSibling epic under the Limatus initiative. Depends on nothing else being\nfinished first, but is more useful once there's a real `SKILL.md` worth\nserving -- reasonable to sequence after `LIM-2d43b1` (CLI/SDK decoupling)\nhas the CLI surface stable enough to document.",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Starting: package SKILL.md and limatus skill subcommand that prints it. Worktree /tmp/limatus-3863ed-skill-cli.",
       "created_at": "2026-09-11T20:44:11.176864Z",
       "comment_type": "default"
+    },
+    {
+      "id": "71c6f4e0-1cf1-4d1b-84d4-83ef931bbaf7",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged AnthusAI/Limatus#30 (6c60b3d): packaged src/limatus/data/SKILL.md printed verbatim by `limatus skill`; advertised in top-level --help. DoD met.",
+      "created_at": "2026-09-11T20:46:53.008046Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-08T18:43:18.303553Z",
-  "updated_at": "2026-09-11T20:44:11.176877Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T20:46:53.039788Z",
+  "closed_at": "2026-09-11T20:46:53.039768Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

@@ -1,9 +1,9 @@
 {
   "id": "LIM-20979346-929f-4f5e-b04e-586714dfbece",
-  "title": "Papyrus adapter: style profile \u2192 Limatus config + SDK calls",
+  "title": "Papyrus adapter: style profile → Limatus config + SDK calls",
   "description": "Replace in-tree editorial core usage with SDK calls. Map Papyrus style profiles into standalone config. Keep human apply/publish gates.\n\nDependencies:\n  blocked-by: 46c0b8\n\nMigrated from PPY-2c62aa.",
   "type": "story",
-  "status": "open",
+  "status": "in_progress",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,12 +12,26 @@
     "editorial"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "b8aebd85-39b3-4321-90d6-66477f034983",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Implementing: Papyrus worktree off origin/develop; papyrus editorial diagnose/options call Limatus SDK; in-tree editorial_* become shims.",
+      "created_at": "2026-09-11T20:03:54.400004Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "5d0666e5-14fb-44c7-8fea-29dbe10a3d84",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Papyrus issue PPY-a1762a. Worktree /tmp/papyrus-a1762a-limatus-adapter.",
+      "created_at": "2026-09-11T20:04:08.434716Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-09-08T18:39:41.810552Z",
-  "updated_at": "2026-09-08T18:39:41.810657Z",
+  "updated_at": "2026-09-11T20:04:08.434737Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,
-  "custom": {},
-  "agent": null
+  "custom": {}
 }

@@ -20,3 +20,13 @@ Feature: Judge voice prompt
   Scenario: Judge system prompt forbids rewriting
     When I read the judge system prompt
     Then the judge system prompt forbids rewriting the draft
+
+  Scenario: Judge body pass does not see YAML titles
+    Given a style profile for judge voice prompt fixtures
+    When I build the OpenAI judge user prompt for a YAML draft titled "Secret Title Token"
+    Then the judge user prompt does not include "Secret Title Token"
+    And the judge user prompt includes the body sentence "Body prose here."
+
+  Scenario: Judge system prompt is the body pass
+    When I read the judge system prompt
+    Then the judge system prompt says title and subtitle are a later pass

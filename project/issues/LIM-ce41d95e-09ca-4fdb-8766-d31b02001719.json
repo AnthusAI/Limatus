@@ -3,7 +3,7 @@
   "title": "Judge spans that split on apostrophes in contractions",
   "description": "## Intent\n\nHook-turn judge finding started at the `s` in `Magnanti's` (`before` was `sandwich.\n\nMagnanti'`). `_index_is_word_boundary` treats `'` as a boundary because it is not `isalnum`, so mid-contraction cuts pass the LIM-906fc9 filter. Apply would have emitted `Magnanti'` plus a new sentence.\n\n## Gherkin\n\n```gherkin\nFeature: Apostrophe is not a word boundary\n  Scenario: Span starting after an apostrophe in a contraction is dropped\n    Given draft text containing Magnanti's door\n    And a judge span whose start index is the s after the apostrophe\n    When the judge lane maps findings\n    Then that span is not emitted\n```\n\n## Out of scope\n\nPublished-file apply. Options retry (LIM-f634c3).",
   "type": "bug",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Grok plan. Composer implements. Worktree `/tmp/limatus-LIM-ce41d9-apostrophe` branch `cursor/feature/LIM-ce41d9-apostrophe` off origin/main.\n\nTreat ASCII apostrophe and U+2019 as word characters in `_index_is_word_boundary` so a span starting at the `s` in `Magnanti's` is dropped. Unittest with that draft. No `project/` in the PR. Do not change options retry (LIM-f634c3).\n",
       "created_at": "2026-09-10T23:59:36.760841Z",
       "comment_type": "default"
+    },
+    {
+      "id": "7adbfb93-c085-4890-ba2d-1567ee488794",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Squash-merged https://github.com/AnthusAI/Limatus/pull/13 to main (`ba1e790`). Apostrophe and U+2019 treated as word characters; hook-turn span at Magnanti's `s` maps to 0 findings. Published hash unchanged.\n",
+      "created_at": "2026-09-11T00:02:44.657599Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T23:58:18.792771Z",
-  "updated_at": "2026-09-10T23:59:36.760855Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T00:02:44.696470Z",
+  "closed_at": "2026-09-11T00:02:44.696448Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

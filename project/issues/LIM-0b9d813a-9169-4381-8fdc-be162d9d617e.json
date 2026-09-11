@@ -3,7 +3,7 @@
   "title": "HITL packets for published Pilobolus",
   "description": "# HITL packets for published Pilobolus\n\n## Done when\n\n- Each published article has a read-only scan packet (JSON + finding list) from latest origin/main.\n- A decisions template lists finding ids with no pre-filled skip/rewrite.\n- A Pilobolus rewrite skill exists (VOICE constraints: no house name, no not-A-it's-B stacks, no invented facts).\n- After Ryan records decisions, options + compare can run without touching published files until apply.\n- Provenance can be composed (scan, decisions, options, compare, models).",
   "type": "epic",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -27,11 +27,18 @@
       "text": "Dogfood parked until LIM-0129cf ships a working CLI loop. Do not ask Ryan to pick published-article options.\n",
       "created_at": "2026-09-10T23:18:42.162925Z",
       "comment_type": "default"
+    },
+    {
+      "id": "bcb476a4-bc5d-44e1-8659-349d182539d9",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closed: all children closed. Scan packets, judge, headline-after-body, apply gate, and redundancy false positives (LIM-ed02c3 / #26) are done. Remaining published-article copy-edits are editorial use of the CLI, not this epic.",
+      "created_at": "2026-09-11T19:37:18.358348Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:38:38.356742Z",
-  "updated_at": "2026-09-10T23:18:42.162938Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T19:37:18.358369Z",
+  "closed_at": "2026-09-11T19:37:18.319782Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

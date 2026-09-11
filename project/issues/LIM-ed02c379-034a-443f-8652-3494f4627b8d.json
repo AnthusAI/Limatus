@@ -3,7 +3,7 @@
   "title": "Redundancy 4-grams misfire on image alts and quoted refrain",
   "description": "## Intent\n\nDogfood: 4-gram redundancy flags image markdown, quoted liturgy, and house motifs that are not slop.\n\n## Gherkin\n\n```gherkin\nFeature: Redundancy ignores non-prose and intentional refrain\n  As a Pilobolus editor\n  I do not want image alts or quoted absolution treated as slop\n  So I can spend HITL time on real voice problems\n\n  Scenario: Image markdown\n    Given a published article whose only repeated four-gram is in image markdown\n    When I run limatus scan\n    Then those image spans are not redundancy findings\n```",
   "type": "story",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -34,11 +34,18 @@
       "text": "PR #26 image-alt mask is good. Sent back: live you-confessed still flags the absolution formula (italics + :::pull-quote body), which is not a > blockquote.",
       "created_at": "2026-09-11T19:34:59.398821Z",
       "comment_type": "default"
+    },
+    {
+      "id": "ef6e163f-56fb-4d9c-9125-02d60acc4ceb",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Closed: squash-merged to main as #26 (e80298d). Image alts masked; redundancy skipped only when every 4-gram hit is blockquote, emphasis, or Markus pull-quote body. Live you-confessed repetition_groups=0.",
+      "created_at": "2026-09-11T19:37:08.275991Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:39:31.745798Z",
-  "updated_at": "2026-09-11T19:34:59.398839Z",
-  "closed_at": null,
+  "updated_at": "2026-09-11T19:37:08.276008Z",
+  "closed_at": "2026-09-11T19:37:08.235432Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

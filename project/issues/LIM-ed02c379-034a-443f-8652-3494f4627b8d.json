@@ -27,10 +27,17 @@
       "text": "Worktree /tmp/limatus-ed02c3-redundancy on fix/LIM-ed02c3-redundancy-alts off origin/main. Composer implementing image-markdown + blockquote redundancy skip.",
       "created_at": "2026-09-11T19:32:15.842395Z",
       "comment_type": "default"
+    },
+    {
+      "id": "75608de1-0c45-4999-a91f-078a1c85e6c5",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "PR #26 image-alt mask is good. Sent back: live you-confessed still flags the absolution formula (italics + :::pull-quote body), which is not a > blockquote.",
+      "created_at": "2026-09-11T19:34:59.398821Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-10T20:39:31.745798Z",
-  "updated_at": "2026-09-11T19:32:15.842414Z",
+  "updated_at": "2026-09-11T19:34:59.398839Z",
   "closed_at": null,
   "right_now_summary": null,
   "right_now_updated_at": null,

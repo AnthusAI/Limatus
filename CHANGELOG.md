@@ -1,6 +1,53 @@
 # CHANGELOG
 
 
+## v0.18.0 (2026-09-11)
+
+### Chores
+
+- **kanbus**: Close evals epic (#28); start LIM-fc61e8 voice audit
+  ([`de4633a`](https://github.com/AnthusAI/Limatus/commit/de4633aba2cb87cb2cfb08d91ac2106072532ab0))
+
+- **kanbus**: Close false HITL wait; start Papyrus SDK adapter
+  ([`2cf8b30`](https://github.com/AnthusAI/Limatus/commit/2cf8b302918dbc2599cc35cb1758bfc5b51d085f))
+
+LIM-80209b was parked on a stale Ryan-option-id gate. LIM-3ff8d0 / LIM-209793 in progress.
+
+- **kanbus**: Close LIM-3ff8d0 Papyrus SDK integration
+  ([`60c3d81`](https://github.com/AnthusAI/Limatus/commit/60c3d81d0ef27234a51e2d914c21d553bf4d11de))
+
+Papyrus #80 landed on develop. LIM-209793 and the epic are done.
+
+- **kanbus**: Close LIM-81ecb1 (#27); start LIM-658c60 metrics
+  ([`25e7a07`](https://github.com/AnthusAI/Limatus/commit/25e7a0723edd4859e3ae7e98f1eaa91d4ae5db97))
+
+- **kanbus**: Lim-fc61e8 Chatticus covered; Anth.us PPY-cc58ab
+  ([`18e864f`](https://github.com/AnthusAI/Limatus/commit/18e864f6d49390db8d43a999468f94b7aa33257d))
+
+- **kanbus**: Pr #80 revision for Tactus lockfile
+  ([`bd01f31`](https://github.com/AnthusAI/Limatus/commit/bd01f31d7d9eef2adadb85901e02466ab0c98ee0))
+
+- **kanbus**: Start LIM-81ecb1 eval CI and fixture corpus close-out
+  ([`5788855`](https://github.com/AnthusAI/Limatus/commit/5788855be56a8a6bdf1d259be45a3cda326196fa))
+
+Offline runner already exists (LIM-c1a014). Remaining: CI, docs, more fixtures.
+
+### Continuous Integration
+
+- **eval**: Smoke pytest and offline corpus on PRs
+  ([#27](https://github.com/AnthusAI/Limatus/pull/27),
+  [`588596f`](https://github.com/AnthusAI/Limatus/commit/588596f32c7fa8cd71f865e1bd6f99c72f1ad932))
+
+Add CI workflow for pytest, offline eval corpus, and Behave smoke. Expand editorial corpus fixtures,
+  document eval workflow in README, and fix portable profile test to resolve reference samples.
+
+### Features
+
+- **eval**: Report finding precision/recall and option claim flags
+  ([#28](https://github.com/AnthusAI/Limatus/pull/28),
+  [`6109937`](https://github.com/AnthusAI/Limatus/commit/6109937a0ee988bb2fa77313ef1941777da7aa6c))
+
+
 ## v0.17.1 (2026-09-11)
 
 ### Bug Fixes

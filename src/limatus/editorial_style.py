@@ -51,6 +51,14 @@ STANDFIRST_FIELD_NAMES = frozenset(
     }
 )
 
+HEADLINE_FIELD_NAMES = frozenset({"when", "order", "title", "subtitle"})
+HEADLINE_TITLE_FIELD_NAMES = frozenset({"key"})
+HEADLINE_SUBTITLE_FIELD_NAMES = frozenset({"key", "role"})
+ALLOWED_HEADLINE_WHEN = frozenset({"afterBody", "never"})
+ALLOWED_HEADLINE_JOBS = frozenset({"title", "subtitle"})
+ALLOWED_HEADLINE_SUBTITLE_ROLES = frozenset({"articleSummary"})
+DEFAULT_HEADLINE_ORDER = ("title", "subtitle")
+
 COMPARE_SECTION_FIELD_NAMES = frozenset({"hardConstraints"})
 
 COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE = "unsupported_claims_increase"
@@ -98,6 +106,25 @@ class StandfirstRules:
 
 
 @dataclass(frozen=True)
+class HeadlineTitleConfig:
+    key: str
+
+
+@dataclass(frozen=True)
+class HeadlineSubtitleConfig:
+    key: str
+    role: str
+
+
+@dataclass(frozen=True)
+class HeadlineConfig:
+    when: str
+    order: tuple[str, ...]
+    title: HeadlineTitleConfig
+    subtitle: HeadlineSubtitleConfig
+
+
+@dataclass(frozen=True)
 class JudgeConfig:
     provider: str
     model: str
@@ -123,6 +150,7 @@ class StyleProfile:
     rules: EditorialRules
     density: DensityThresholds
     standfirst: StandfirstRules | None
+    headline: HeadlineConfig | None
     judge: JudgeConfig | None
     editorial_aim: str | None
     compare_hard_constraints: tuple[str, ...]
@@ -229,6 +257,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     rules = _parse_rules(raw.get("rules"), profile_path)
     density = _parse_density(raw.get("density"), profile_path)
     standfirst = _parse_standfirst(raw.get("standfirst"), profile_path)
+    headline = _parse_headline(raw.get("headline"), profile_path)
     judge = _parse_judge(raw.get("judge"), profile_path)
     editorial_aim = _parse_editorial_aim(raw.get("editorialAim"), profile_path)
     compare_hard_constraints = _parse_compare_section(raw.get("compare"), profile_path)
@@ -249,6 +278,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         rules=rules,
         density=density,
         standfirst=standfirst,
+        headline=headline,
         judge=judge,
         editorial_aim=editorial_aim,
         compare_hard_constraints=compare_hard_constraints,
@@ -393,6 +423,65 @@ def _parse_by_surface(value: Any, profile_path: Path) -> dict[str, int | None]:
             )
         resolved[surface] = _parse_contrast_cap(override.get("contrastCap"), profile_path)
     return resolved
+
+
+def _parse_headline(value: Any, profile_path: Path) -> HeadlineConfig | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"headline must be a mapping in {profile_path}")
+    unknown = set(value) - HEADLINE_FIELD_NAMES
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise StyleProfileValidationError(f"Unknown headline keys in {profile_path}: {joined}")
+    when = value.get("when", "afterBody")
+    if not isinstance(when, str) or when not in ALLOWED_HEADLINE_WHEN:
+        raise StyleProfileValidationError(
+            f"headline.when must be one of {', '.join(sorted(ALLOWED_HEADLINE_WHEN))} in {profile_path}"
+        )
+    order_raw = value.get("order")
+    if order_raw is None:
+        order = DEFAULT_HEADLINE_ORDER
+    else:
+        if not isinstance(order_raw, list) or not order_raw:
+            raise StyleProfileValidationError(f"headline.order must be a non-empty list in {profile_path}")
+        order = tuple(str(item).strip() for item in order_raw)
+        if len(order) != len(set(order)):
+            raise StyleProfileValidationError(f"headline.order entries must be unique in {profile_path}")
+        for index, job in enumerate(order):
+            if job not in ALLOWED_HEADLINE_JOBS:
+                raise StyleProfileValidationError(
+                    f"headline.order[{index}] must be one of "
+                    f"{', '.join(sorted(ALLOWED_HEADLINE_JOBS))} in {profile_path}"
+                )
+    title_raw = value.get("title")
+    if not isinstance(title_raw, dict):
+        raise StyleProfileValidationError(f"headline.title must be a mapping in {profile_path}")
+    title_unknown = set(title_raw) - HEADLINE_TITLE_FIELD_NAMES
+    if title_unknown:
+        joined = ", ".join(sorted(str(key) for key in title_unknown))
+        raise StyleProfileValidationError(f"Unknown headline.title keys in {profile_path}: {joined}")
+    title_key = _require_non_empty_string(title_raw.get("key"), "headline.title.key", profile_path)
+    subtitle_raw = value.get("subtitle")
+    if not isinstance(subtitle_raw, dict):
+        raise StyleProfileValidationError(f"headline.subtitle must be a mapping in {profile_path}")
+    subtitle_unknown = set(subtitle_raw) - HEADLINE_SUBTITLE_FIELD_NAMES
+    if subtitle_unknown:
+        joined = ", ".join(sorted(str(key) for key in subtitle_unknown))
+        raise StyleProfileValidationError(f"Unknown headline.subtitle keys in {profile_path}: {joined}")
+    subtitle_key = _require_non_empty_string(subtitle_raw.get("key"), "headline.subtitle.key", profile_path)
+    role = _require_non_empty_string(subtitle_raw.get("role"), "headline.subtitle.role", profile_path)
+    if role not in ALLOWED_HEADLINE_SUBTITLE_ROLES:
+        raise StyleProfileValidationError(
+            f"headline.subtitle.role must be one of "
+            f"{', '.join(sorted(ALLOWED_HEADLINE_SUBTITLE_ROLES))} in {profile_path}"
+        )
+    return HeadlineConfig(
+        when=when,
+        order=order,
+        title=HeadlineTitleConfig(key=title_key),
+        subtitle=HeadlineSubtitleConfig(key=subtitle_key, role=role),
+    )
 
 
 def _parse_standfirst(value: Any, profile_path: Path) -> StandfirstRules | None:

@@ -10,6 +10,8 @@
     limatus apply --original <file> --working-copy <file> --options <options.json> [...]
     limatus diff --original <file> --working-copy <file> [...]
     limatus verify --original <file> --working-copy <file> --profile <style-profile.yml> [...]
+    limatus headline options --job title|subtitle --working-copy <file> --profile <style-profile.yml> \\
+                             --skill <editorial-rewrite-skill.yml> [...]
     limatus diagnose  (alias for scan)
 
 See editorial_commands.py for each subcommand's full flag set.
@@ -29,6 +31,7 @@ from .editorial_commands import (
     editorial_options,
     editorial_compare,
     editorial_scan,
+    editorial_headline,
     editorial_standfirst,
     editorial_verify,
 )
@@ -44,6 +47,7 @@ COMMANDS = {
     "diff": editorial_diff,
     "compare": editorial_compare,
     "verify": editorial_verify,
+    "headline": editorial_headline,
     "standfirst": editorial_standfirst,
     "eval": editorial_eval,
     "canary": editorial_canary,

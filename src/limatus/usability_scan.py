@@ -87,6 +87,7 @@ class _DomNode:
     attrs: dict[str, str]
     direct_text: list[str] = field(default_factory=list)
     children: list[_DomNode] = field(default_factory=list)
+    parent: _DomNode | None = None
 
 
 @dataclass(frozen=True)
@@ -110,6 +111,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
     )
     if profile.profile.focus.flag_suppressed_outline:
         findings.extend(_find_suppressed_focus_outline(tree, css_rules))
+    if profile.profile.accessible_name.flag_missing:
+        findings.extend(_find_missing_accessible_name(tree))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -161,10 +164,11 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "low_contrast",
         "small_tap_target",
         "suppressed_focus_outline",
+        "missing_accessible_name",
     }:
         raise UsabilityFindingsValidationError(
             f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
-            "or 'suppressed_focus_outline'."
+            "'suppressed_focus_outline', or 'missing_accessible_name'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -204,14 +208,111 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include width or height for suppressed_focus_outline."
             )
-    else:
+    elif kind in {"missing_alt", "missing_accessible_name"}:
         if "ratio" in entry:
-            raise UsabilityFindingsValidationError(f"{location} must not include ratio for missing_alt.")
+            raise UsabilityFindingsValidationError(
+                f"{location} must not include ratio for {kind}."
+            )
         if "width" in entry or "height" in entry:
             raise UsabilityFindingsValidationError(
-                f"{location} must not include width or height for missing_alt."
+                f"{location} must not include width or height for {kind}."
             )
     return result
+
+
+def _build_accessible_name_index(
+    node: _DomNode,
+    *,
+    element_ids: set[str],
+    label_for_ids: set[str],
+) -> None:
+    element_id = node.attrs.get("id", "").strip()
+    if element_id:
+        element_ids.add(element_id)
+    if node.tag == "label":
+        for_value = node.attrs.get("for", "").strip()
+        if for_value:
+            label_for_ids.add(for_value)
+    for child in node.children:
+        _build_accessible_name_index(
+            child, element_ids=element_ids, label_for_ids=label_for_ids
+        )
+
+
+def _input_type(node: _DomNode) -> str:
+    return node.attrs.get("type", "text").lower()
+
+
+def _control_needs_accessible_name_check(node: _DomNode) -> bool:
+    tag = node.tag
+    if tag in {"select", "textarea"}:
+        return True
+    if tag != "input":
+        return False
+    input_type = _input_type(node)
+    if input_type == "hidden":
+        return False
+    if input_type in {"submit", "button", "reset"}:
+        if node.attrs.get("value", "").strip():
+            return False
+        if node.attrs.get("aria-label", "").strip():
+            return False
+    return True
+
+
+def _has_accessible_name(
+    node: _DomNode,
+    *,
+    element_ids: set[str],
+    label_for_ids: set[str],
+) -> bool:
+    if node.attrs.get("aria-label", "").strip():
+        return True
+    labelledby = node.attrs.get("aria-labelledby", "").strip()
+    if labelledby:
+        for token in labelledby.split():
+            if token in element_ids:
+                return True
+    ancestor = node.parent
+    while ancestor is not None and ancestor.tag != "document":
+        if ancestor.tag == "label":
+            return True
+        ancestor = ancestor.parent
+    element_id = node.attrs.get("id", "").strip()
+    if element_id and element_id in label_for_ids:
+        return True
+    if node.tag == "input" and _input_type(node) == "image":
+        if node.attrs.get("alt", "").strip():
+            return True
+    return False
+
+
+def _find_missing_accessible_name(node: _DomNode) -> list[dict[str, Any]]:
+    element_ids: set[str] = set()
+    label_for_ids: set[str] = set()
+    _build_accessible_name_index(node, element_ids=element_ids, label_for_ids=label_for_ids)
+    findings: list[dict[str, Any]] = []
+
+    def walk(current: _DomNode) -> None:
+        if current.tag != "document" and _control_needs_accessible_name_check(current):
+            if not _has_accessible_name(
+                current, element_ids=element_ids, label_for_ids=label_for_ids
+            ):
+                selector = _element_selector(current)
+                finding_id = stable_usability_finding_id("missing_accessible_name", selector)
+                findings.append(
+                    {
+                        "id": finding_id,
+                        "kind": "missing_accessible_name",
+                        "selector": selector,
+                        "rationale": "Form control has no accessible name.",
+                    }
+                )
+        for child in current.children:
+            walk(child)
+
+    walk(node)
+    return findings
 
 
 def _find_missing_alt(node: _DomNode) -> list[dict[str, Any]]:
@@ -606,8 +707,9 @@ class _PageParser(HTMLParser):
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         normalized = tag.lower()
         attr_map = {name.lower(): (value if value is not None else "") for name, value in attrs}
-        node = _DomNode(tag=normalized, attrs=attr_map)
-        self._stack[-1].children.append(node)
+        parent = self._stack[-1]
+        node = _DomNode(tag=normalized, attrs=attr_map, parent=parent)
+        parent.children.append(node)
         if normalized == "style" and self._style_text is None:
             self._capture_style = True
             self._style_chunks = []

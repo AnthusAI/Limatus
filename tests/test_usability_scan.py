@@ -141,6 +141,64 @@ class UsabilityScanTests(unittest.TestCase):
             payload = scan_html_page(html, profile=loaded)
             self.assertEqual(len([f for f in payload["findings"] if f["kind"] == "small_tap_target"]), 1)
 
+    def test_bare_text_input_flags_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><input type="text"></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
+        self.assertEqual(len(missing), 1)
+        self.assertIn("input", missing[0]["selector"])
+
+    def test_wrapping_label_does_not_flag_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><label>Name <input type="text"></label></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
+        self.assertEqual(missing, [])
+
+    def test_label_for_id_does_not_flag_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        html = (
+            '<!DOCTYPE html><html><body>'
+            '<label for="n">Name</label><input id="n" type="text">'
+            "</body></html>"
+        )
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
+        self.assertEqual(missing, [])
+
+    def test_aria_label_does_not_flag_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><input type="text" aria-label="Search"></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
+        self.assertEqual(missing, [])
+
+    def test_both_findings_page_has_no_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(BOTH_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("missing_accessible_name", kinds)
+
+    def test_minimal_page_has_no_missing_accessible_name(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(MINIMAL_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("missing_accessible_name", kinds)
+
+    def test_flag_missing_false_disables_missing_accessible_name(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-name.yml"
+            profile_path.write_text(
+                "accessibleName:\n  flagMissing: false\n",
+                encoding="utf-8",
+            )
+            profile = load_usability_profile(profile_path)
+            html = '<!DOCTYPE html><html><body><input type="text"></body></html>'
+            payload = scan_html_page(html, profile=profile)
+            missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
+            self.assertEqual(missing, [])
+
     def test_profile_rejects_unknown_keys(self):
         with tempfile.TemporaryDirectory() as tmp:
             bad_path = Path(tmp) / "bad-profile.yml"

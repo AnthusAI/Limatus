@@ -9,11 +9,15 @@ import yaml
 DEFAULT_CONTRAST_MIN_RATIO = 4.5
 DEFAULT_TAP_TARGET_MIN_PX = 24
 
-USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset({"contrast", "tapTarget", "focus"})
+USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset(
+    {"contrast", "tapTarget", "focus", "accessibleName"}
+)
 CONTRAST_BLOCK_KEYS = frozenset({"minRatio"})
 TAP_TARGET_BLOCK_KEYS = frozenset({"minPx"})
 FOCUS_BLOCK_KEYS = frozenset({"flagSuppressedOutline"})
+ACCESSIBLE_NAME_BLOCK_KEYS = frozenset({"flagMissing"})
 DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE = True
+DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING = True
 
 
 class UsabilityProfileValidationError(ValueError):
@@ -36,10 +40,16 @@ class UsabilityFocusConfig:
 
 
 @dataclass(frozen=True)
+class UsabilityAccessibleNameConfig:
+    flag_missing: bool
+
+
+@dataclass(frozen=True)
 class UsabilityProfile:
     contrast: UsabilityContrastConfig
     tap_target: UsabilityTapTargetConfig
     focus: UsabilityFocusConfig
+    accessible_name: UsabilityAccessibleNameConfig
 
 
 @dataclass(frozen=True)
@@ -68,9 +78,15 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
     contrast = _parse_contrast(raw.get("contrast"), resolved)
     tap_target = _parse_tap_target(raw.get("tapTarget"), resolved)
     focus = _parse_focus(raw.get("focus"), resolved)
+    accessible_name = _parse_accessible_name(raw.get("accessibleName"), resolved)
     return LoadedUsabilityProfile(
         path=resolved,
-        profile=UsabilityProfile(contrast=contrast, tap_target=tap_target, focus=focus),
+        profile=UsabilityProfile(
+            contrast=contrast,
+            tap_target=tap_target,
+            focus=focus,
+            accessible_name=accessible_name,
+        ),
     )
 
 
@@ -125,3 +141,24 @@ def _parse_focus(value: Any, profile_path: Path) -> UsabilityFocusConfig:
             f"focus.flagSuppressedOutline must be a boolean in {profile_path}"
         )
     return UsabilityFocusConfig(flag_suppressed_outline=flag_raw)
+
+
+def _parse_accessible_name(value: Any, profile_path: Path) -> UsabilityAccessibleNameConfig:
+    if value is None:
+        return UsabilityAccessibleNameConfig(flag_missing=DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING)
+    if not isinstance(value, dict):
+        raise UsabilityProfileValidationError(
+            f"accessibleName must be a mapping in {profile_path}"
+        )
+    unknown = set(value.keys()) - ACCESSIBLE_NAME_BLOCK_KEYS
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise UsabilityProfileValidationError(
+            f"Unknown accessibleName keys in {profile_path}: {joined}"
+        )
+    flag_raw = value.get("flagMissing", DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING)
+    if not isinstance(flag_raw, bool):
+        raise UsabilityProfileValidationError(
+            f"accessibleName.flagMissing must be a boolean in {profile_path}"
+        )
+    return UsabilityAccessibleNameConfig(flag_missing=flag_raw)

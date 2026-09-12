@@ -18,9 +18,10 @@ FOCUS_BLOCK_KEYS = frozenset({"flagSuppressedOutline"})
 ACCESSIBLE_NAME_BLOCK_KEYS = frozenset({"flagMissing"})
 LANG_BLOCK_KEYS = frozenset({"flagMissing"})
 EMOJI_BLOCK_KEYS = frozenset({"flagInHeadings"})
-TEMPLATE_BLOCK_KEYS = frozenset({"flagGradientHero"})
+TEMPLATE_BLOCK_KEYS = frozenset({"flagGradientHero", "flagFeatureRow"})
 DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE = True
 DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO = True
+DEFAULT_TEMPLATE_FLAG_FEATURE_ROW = True
 DEFAULT_EMOJI_FLAG_IN_HEADINGS = True
 DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING = True
 DEFAULT_LANG_FLAG_MISSING = True
@@ -63,6 +64,7 @@ class UsabilityEmojiConfig:
 @dataclass(frozen=True)
 class UsabilityTemplateConfig:
     flag_gradient_hero: bool
+    flag_feature_row: bool
 
 
 @dataclass(frozen=True)
@@ -228,16 +230,27 @@ def _parse_emoji(value: Any, profile_path: Path) -> UsabilityEmojiConfig:
 
 def _parse_template(value: Any, profile_path: Path) -> UsabilityTemplateConfig:
     if value is None:
-        return UsabilityTemplateConfig(flag_gradient_hero=DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO)
+        return UsabilityTemplateConfig(
+            flag_gradient_hero=DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO,
+            flag_feature_row=DEFAULT_TEMPLATE_FLAG_FEATURE_ROW,
+        )
     if not isinstance(value, dict):
         raise UsabilityProfileValidationError(f"template must be a mapping in {profile_path}")
     unknown = set(value.keys()) - TEMPLATE_BLOCK_KEYS
     if unknown:
         joined = ", ".join(sorted(str(key) for key in unknown))
         raise UsabilityProfileValidationError(f"Unknown template keys in {profile_path}: {joined}")
-    flag_raw = value.get("flagGradientHero", DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO)
-    if not isinstance(flag_raw, bool):
+    flag_gradient_raw = value.get("flagGradientHero", DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO)
+    if not isinstance(flag_gradient_raw, bool):
         raise UsabilityProfileValidationError(
             f"template.flagGradientHero must be a boolean in {profile_path}"
         )
-    return UsabilityTemplateConfig(flag_gradient_hero=flag_raw)
+    flag_feature_row_raw = value.get("flagFeatureRow", DEFAULT_TEMPLATE_FLAG_FEATURE_ROW)
+    if not isinstance(flag_feature_row_raw, bool):
+        raise UsabilityProfileValidationError(
+            f"template.flagFeatureRow must be a boolean in {profile_path}"
+        )
+    return UsabilityTemplateConfig(
+        flag_gradient_hero=flag_gradient_raw,
+        flag_feature_row=flag_feature_row_raw,
+    )

@@ -342,6 +342,68 @@ class UsabilityScanTests(unittest.TestCase):
         kinds = {entry["kind"] for entry in payload["findings"]}
         self.assertNotIn("generic_gradient_hero", kinds)
 
+    def test_generic_feature_row_flags_parent_with_three_cards_and_images(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><body><section>
+        <div class="card"><img src="a" alt=""></div>
+        <div class="card"><img src="b" alt=""></div>
+        <div class="card"><img src="c" alt=""></div>
+        </section></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        feature_rows = [f for f in payload["findings"] if f["kind"] == "generic_feature_row"]
+        self.assertEqual(len(feature_rows), 1)
+        self.assertEqual(feature_rows[0]["selector"], "section")
+
+    def test_generic_feature_row_ignores_two_cards_with_images(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><body><section>
+        <div class="card"><img src="a" alt=""></div>
+        <div class="card"><img src="b" alt=""></div>
+        </section></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        feature_rows = [f for f in payload["findings"] if f["kind"] == "generic_feature_row"]
+        self.assertEqual(feature_rows, [])
+
+    def test_generic_feature_row_ignores_three_cards_without_images(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><body><section>
+        <div class="card"><p>One</p></div>
+        <div class="card"><p>Two</p></div>
+        <div class="card"><p>Three</p></div>
+        </section></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        feature_rows = [f for f in payload["findings"] if f["kind"] == "generic_feature_row"]
+        self.assertEqual(feature_rows, [])
+
+    def test_flag_feature_row_false_disables_generic_feature_row(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-feature-row.yml"
+            profile_path.write_text("template:\n  flagFeatureRow: false\n", encoding="utf-8")
+            profile = load_usability_profile(profile_path)
+            html = """<!DOCTYPE html><html><body><section>
+            <div class="card"><img src="a" alt=""></div>
+            <div class="card"><img src="b" alt=""></div>
+            <div class="card"><img src="c" alt=""></div>
+            </section></body></html>"""
+            payload = scan_html_page(html, profile=profile)
+            feature_rows = [f for f in payload["findings"] if f["kind"] == "generic_feature_row"]
+            self.assertEqual(feature_rows, [])
+
+    def test_template_only_flag_gradient_hero_defaults_flag_feature_row_true(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "gradient-only.yml"
+            profile_path.write_text("template:\n  flagGradientHero: true\n", encoding="utf-8")
+            profile = load_usability_profile(profile_path)
+            self.assertTrue(profile.profile.template.flag_feature_row)
+            html = """<!DOCTYPE html><html><body><section>
+            <div class="card"><img src="a" alt=""></div>
+            <div class="card"><img src="b" alt=""></div>
+            <div class="card"><img src="c" alt=""></div>
+            </section></body></html>"""
+            payload = scan_html_page(html, profile=profile)
+            feature_rows = [f for f in payload["findings"] if f["kind"] == "generic_feature_row"]
+            self.assertEqual(len(feature_rows), 1)
+
     def test_void_img_does_not_swallow_following_siblings(self):
         profile = load_usability_profile(PROFILE)
         html = """<!DOCTYPE html>

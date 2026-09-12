@@ -10,14 +10,16 @@ DEFAULT_CONTRAST_MIN_RATIO = 4.5
 DEFAULT_TAP_TARGET_MIN_PX = 24
 
 USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset(
-    {"contrast", "tapTarget", "focus", "accessibleName", "lang"}
+    {"contrast", "tapTarget", "focus", "accessibleName", "lang", "emoji"}
 )
 CONTRAST_BLOCK_KEYS = frozenset({"minRatio"})
 TAP_TARGET_BLOCK_KEYS = frozenset({"minPx"})
 FOCUS_BLOCK_KEYS = frozenset({"flagSuppressedOutline"})
 ACCESSIBLE_NAME_BLOCK_KEYS = frozenset({"flagMissing"})
 LANG_BLOCK_KEYS = frozenset({"flagMissing"})
+EMOJI_BLOCK_KEYS = frozenset({"flagInHeadings"})
 DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE = True
+DEFAULT_EMOJI_FLAG_IN_HEADINGS = True
 DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING = True
 DEFAULT_LANG_FLAG_MISSING = True
 
@@ -52,12 +54,18 @@ class UsabilityLangConfig:
 
 
 @dataclass(frozen=True)
+class UsabilityEmojiConfig:
+    flag_in_headings: bool
+
+
+@dataclass(frozen=True)
 class UsabilityProfile:
     contrast: UsabilityContrastConfig
     tap_target: UsabilityTapTargetConfig
     focus: UsabilityFocusConfig
     accessible_name: UsabilityAccessibleNameConfig
     lang: UsabilityLangConfig
+    emoji: UsabilityEmojiConfig
 
 
 @dataclass(frozen=True)
@@ -88,6 +96,7 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
     focus = _parse_focus(raw.get("focus"), resolved)
     accessible_name = _parse_accessible_name(raw.get("accessibleName"), resolved)
     lang = _parse_lang(raw.get("lang"), resolved)
+    emoji = _parse_emoji(raw.get("emoji"), resolved)
     return LoadedUsabilityProfile(
         path=resolved,
         profile=UsabilityProfile(
@@ -96,6 +105,7 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
             focus=focus,
             accessible_name=accessible_name,
             lang=lang,
+            emoji=emoji,
         ),
     )
 
@@ -187,3 +197,20 @@ def _parse_lang(value: Any, profile_path: Path) -> UsabilityLangConfig:
     if not isinstance(flag_raw, bool):
         raise UsabilityProfileValidationError(f"lang.flagMissing must be a boolean in {profile_path}")
     return UsabilityLangConfig(flag_missing=flag_raw)
+
+
+def _parse_emoji(value: Any, profile_path: Path) -> UsabilityEmojiConfig:
+    if value is None:
+        return UsabilityEmojiConfig(flag_in_headings=DEFAULT_EMOJI_FLAG_IN_HEADINGS)
+    if not isinstance(value, dict):
+        raise UsabilityProfileValidationError(f"emoji must be a mapping in {profile_path}")
+    unknown = set(value.keys()) - EMOJI_BLOCK_KEYS
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise UsabilityProfileValidationError(f"Unknown emoji keys in {profile_path}: {joined}")
+    flag_raw = value.get("flagInHeadings", DEFAULT_EMOJI_FLAG_IN_HEADINGS)
+    if not isinstance(flag_raw, bool):
+        raise UsabilityProfileValidationError(
+            f"emoji.flagInHeadings must be a boolean in {profile_path}"
+        )
+    return UsabilityEmojiConfig(flag_in_headings=flag_raw)

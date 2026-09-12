@@ -199,6 +199,50 @@ class UsabilityScanTests(unittest.TestCase):
             missing = [f for f in payload["findings"] if f["kind"] == "missing_accessible_name"]
             self.assertEqual(missing, [])
 
+    def test_missing_lang_flags_html_without_lang(self):
+        profile = load_usability_profile(PROFILE)
+        html = "<html><body></body></html>"
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_lang"]
+        self.assertEqual(len(missing), 1)
+        self.assertEqual(missing[0]["selector"], "html")
+
+    def test_missing_lang_skips_when_lang_present(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<html lang="en"><body></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_lang"]
+        self.assertEqual(missing, [])
+
+    def test_both_findings_page_has_no_missing_lang(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(BOTH_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("missing_lang", kinds)
+
+    def test_minimal_page_has_no_missing_lang(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(MINIMAL_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("missing_lang", kinds)
+
+    def test_flag_missing_false_disables_missing_lang(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-lang.yml"
+            profile_path.write_text("lang:\n  flagMissing: false\n", encoding="utf-8")
+            profile = load_usability_profile(profile_path)
+            html = "<html><body></body></html>"
+            payload = scan_html_page(html, profile=profile)
+            missing = [f for f in payload["findings"] if f["kind"] == "missing_lang"]
+            self.assertEqual(missing, [])
+
+    def test_html_fragment_without_html_element_has_no_missing_lang(self):
+        profile = load_usability_profile(PROFILE)
+        html = "<body><p>Fragment</p></body>"
+        payload = scan_html_page(html, profile=profile)
+        missing = [f for f in payload["findings"] if f["kind"] == "missing_lang"]
+        self.assertEqual(missing, [])
+
     def test_profile_rejects_unknown_keys(self):
         with tempfile.TemporaryDirectory() as tmp:
             bad_path = Path(tmp) / "bad-profile.yml"

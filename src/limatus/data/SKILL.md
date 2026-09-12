@@ -144,6 +144,7 @@ Structured finding kinds include:
 - `small_tap_target`
 - `suppressed_focus_outline`
 - `missing_accessible_name`
+- `missing_lang`
 
 Route usability findings to human or design-system fixes outside the editorial decide/options/apply loop.
 

@@ -1,0 +1,31 @@
+{
+  "id": "LIM-d7564181-f548-425c-a68f-6f89e202634c",
+  "title": "Read-only generic three-icon feature-row findings",
+  "description": "# Read-only generic three-icon feature-row findings\n\nNext slice of LIM-e872b1 generic-template tells. Extends `limatus usability scan` only.\n\n## DoD\n\n- Same CLI. New kind: `generic_feature_row`.\n- Profile: `template.flagFeatureRow` boolean, default **true** (same `template` block as `flagGradientHero`). Unknown keys rejected. Existing profiles still load; a profile with only `flagGradientHero` still gets this default.\n- When false, never emit this kind.\n- Flag a parent when it has **three or more consecutive sibling children** that share the same non-empty `class` token (first class if multiple) **and** each of those siblings contains at least one `img` or `svg` (including descendants).\n- One finding on the **parent** (selector of the parent). Do not flag 1–2 siblings. Do not flag siblings with no shared class. Do not flag if images are missing.\n- JSON: `id`, `kind`, `selector`, `rationale`. Add `generic_feature_row` to SKILL.md kinds list.\n- Tests (tempfile): three `.card` siblings each with `<img>` flags the parent; two `.card` siblings do not; three `.card` without images do not; flag false suppresses; existing fixtures unchanged.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- gradients, layout/overflow, decide/apply, live URLs\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-feature-row` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-feature-row`\n- PR target: **main**\n\n## Inversion\n\n- Sparse pages and two-column layouts stay clean.\n- A feature row without icons/images is not this tell.",
+  "type": "task",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "ccfeb3ca-867a-4e50-bc79-82c1a2d9181c",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Started. Worktree /tmp/limatus-e872b1-feature-row branch feat/LIM-d75641-usability-feature-row from origin/main.",
+      "created_at": "2026-09-12T11:45:50.811408Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-12T11:45:32.582668Z",
+  "updated_at": "2026-09-12T11:45:50.811426Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

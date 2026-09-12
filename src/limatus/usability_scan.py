@@ -120,6 +120,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
         findings.extend(_find_missing_lang(tree))
     if profile.profile.emoji.flag_in_headings:
         findings.extend(_find_emoji_heading(tree))
+    if profile.profile.template.flag_gradient_hero:
+        findings.extend(_find_generic_gradient_hero(tree, css_rules))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -174,11 +176,12 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "missing_accessible_name",
         "missing_lang",
         "emoji_heading",
+        "generic_gradient_hero",
     }:
         raise UsabilityFindingsValidationError(
             f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
-            "'suppressed_focus_outline', 'missing_accessible_name', 'missing_lang', or "
-            "'emoji_heading'."
+            "'suppressed_focus_outline', 'missing_accessible_name', 'missing_lang', "
+            "'emoji_heading', or 'generic_gradient_hero'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -218,7 +221,13 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include width or height for suppressed_focus_outline."
             )
-    elif kind in {"missing_alt", "missing_accessible_name", "missing_lang", "emoji_heading"}:
+    elif kind in {
+        "missing_alt",
+        "missing_accessible_name",
+        "missing_lang",
+        "emoji_heading",
+        "generic_gradient_hero",
+    }:
         if "ratio" in entry:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include ratio for {kind}."
@@ -235,6 +244,79 @@ def _node_text_content(node: _DomNode) -> str:
     for child in node.children:
         parts.append(_node_text_content(child))
     return "".join(parts)
+
+
+HERO_GRADIENT_SELECTORS = frozenset(
+    {"body", "header", ".hero", "#hero", ".banner", "#banner"}
+)
+
+
+def _parse_simple_hero_selector(selector: str) -> str | None:
+    stripped = selector.strip()
+    if not stripped or any(char in stripped for char in " *>+~"):
+        return None
+    if stripped in HERO_GRADIENT_SELECTORS:
+        return stripped
+    return None
+
+
+def _declaration_value_has_linear_gradient(value: str) -> bool:
+    return "linear-gradient" in value.lower()
+
+
+def _rule_has_hero_linear_gradient(declarations: dict[str, str]) -> bool:
+    for prop in ("background", "background-image"):
+        raw = declarations.get(prop)
+        if raw is not None and _declaration_value_has_linear_gradient(raw):
+            return True
+    return False
+
+
+def _collect_gradient_hero_nodes(
+    node: _DomNode,
+    css_rules: list[_CssRule],
+    flagged: set[str],
+    findings: list[dict[str, Any]],
+) -> None:
+    if node.tag != "document":
+        for rule in css_rules:
+            if not _rule_has_hero_linear_gradient(rule.declarations):
+                continue
+            for selector in rule.selectors:
+                hero = _parse_simple_hero_selector(selector)
+                if hero is None:
+                    continue
+                if not _single_selector_matches(node, hero):
+                    continue
+                selector_label = _element_selector(node)
+                if selector_label in flagged:
+                    break
+                flagged.add(selector_label)
+                finding_id = stable_usability_finding_id("generic_gradient_hero", selector_label)
+                findings.append(
+                    {
+                        "id": finding_id,
+                        "kind": "generic_gradient_hero",
+                        "selector": selector_label,
+                        "rationale": (
+                            "Hero-region element uses a linear-gradient background, a common "
+                            "generic template pattern."
+                        ),
+                    }
+                )
+                break
+    for child in node.children:
+        _collect_gradient_hero_nodes(child, css_rules, flagged, findings)
+
+
+def _find_generic_gradient_hero(
+    node: _DomNode,
+    css_rules: list[_CssRule],
+) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    flagged: set[str] = set()
+    _collect_gradient_hero_nodes(node, css_rules, flagged, findings)
+    return findings
 
 
 def _find_emoji_heading(node: _DomNode) -> list[dict[str, Any]]:

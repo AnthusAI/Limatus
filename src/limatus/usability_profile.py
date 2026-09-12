@@ -10,7 +10,7 @@ DEFAULT_CONTRAST_MIN_RATIO = 4.5
 DEFAULT_TAP_TARGET_MIN_PX = 24
 
 USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset(
-    {"contrast", "tapTarget", "focus", "accessibleName", "lang", "emoji"}
+    {"contrast", "tapTarget", "focus", "accessibleName", "lang", "emoji", "template"}
 )
 CONTRAST_BLOCK_KEYS = frozenset({"minRatio"})
 TAP_TARGET_BLOCK_KEYS = frozenset({"minPx"})
@@ -18,7 +18,9 @@ FOCUS_BLOCK_KEYS = frozenset({"flagSuppressedOutline"})
 ACCESSIBLE_NAME_BLOCK_KEYS = frozenset({"flagMissing"})
 LANG_BLOCK_KEYS = frozenset({"flagMissing"})
 EMOJI_BLOCK_KEYS = frozenset({"flagInHeadings"})
+TEMPLATE_BLOCK_KEYS = frozenset({"flagGradientHero"})
 DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE = True
+DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO = True
 DEFAULT_EMOJI_FLAG_IN_HEADINGS = True
 DEFAULT_ACCESSIBLE_NAME_FLAG_MISSING = True
 DEFAULT_LANG_FLAG_MISSING = True
@@ -59,6 +61,11 @@ class UsabilityEmojiConfig:
 
 
 @dataclass(frozen=True)
+class UsabilityTemplateConfig:
+    flag_gradient_hero: bool
+
+
+@dataclass(frozen=True)
 class UsabilityProfile:
     contrast: UsabilityContrastConfig
     tap_target: UsabilityTapTargetConfig
@@ -66,6 +73,7 @@ class UsabilityProfile:
     accessible_name: UsabilityAccessibleNameConfig
     lang: UsabilityLangConfig
     emoji: UsabilityEmojiConfig
+    template: UsabilityTemplateConfig
 
 
 @dataclass(frozen=True)
@@ -97,6 +105,7 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
     accessible_name = _parse_accessible_name(raw.get("accessibleName"), resolved)
     lang = _parse_lang(raw.get("lang"), resolved)
     emoji = _parse_emoji(raw.get("emoji"), resolved)
+    template = _parse_template(raw.get("template"), resolved)
     return LoadedUsabilityProfile(
         path=resolved,
         profile=UsabilityProfile(
@@ -106,6 +115,7 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
             accessible_name=accessible_name,
             lang=lang,
             emoji=emoji,
+            template=template,
         ),
     )
 
@@ -214,3 +224,20 @@ def _parse_emoji(value: Any, profile_path: Path) -> UsabilityEmojiConfig:
             f"emoji.flagInHeadings must be a boolean in {profile_path}"
         )
     return UsabilityEmojiConfig(flag_in_headings=flag_raw)
+
+
+def _parse_template(value: Any, profile_path: Path) -> UsabilityTemplateConfig:
+    if value is None:
+        return UsabilityTemplateConfig(flag_gradient_hero=DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO)
+    if not isinstance(value, dict):
+        raise UsabilityProfileValidationError(f"template must be a mapping in {profile_path}")
+    unknown = set(value.keys()) - TEMPLATE_BLOCK_KEYS
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise UsabilityProfileValidationError(f"Unknown template keys in {profile_path}: {joined}")
+    flag_raw = value.get("flagGradientHero", DEFAULT_TEMPLATE_FLAG_GRADIENT_HERO)
+    if not isinstance(flag_raw, bool):
+        raise UsabilityProfileValidationError(
+            f"template.flagGradientHero must be a boolean in {profile_path}"
+        )
+    return UsabilityTemplateConfig(flag_gradient_hero=flag_raw)

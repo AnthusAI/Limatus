@@ -9,9 +9,11 @@ import yaml
 DEFAULT_CONTRAST_MIN_RATIO = 4.5
 DEFAULT_TAP_TARGET_MIN_PX = 24
 
-USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset({"contrast", "tapTarget"})
+USABILITY_PROFILE_TOP_LEVEL_KEYS = frozenset({"contrast", "tapTarget", "focus"})
 CONTRAST_BLOCK_KEYS = frozenset({"minRatio"})
 TAP_TARGET_BLOCK_KEYS = frozenset({"minPx"})
+FOCUS_BLOCK_KEYS = frozenset({"flagSuppressedOutline"})
+DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE = True
 
 
 class UsabilityProfileValidationError(ValueError):
@@ -29,9 +31,15 @@ class UsabilityTapTargetConfig:
 
 
 @dataclass(frozen=True)
+class UsabilityFocusConfig:
+    flag_suppressed_outline: bool
+
+
+@dataclass(frozen=True)
 class UsabilityProfile:
     contrast: UsabilityContrastConfig
     tap_target: UsabilityTapTargetConfig
+    focus: UsabilityFocusConfig
 
 
 @dataclass(frozen=True)
@@ -59,9 +67,10 @@ def load_usability_profile(profile_path: Path) -> LoadedUsabilityProfile:
         raise UsabilityProfileValidationError(f"Unknown usability profile keys in {resolved}: {joined}")
     contrast = _parse_contrast(raw.get("contrast"), resolved)
     tap_target = _parse_tap_target(raw.get("tapTarget"), resolved)
+    focus = _parse_focus(raw.get("focus"), resolved)
     return LoadedUsabilityProfile(
         path=resolved,
-        profile=UsabilityProfile(contrast=contrast, tap_target=tap_target),
+        profile=UsabilityProfile(contrast=contrast, tap_target=tap_target, focus=focus),
     )
 
 
@@ -99,3 +108,20 @@ def _parse_tap_target(value: Any, profile_path: Path) -> UsabilityTapTargetConfi
     if min_px <= 0:
         raise UsabilityProfileValidationError(f"tapTarget.minPx must be positive in {profile_path}")
     return UsabilityTapTargetConfig(min_px=min_px)
+
+
+def _parse_focus(value: Any, profile_path: Path) -> UsabilityFocusConfig:
+    if value is None:
+        return UsabilityFocusConfig(flag_suppressed_outline=DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE)
+    if not isinstance(value, dict):
+        raise UsabilityProfileValidationError(f"focus must be a mapping in {profile_path}")
+    unknown = set(value.keys()) - FOCUS_BLOCK_KEYS
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise UsabilityProfileValidationError(f"Unknown focus keys in {profile_path}: {joined}")
+    flag_raw = value.get("flagSuppressedOutline", DEFAULT_FOCUS_FLAG_SUPPRESSED_OUTLINE)
+    if not isinstance(flag_raw, bool):
+        raise UsabilityProfileValidationError(
+            f"focus.flagSuppressedOutline must be a boolean in {profile_path}"
+        )
+    return UsabilityFocusConfig(flag_suppressed_outline=flag_raw)

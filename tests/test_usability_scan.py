@@ -37,6 +37,7 @@ class UsabilityScanTests(unittest.TestCase):
         self.assertEqual(payload["schemaVersion"], 1)
         kinds = {entry["kind"] for entry in payload["findings"]}
         self.assertEqual(kinds, {"missing_alt", "low_contrast"})
+        self.assertNotIn("suppressed_focus_outline", kinds)
         for key in USABILITY_FORBIDDEN_OUTPUT_KEYS:
             self.assertNotIn(key, json.dumps(payload))
         missing = next(entry for entry in payload["findings"] if entry["kind"] == "missing_alt")
@@ -74,6 +75,61 @@ class UsabilityScanTests(unittest.TestCase):
         payload = scan_html_page(html, profile=profile)
         tap = [entry for entry in payload["findings"] if entry["kind"] == "small_tap_target"]
         self.assertEqual(tap, [])
+
+    def test_suppressed_focus_outline_flags_button_focus_none(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><head><style>
+        button:focus { outline: none }
+        </style></head><body><button>Go</button></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        suppressed = [
+            entry for entry in payload["findings"] if entry["kind"] == "suppressed_focus_outline"
+        ]
+        self.assertEqual(len(suppressed), 1)
+        self.assertEqual(suppressed[0]["selector"], "button")
+
+    def test_suppressed_focus_outline_skips_when_box_shadow_focus_ring(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><head><style>
+        button:focus { outline: none; box-shadow: 0 0 0 2px #000 }
+        </style></head><body><button>Go</button></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        suppressed = [
+            entry for entry in payload["findings"] if entry["kind"] == "suppressed_focus_outline"
+        ]
+        self.assertEqual(suppressed, [])
+
+    def test_flag_suppressed_outline_false_disables_finding(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-focus.yml"
+            profile_path.write_text(
+                "focus:\n  flagSuppressedOutline: false\n",
+                encoding="utf-8",
+            )
+            profile = load_usability_profile(profile_path)
+            html = """<!DOCTYPE html><html><head><style>
+            button:focus { outline: none }
+            </style></head><body><button>Go</button></body></html>"""
+            payload = scan_html_page(html, profile=profile)
+            suppressed = [
+                entry for entry in payload["findings"] if entry["kind"] == "suppressed_focus_outline"
+            ]
+            self.assertEqual(suppressed, [])
+
+    def test_tap_target_only_profile_uses_default_focus_flag(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "tap-only.yml"
+            profile_path.write_text("tapTarget:\n  minPx: 24\n", encoding="utf-8")
+            loaded = load_usability_profile(profile_path)
+            self.assertTrue(loaded.profile.focus.flag_suppressed_outline)
+            html = """<!DOCTYPE html><html><head><style>
+            button:focus { outline: none }
+            </style></head><body><button>Go</button></body></html>"""
+            payload = scan_html_page(html, profile=loaded)
+            self.assertEqual(
+                len([f for f in payload["findings"] if f["kind"] == "suppressed_focus_outline"]),
+                1,
+            )
 
     def test_contrast_only_profile_uses_default_tap_target_min_px(self):
         with tempfile.TemporaryDirectory() as tmp:

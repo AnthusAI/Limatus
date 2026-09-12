@@ -1,0 +1,31 @@
+{
+  "id": "LIM-f9e7cff9-4aab-444c-8cb9-04d1b70f1da8",
+  "title": "Read-only generic gradient-hero findings",
+  "description": "# Read-only generic gradient-hero findings\n\nNext slice of LIM-e872b1 generic-template tells. Extends `limatus usability scan` only.\n\n## DoD\n\n- Same CLI. New kind: `generic_gradient_hero`.\n- Profile: `template.flagGradientHero` boolean, default **true**. Unknown keys rejected. Existing profiles still load.\n- When false, never emit this kind.\n- Flag when a simple CSS rule (existing parser: `tag` / `.class` / `#id` only, no combinators) whose selector is one of `body`, `header`, `.hero`, `#hero`, `.banner`, `#banner` sets `background` or `background-image` to a value containing `linear-gradient` (case-insensitive).\n- Do **not** flag `linear-gradient` on other selectors (`button`, `.card`, `a`, etc.).\n- If multiple matching rules, one finding per matching **element in the page** that the selector applies to (body/header/elements with those ids/classes). If the CSS names `.hero` but the HTML has no `.hero`, **no** finding (don’t flag CSS that doesn’t land).\n- JSON: `id`, `kind`, `selector`, `rationale`. Add `generic_gradient_hero` to SKILL.md kinds list.\n- Tests (tempfile): `body { background: linear-gradient(#000, #fff) }` with `<body>` flags; `button { background: linear-gradient(#000, #fff) }` does not; `.hero` rule with no `.hero` in HTML does not; flag false suppresses; existing fixtures unchanged.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- radial-gradient, three-icon rows, screenshots, decide/apply\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-gradient-hero` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-gradient-hero`\n- PR target: **main**\n\n## Inversion\n\n- A page with no matching selector+element pair stays clean.\n- Gradients on controls are not this tell.",
+  "type": "task",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "eb5496ac-1f6e-47c2-a9c0-bc0d264fd437",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Started. Worktree /tmp/limatus-e872b1-gradient-hero branch feat/LIM-f9e7cf-usability-gradient-hero from origin/main.",
+      "created_at": "2026-09-12T11:43:40.633218Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-12T11:43:23.823723Z",
+  "updated_at": "2026-09-12T11:43:40.633239Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

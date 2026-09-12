@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.27.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`65fd120`](https://github.com/AnthusAI/Limatus/commit/65fd120295fb3eeff7d5493253a738fe79ec8661))
+
+### Features
+
+- **usability**: Add generic_gradient_hero scan (LIM-f9e7cf)
+  ([#38](https://github.com/AnthusAI/Limatus/pull/38),
+  [`891d05c`](https://github.com/AnthusAI/Limatus/commit/891d05c951c063fe0472ea866b7a18105c0d0663))
+
+Detect linear-gradient backgrounds on hero-region selectors when template.flagGradientHero is
+  enabled (default true).
+
+
 ## v0.26.0 (2026-09-12)
 
 ### Chores

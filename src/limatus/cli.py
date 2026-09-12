@@ -12,6 +12,7 @@
     limatus verify --original <file> --working-copy <file> --profile <style-profile.yml> [...]
     limatus headline options --job title|subtitle --working-copy <file> --profile <style-profile.yml> \\
                              --skill <editorial-rewrite-skill.yml> [...]
+    limatus usability scan --page FILE.html --profile FILE.yml [--output findings.json]
     limatus eval --manifest <editorial-corpus/manifest.yml>
     limatus canary --manifest <editorial-canary/manifest.yml>
     limatus skill   (print the packaged copy-edit Agent Skill for agents)
@@ -42,6 +43,8 @@ from .editorial_commands import (
 from .editorial_canary import main as editorial_canary
 from .editorial_eval import main as editorial_eval
 from .skill import load_skill_bytes
+from .usability_commands import editorial_usability
+from .usability_profile import UsabilityProfileValidationError
 
 
 def editorial_skill(flags: list[str]) -> None:
@@ -61,6 +64,7 @@ COMMANDS = {
     "compare": editorial_compare,
     "verify": editorial_verify,
     "headline": editorial_headline,
+    "usability": editorial_usability,
     "standfirst": editorial_standfirst,
     "eval": editorial_eval,
     "canary": editorial_canary,
@@ -85,7 +89,7 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         result = handler(flags)
-    except (StyleProfileValidationError, JudgeUnavailableError, ValueError) as exc:
+    except (StyleProfileValidationError, UsabilityProfileValidationError, JudgeUnavailableError, ValueError) as exc:
         print(f"limatus: {exc}", file=sys.stderr)
         return 1
     return result if isinstance(result, int) else 0

@@ -3,7 +3,7 @@
   "title": "Read-only missing accessible name on form controls",
   "description": "# Read-only missing accessible name on form controls\n\nNext slice of LIM-e872b1. Extends `limatus usability scan` only. No layout engine.\n\n## DoD\n\n- Same CLI. New kind: `missing_accessible_name`.\n- Profile: `accessibleName.flagMissing` boolean, default **true**. Unknown keys rejected. Existing contrast / tapTarget / focus profiles still load.\n- When `flagMissing` is false, never emit this kind.\n- Elements: `input` except `type=hidden`, `select`, `textarea`. Also `input type=image` with no alt/aria-label (alt counts as the name). Do **not** flag `button` that has non-whitespace text, or `input type=submit|button|reset` that has a non-empty `value` or `aria-label`.\n- An accessible name exists if **any** of: non-empty `aria-label`; non-empty `aria-labelledby` id that matches an element in the page; a wrapping `<label>`; a `<label for=\"id\">` pointing at this control’s `id`; for `input type=image`, a non-empty `alt`.\n- `title` alone is **not** a name (too weak).\n- JSON: `id`, `kind`, `selector`, `rationale`. Other kinds unchanged.\n- Tests (tempfile HTML, not fixture-dir junk):\n  - `<input type=\"text\">` with no label → flags\n  - `<label>Name <input type=\"text\"></label>` → no this kind\n  - `<label for=\"n\">N</label><input id=\"n\">` → no this kind\n  - `aria-label=\"Name\"` → no this kind\n  - existing both-findings.html / minimal.html do not gain this kind\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- Placeholder-as-label, title, decide/apply, SKILL.md, live URLs, contrast/tap/focus regressions\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-accessible-name` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-accessible-name`\n- PR target: **main**\n\n## Inversion\n\n- Do not flag a properly labelled control.\n- Do not treat placeholder or title as a name.",
   "type": "task",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Started. Worktree /tmp/limatus-e872b1-accessible-name branch feat/LIM-dbfe8e-usability-accessible-name from origin/main.",
       "created_at": "2026-09-12T11:34:52.155963Z",
       "comment_type": "default"
+    },
+    {
+      "id": "c6b86baa-6278-42fe-9f34-31b93b466112",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged AnthusAI/Limatus#34: missing_accessible_name (labels/aria-label/aria-labelledby; title/placeholder ignored). DoD met.",
+      "created_at": "2026-09-12T11:37:01.456789Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-12T11:34:31.821238Z",
-  "updated_at": "2026-09-12T11:34:52.155979Z",
-  "closed_at": null,
+  "updated_at": "2026-09-12T11:37:01.495679Z",
+  "closed_at": "2026-09-12T11:37:01.495642Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

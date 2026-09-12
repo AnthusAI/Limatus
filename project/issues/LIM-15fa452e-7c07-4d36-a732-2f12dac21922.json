@@ -1,0 +1,31 @@
+{
+  "id": "LIM-15fa452e-7c07-4d36-a732-2f12dac21922",
+  "title": "Document usability scan in packaged SKILL.md",
+  "description": "# Document usability scan in packaged SKILL.md\n\nLIM-3863ed left an open question: one SKILL.md for both editorial and usability once the second capability exists. That capability is now `limatus usability scan`. Update the packaged skill (same file `limatus skill` prints) so agents can discover it.\n\n## DoD\n\n- Edit `src/limatus/data/SKILL.md` only (plus tests if the skill CLI test needs new assertions).\n- Keep YAML frontmatter; broaden description to mention both copy-edit and HTML usability diagnose.\n- Add a short **HTML usability** section: `limatus usability scan --page --profile [--output]`, read-only, never rewrite the page, kinds currently implemented (`missing_alt`, `low_contrast`, `small_tap_target`, `suppressed_focus_outline`, `missing_accessible_name`), profile is **not** `style-profile.yml`.\n- Explicit: no usability `options`/`apply` yet; do not invent those commands.\n- Keep the editorial loop as the primary workflow; usability is a sibling diagnose step.\n- Stay well under ~5,000 tokens. Do not duplicate the full editorial command cookbook.\n- `PYTHONPATH=src python -m pytest tests -q` (including `test_skill_cli.py`).\n\n## Out of scope\n\n- New scanner kinds, CLI flags, `limatus skills <id>` drill-down.\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-skill-usability` from `origin/main`\n- Branch: `feat/LIM-<this-id>-skill-usability`\n- PR target: **main**",
+  "type": "task",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "docs"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "034dcc9e-f31d-4c64-b8e5-3ddaace11fa4",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Started. Worktree /tmp/limatus-e872b1-skill-usability branch feat/LIM-15fa45-skill-usability from origin/main.",
+      "created_at": "2026-09-12T11:37:15.287592Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-12T11:37:01.532755Z",
+  "updated_at": "2026-09-12T11:37:15.287617Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

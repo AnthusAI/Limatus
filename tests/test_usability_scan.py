@@ -290,6 +290,58 @@ class UsabilityScanTests(unittest.TestCase):
             emoji = [f for f in payload["findings"] if f["kind"] == "emoji_heading"]
             self.assertEqual(emoji, [])
 
+    def test_generic_gradient_hero_flags_body_linear_gradient(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><head><style>
+        body { background: linear-gradient(to bottom, #fff, #eee); }
+        </style></head><body><p>Hi</p></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        gradient = [f for f in payload["findings"] if f["kind"] == "generic_gradient_hero"]
+        self.assertEqual(len(gradient), 1)
+        self.assertEqual(gradient[0]["selector"], "body")
+
+    def test_generic_gradient_hero_ignores_button_linear_gradient(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><head><style>
+        button { background-image: linear-gradient(90deg, red, blue); }
+        </style></head><body><button>Go</button></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        gradient = [f for f in payload["findings"] if f["kind"] == "generic_gradient_hero"]
+        self.assertEqual(gradient, [])
+
+    def test_generic_gradient_hero_hero_rule_without_matching_element(self):
+        profile = load_usability_profile(PROFILE)
+        html = """<!DOCTYPE html><html><head><style>
+        .hero { background: linear-gradient(#000, #111); }
+        </style></head><body><div class="banner">X</div></body></html>"""
+        payload = scan_html_page(html, profile=profile)
+        gradient = [f for f in payload["findings"] if f["kind"] == "generic_gradient_hero"]
+        self.assertEqual(gradient, [])
+
+    def test_flag_gradient_hero_false_disables_generic_gradient_hero(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-gradient-hero.yml"
+            profile_path.write_text("template:\n  flagGradientHero: false\n", encoding="utf-8")
+            profile = load_usability_profile(profile_path)
+            html = """<!DOCTYPE html><html><head><style>
+            body { background: linear-gradient(to bottom, #fff, #eee); }
+            </style></head><body></body></html>"""
+            payload = scan_html_page(html, profile=profile)
+            gradient = [f for f in payload["findings"] if f["kind"] == "generic_gradient_hero"]
+            self.assertEqual(gradient, [])
+
+    def test_both_findings_page_has_no_generic_gradient_hero(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(BOTH_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("generic_gradient_hero", kinds)
+
+    def test_minimal_page_has_no_generic_gradient_hero(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(MINIMAL_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("generic_gradient_hero", kinds)
+
     def test_void_img_does_not_swallow_following_siblings(self):
         profile = load_usability_profile(PROFILE)
         html = """<!DOCTYPE html>

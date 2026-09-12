@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.22.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`95cecb0`](https://github.com/AnthusAI/Limatus/commit/95cecb0ffec320a7e134d0f69e969a2d853351aa))
+
+### Features
+
+- **usability**: Add small tap target scan (LIM-17723e)
+  ([#32](https://github.com/AnthusAI/Limatus/pull/32),
+  [`a4375e2`](https://github.com/AnthusAI/Limatus/commit/a4375e29dc8d873e6a9c3a991cb9af028f91310e))
+
+Extend usability scan with small_tap_target findings, tapTarget.minPx profile default, and
+  deterministic width/height resolution from attrs, inline styles, and embedded CSS rules.
+
+
 ## v0.21.0 (2026-09-12)
 
 ### Chores

@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.23.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`cbf8879`](https://github.com/AnthusAI/Limatus/commit/cbf8879758f14a1de387d0620f5d047c1315cbc3))
+
+### Features
+
+- **usability**: Flag suppressed focus outline (LIM-942618)
+  ([#33](https://github.com/AnthusAI/Limatus/pull/33),
+  [`7f2985a`](https://github.com/AnthusAI/Limatus/commit/7f2985a080031ce3e2f9358bc17fef6f4c2aac00))
+
+Add suppressed_focus_outline scan for interactive controls when focus styles remove outline without
+  a compensating box-shadow, with profile focus.flagSuppressedOutline (default true).
+
+
 ## v0.22.0 (2026-09-12)
 
 ### Chores

@@ -113,6 +113,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
         findings.extend(_find_suppressed_focus_outline(tree, css_rules))
     if profile.profile.accessible_name.flag_missing:
         findings.extend(_find_missing_accessible_name(tree))
+    if profile.profile.lang.flag_missing:
+        findings.extend(_find_missing_lang(tree))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -165,10 +167,11 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "small_tap_target",
         "suppressed_focus_outline",
         "missing_accessible_name",
+        "missing_lang",
     }:
         raise UsabilityFindingsValidationError(
             f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
-            "'suppressed_focus_outline', or 'missing_accessible_name'."
+            "'suppressed_focus_outline', 'missing_accessible_name', or 'missing_lang'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -208,7 +211,7 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include width or height for suppressed_focus_outline."
             )
-    elif kind in {"missing_alt", "missing_accessible_name"}:
+    elif kind in {"missing_alt", "missing_accessible_name", "missing_lang"}:
         if "ratio" in entry:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include ratio for {kind}."
@@ -218,6 +221,25 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
                 f"{location} must not include width or height for {kind}."
             )
     return result
+
+
+def _find_missing_lang(node: _DomNode) -> list[dict[str, Any]]:
+    html_nodes = [child for child in node.children if child.tag == "html"]
+    if not html_nodes:
+        return []
+    html = html_nodes[0]
+    lang = html.attrs.get("lang", "")
+    if lang.strip():
+        return []
+    finding_id = stable_usability_finding_id("missing_lang", "html")
+    return [
+        {
+            "id": finding_id,
+            "kind": "missing_lang",
+            "selector": "html",
+            "rationale": "Root html element lacks a non-empty lang attribute.",
+        }
+    ]
 
 
 def _build_accessible_name_index(

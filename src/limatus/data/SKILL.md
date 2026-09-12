@@ -1,13 +1,13 @@
 ---
 name: limatus-copy-edit-loop
-description: Run the Limatus diagnose-and-steer copy-edit loop on a draft against a style profile—scan findings, record steering decisions, generate rewrite options, compare candidates, apply one chosen patch to a working copy only, then refresh headline fields in profile order. Never auto-apply; never modify the original draft file.
+description: Run Limatus diagnose-and-steer workflows on publication content—copy-edit markdown drafts against a style profile (scan, decide, options, compare, apply, headlines) and read-only HTML usability scans against a usability profile. Never auto-apply editorial patches; never modify the original draft or HTML page files.
 ---
 
 # Limatus copy-edit loop
 
 Use this skill when an agent (or human with agent assistance) copy-edits AI-assisted prose under a publication-specific style profile. Limatus reports and steers; it does not silently rewrite. The human (or an explicit human-directed apply step) chooses which option lands on disk.
 
-Progressive disclosure: run `limatus skill` anytime to re-read this document. Start with **scan**; only invoke later commands when their inputs exist.
+Progressive disclosure: run `limatus skill` anytime to re-read this document. For prose, start with editorial **scan**; only invoke later copy-edit commands when their inputs exist. For static HTML, see **HTML usability** below (separate profile and CLI).
 
 ## Principles
 
@@ -126,6 +126,26 @@ Map `--job title|subtitle` to the profile’s `headline.<job>.key` when editing 
 python -m limatus eval --manifest path/to/editorial-corpus/manifest.yml
 python -m limatus canary --manifest path/to/editorial-canary/manifest.yml
 ```
+
+## HTML usability
+
+Use this path for static HTML pages (landing pages, articles rendered to HTML)—not for markdown copy-edit drafts. It is **read-only**: Limatus reports findings; it does not rewrite the page. There is no `usability options`, `usability apply`, or other usability write commands.
+
+The profile is a **usability profile** (thresholds for contrast, tap targets, focus visibility, etc.). It is **not** the editorial `style-profile.yml` used by `scan` / `options` / `apply`.
+
+```bash
+python -m limatus usability scan --page FILE.html --profile FILE.yml [--output findings.json]
+```
+
+Structured finding kinds include:
+
+- `missing_alt`
+- `low_contrast`
+- `small_tap_target`
+- `suppressed_focus_outline`
+- `missing_accessible_name`
+
+Route usability findings to human or design-system fixes outside the editorial decide/options/apply loop.
 
 ## Agent steering
 

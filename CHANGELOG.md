@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.26.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`35fd293`](https://github.com/AnthusAI/Limatus/commit/35fd293cc33b2f4c5c15076dff923477eba14e17))
+
+### Features
+
+- **usability**: Emoji_heading scan kind (LIM-f7bce7)
+  ([#37](https://github.com/AnthusAI/Limatus/pull/37),
+  [`a915c7b`](https://github.com/AnthusAI/Limatus/commit/a915c7be2d124a6d6f212da6b47c993dd4f35178))
+
+Extract shared EMOJI_PATTERN, add emoji.flagInHeadings profile toggle, and flag headings that
+  contain emoji in usability scan.
+
+
 ## v0.25.0 (2026-09-12)
 
 ### Chores

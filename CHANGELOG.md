@@ -1,6 +1,36 @@
 # CHANGELOG
 
 
+## v0.21.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`995a263`](https://github.com/AnthusAI/Limatus/commit/995a263de7a3e16b8fbaeb7cd99363d67ffe547c))
+
+- **kanbus**: Commit board state (issues)
+  ([`aaea8b7`](https://github.com/AnthusAI/Limatus/commit/aaea8b7a32ff79ccb82013f2fb3fd4d97a9a4165))
+
+- **kanbus**: Commit board state (issues)
+  ([`3287c46`](https://github.com/AnthusAI/Limatus/commit/3287c46b310067e5d515d55118c768e4591f18ad))
+
+### Features
+
+- **usability**: Read-only HTML scan (LIM-274a81)
+  ([#31](https://github.com/AnthusAI/Limatus/pull/31),
+  [`0a2f37d`](https://github.com/AnthusAI/Limatus/commit/0a2f37decbb91cfc225026912788527f4024e761))
+
+* feat(usability): add read-only HTML scan for LIM-274a81
+
+Introduce `limatus usability scan` with a dedicated usability profile schema, WCAG contrast checks,
+  and missing-alt detection without touching editorial scan output.
+
+* fix(usability): void HTML elements and test hygiene (LIM-274a81)
+
+Pop void tags off the parser stack so siblings are not nested under img, harden 3-digit hex parsing,
+  and use temp dirs for CLI/profile tests plus a read-only page byte check.
+
+
 ## v0.20.0 (2026-09-11)
 
 ### Chores

@@ -3,7 +3,7 @@
   "title": "Read-only missing html lang",
   "description": "# Read-only missing html lang\n\nNext slice of LIM-e872b1. Extends `limatus usability scan` only.\n\n## DoD\n\n- Same CLI. New kind: `missing_lang`.\n- Profile: `lang.flagMissing` boolean, default **true**. Unknown keys rejected. Existing profiles still load.\n- When false, never emit this kind.\n- Flag the root `<html>` element when it has no `lang` attribute or `lang` is whitespace-only. Do **not** flag if `lang` is present (any non-empty value, including `und`). Do **not** invent a language. Do **not** walk nested elements for xml:lang.\n- If there is no `<html>` element (fragment), flag the document root with selector `html` only if you can identify a top-level `html` node; fragments without `<html>` → **no** finding (avoid punishing partial snippets).\n- JSON: `id`, `kind`, `selector`, `rationale`. Selector should be `html` when the element exists.\n- Update the kinds list in `src/limatus/data/SKILL.md` HTML usability section to include `missing_lang`.\n- Tests (tempfile): `<html><body></body></html>` flags; `<html lang=\"en\">` does not; `minimal.html` / `both-findings.html` already have lang so they must not gain this kind; flagMissing false suppresses.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- hreflang, content-language headers, decide/apply, live URLs\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-missing-lang` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-missing-lang`\n- PR target: **main**",
   "type": "task",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Started. Worktree /tmp/limatus-e872b1-missing-lang branch feat/LIM-1d9020-usability-missing-lang from origin/main.",
       "created_at": "2026-09-12T11:38:46.651118Z",
       "comment_type": "default"
+    },
+    {
+      "id": "777f52cf-c2d1-429c-8ad1-44231c0ad0a2",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged AnthusAI/Limatus#36: missing_lang on root html; fragments without html are skipped. DoD met.",
+      "created_at": "2026-09-12T11:41:12.365645Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-12T11:38:32.076063Z",
-  "updated_at": "2026-09-12T11:38:46.651138Z",
-  "closed_at": null,
+  "updated_at": "2026-09-12T11:41:12.404536Z",
+  "closed_at": "2026-09-12T11:41:12.404511Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

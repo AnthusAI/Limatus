@@ -147,6 +147,7 @@ Structured finding kinds include:
 - `missing_lang`
 - `emoji_heading`
 - `generic_gradient_hero`
+- `generic_feature_row`
 
 Route usability findings to human or design-system fixes outside the editorial decide/options/apply loop.
 

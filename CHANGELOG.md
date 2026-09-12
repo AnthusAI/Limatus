@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.28.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`2cd835f`](https://github.com/AnthusAI/Limatus/commit/2cd835f1d5fe380d2f7eae2710f1b916bf891c5e))
+
+### Features
+
+- **usability**: Add generic_feature_row scan (LIM-d75641)
+  ([#39](https://github.com/AnthusAI/Limatus/pull/39),
+  [`3bc99ae`](https://github.com/AnthusAI/Limatus/commit/3bc99aea072df4b910c4ad5179e81a20680cc341))
+
+Detect consecutive sibling feature cards with shared leading class and images; gate via
+  template.flagFeatureRow (default true).
+
+
 ## v0.27.0 (2026-09-12)
 
 ### Chores

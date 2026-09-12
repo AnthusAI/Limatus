@@ -145,6 +145,7 @@ Structured finding kinds include:
 - `suppressed_focus_outline`
 - `missing_accessible_name`
 - `missing_lang`
+- `emoji_heading`
 
 Route usability findings to human or design-system fixes outside the editorial decide/options/apply loop.
 

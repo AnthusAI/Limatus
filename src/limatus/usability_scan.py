@@ -6,7 +6,10 @@ from html.parser import HTMLParser
 from typing import Any
 
 from ._util import hash_short
+from .emoji import EMOJI_PATTERN
 from .usability_profile import LoadedUsabilityProfile
+
+HEADING_TAGS = frozenset({"h1", "h2", "h3", "h4", "h5", "h6"})
 
 SCHEMA_VERSION = 1
 
@@ -115,6 +118,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
         findings.extend(_find_missing_accessible_name(tree))
     if profile.profile.lang.flag_missing:
         findings.extend(_find_missing_lang(tree))
+    if profile.profile.emoji.flag_in_headings:
+        findings.extend(_find_emoji_heading(tree))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -168,10 +173,12 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "suppressed_focus_outline",
         "missing_accessible_name",
         "missing_lang",
+        "emoji_heading",
     }:
         raise UsabilityFindingsValidationError(
             f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
-            "'suppressed_focus_outline', 'missing_accessible_name', or 'missing_lang'."
+            "'suppressed_focus_outline', 'missing_accessible_name', 'missing_lang', or "
+            "'emoji_heading'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -211,7 +218,7 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include width or height for suppressed_focus_outline."
             )
-    elif kind in {"missing_alt", "missing_accessible_name", "missing_lang"}:
+    elif kind in {"missing_alt", "missing_accessible_name", "missing_lang", "emoji_heading"}:
         if "ratio" in entry:
             raise UsabilityFindingsValidationError(
                 f"{location} must not include ratio for {kind}."
@@ -221,6 +228,33 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
                 f"{location} must not include width or height for {kind}."
             )
     return result
+
+
+def _node_text_content(node: _DomNode) -> str:
+    parts = list(node.direct_text)
+    for child in node.children:
+        parts.append(_node_text_content(child))
+    return "".join(parts)
+
+
+def _find_emoji_heading(node: _DomNode) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    if node.tag in HEADING_TAGS:
+        text = _node_text_content(node)
+        if EMOJI_PATTERN.search(text):
+            selector = _element_selector(node)
+            finding_id = stable_usability_finding_id("emoji_heading", selector)
+            findings.append(
+                {
+                    "id": finding_id,
+                    "kind": "emoji_heading",
+                    "selector": selector,
+                    "rationale": "Heading contains emoji characters.",
+                }
+            )
+    for child in node.children:
+        findings.extend(_find_emoji_heading(child))
+    return findings
 
 
 def _find_missing_lang(node: _DomNode) -> list[dict[str, Any]]:

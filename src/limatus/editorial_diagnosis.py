@@ -13,16 +13,9 @@ from .editorial_diagnosis_schema import (
 )
 from .editorial_style import LoadedStyleProfile
 from .editorial_text import line_at_offset, paragraphs, sentence_spans, sentences, word_count
+from .emoji import EMOJI_PATTERN as _EMOJI_PATTERN
 
 PROFILE_RULE_PREFIX = "Profile rule:"
-
-_EMOJI_PATTERN = re.compile(
-    "["
-    "\U0001F300-\U0001FAFF"
-    "\U00002600-\U000027BF"
-    "\U0001F1E6-\U0001F1FF"
-    "]"
-)
 
 _EMPTY_LEADIN_PATTERNS = (
     r"^In today's\b",

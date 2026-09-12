@@ -253,6 +253,43 @@ class UsabilityScanTests(unittest.TestCase):
             with self.assertRaises(UsabilityProfileValidationError):
                 load_usability_profile(bad_path)
 
+    def test_emoji_heading_flags_h1_with_emoji(self):
+        profile = load_usability_profile(PROFILE)
+        html = "<!DOCTYPE html><html><body><h1>🚀 Launch</h1></body></html>"
+        payload = scan_html_page(html, profile=profile)
+        emoji = [f for f in payload["findings"] if f["kind"] == "emoji_heading"]
+        self.assertEqual(len(emoji), 1)
+        self.assertEqual(emoji[0]["selector"], "h1")
+
+    def test_emoji_heading_ignores_emoji_in_non_headings(self):
+        profile = load_usability_profile(PROFILE)
+        html = "<!DOCTYPE html><html><body><h1>Launch</h1><p>🚀</p></body></html>"
+        payload = scan_html_page(html, profile=profile)
+        emoji = [f for f in payload["findings"] if f["kind"] == "emoji_heading"]
+        self.assertEqual(emoji, [])
+
+    def test_both_findings_page_has_no_emoji_heading(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(BOTH_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("emoji_heading", kinds)
+
+    def test_minimal_page_has_no_emoji_heading(self):
+        profile = load_usability_profile(PROFILE)
+        payload = scan_html_page(MINIMAL_PAGE.read_text(encoding="utf-8"), profile=profile)
+        kinds = {entry["kind"] for entry in payload["findings"]}
+        self.assertNotIn("emoji_heading", kinds)
+
+    def test_flag_in_headings_false_disables_emoji_heading(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "no-emoji.yml"
+            profile_path.write_text("emoji:\n  flagInHeadings: false\n", encoding="utf-8")
+            profile = load_usability_profile(profile_path)
+            html = "<!DOCTYPE html><html><body><h1>🚀 Launch</h1></body></html>"
+            payload = scan_html_page(html, profile=profile)
+            emoji = [f for f in payload["findings"] if f["kind"] == "emoji_heading"]
+            self.assertEqual(emoji, [])
+
     def test_void_img_does_not_swallow_following_siblings(self):
         profile = load_usability_profile(PROFILE)
         html = """<!DOCTYPE html>

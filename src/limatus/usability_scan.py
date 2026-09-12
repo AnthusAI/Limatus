@@ -103,6 +103,11 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
     findings.extend(
         _find_low_contrast(tree, css_rules, min_ratio=profile.profile.contrast.min_ratio)
     )
+    findings.extend(
+        _find_small_tap_target(
+            tree, css_rules, min_px=profile.profile.tap_target.min_px
+        )
+    )
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -149,9 +154,9 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         raise UsabilityFindingsValidationError(f"{location} must be a mapping.")
     assert_no_forbidden_usability_keys(entry, location)
     kind = entry.get("kind")
-    if kind not in {"missing_alt", "low_contrast"}:
+    if kind not in {"missing_alt", "low_contrast", "small_tap_target"}:
         raise UsabilityFindingsValidationError(
-            f"{location}.kind must be 'missing_alt' or 'low_contrast'."
+            f"{location}.kind must be 'missing_alt', 'low_contrast', or 'small_tap_target'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -173,8 +178,22 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         if not isinstance(ratio, (int, float)) or isinstance(ratio, bool):
             raise UsabilityFindingsValidationError(f"{location}.ratio must be a number.")
         result["ratio"] = round(float(ratio), 4)
-    elif "ratio" in entry:
-        raise UsabilityFindingsValidationError(f"{location} must not include ratio for missing_alt.")
+    elif kind == "small_tap_target":
+        width = entry.get("width")
+        height = entry.get("height")
+        if not isinstance(width, (int, float)) or isinstance(width, bool):
+            raise UsabilityFindingsValidationError(f"{location}.width must be a number.")
+        if not isinstance(height, (int, float)) or isinstance(height, bool):
+            raise UsabilityFindingsValidationError(f"{location}.height must be a number.")
+        result["width"] = float(width)
+        result["height"] = float(height)
+    else:
+        if "ratio" in entry:
+            raise UsabilityFindingsValidationError(f"{location} must not include ratio for missing_alt.")
+        if "width" in entry or "height" in entry:
+            raise UsabilityFindingsValidationError(
+                f"{location} must not include width or height for missing_alt."
+            )
     return result
 
 
@@ -195,6 +214,49 @@ def _find_missing_alt(node: _DomNode) -> list[dict[str, Any]]:
             )
     for child in node.children:
         findings.extend(_find_missing_alt(child))
+    return findings
+
+
+def _is_interactive_tap_target(node: _DomNode) -> bool:
+    role = node.attrs.get("role", "").lower()
+    if role in {"button", "link"}:
+        return True
+    tag = node.tag
+    if tag == "input":
+        input_type = node.attrs.get("type", "text").lower()
+        return input_type != "hidden"
+    return tag in {"a", "button", "select", "textarea", "summary"}
+
+
+def _find_small_tap_target(
+    node: _DomNode,
+    css_rules: list[_CssRule],
+    *,
+    min_px: float,
+) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    if node.tag != "document" and _is_interactive_tap_target(node):
+        width = _resolve_length_px(node, "width", css_rules)
+        height = _resolve_length_px(node, "height", css_rules)
+        if width is not None and height is not None and (width < min_px or height < min_px):
+            selector = _element_selector(node)
+            detail = f"{width}x{height}"
+            finding_id = stable_usability_finding_id("small_tap_target", selector, detail)
+            findings.append(
+                {
+                    "id": finding_id,
+                    "kind": "small_tap_target",
+                    "selector": selector,
+                    "rationale": (
+                        f"Interactive control size {width}×{height}px is below the profile "
+                        f"minimum ({min_px}px) on at least one dimension."
+                    ),
+                    "width": width,
+                    "height": height,
+                }
+            )
+    for child in node.children:
+        findings.extend(_find_small_tap_target(child, css_rules, min_px=min_px))
     return findings
 
 
@@ -244,6 +306,56 @@ def _element_selector(node: _DomNode) -> str:
         if class_name:
             parts.append(f".{class_name}")
     return "".join(parts)
+
+
+def _resolve_length_px(
+    node: _DomNode, property_name: str, css_rules: list[_CssRule]
+) -> float | None:
+    attr_value = node.attrs.get(property_name)
+    if attr_value is not None:
+        parsed = parse_css_length_px(attr_value)
+        if parsed is not None:
+            return parsed
+    inline = _inline_style_dict(node.attrs.get("style", ""))
+    if property_name in inline:
+        parsed = parse_css_length_px(inline[property_name])
+        if parsed is not None:
+            return parsed
+    matched_value: str | None = None
+    matched_specificity = -1
+    matched_order = -1
+    for order, rule in enumerate(css_rules):
+        if not _selector_matches_node(node, rule.selectors):
+            continue
+        if property_name not in rule.declarations:
+            continue
+        specificity = _selector_specificity(rule.selectors, node)
+        if specificity > matched_specificity or (
+            specificity == matched_specificity and order > matched_order
+        ):
+            matched_specificity = specificity
+            matched_order = order
+            matched_value = rule.declarations[property_name]
+    if matched_value is None:
+        return None
+    return parse_css_length_px(matched_value)
+
+
+def parse_css_length_px(value: str) -> float | None:
+    text = value.strip().lower()
+    if not text:
+        return None
+    if text.endswith("px"):
+        number_text = text[:-2].strip()
+        if not number_text:
+            return None
+        try:
+            return float(number_text)
+        except ValueError:
+            return None
+    if re.fullmatch(r"-?[0-9]+(?:\.[0-9]+)?", text):
+        return float(text)
+    return None
 
 
 def _resolve_color(node: _DomNode, property_name: str, css_rules: list[_CssRule]) -> tuple[int, int, int] | None:

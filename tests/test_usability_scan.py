@@ -51,6 +51,40 @@ class UsabilityScanTests(unittest.TestCase):
         payload = scan_html_page(html, profile=profile)
         self.assertEqual(payload["findings"], [])
 
+    def test_small_tap_target_flags_16px_button(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><button width="16" height="16">Go</button></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        tap = [entry for entry in payload["findings"] if entry["kind"] == "small_tap_target"]
+        self.assertEqual(len(tap), 1)
+        self.assertEqual(tap[0]["width"], 16.0)
+        self.assertEqual(tap[0]["height"], 16.0)
+        validate_usability_findings(payload)
+
+    def test_24px_control_does_not_flag_small_tap_target(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><button width="24" height="24">Go</button></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        tap = [entry for entry in payload["findings"] if entry["kind"] == "small_tap_target"]
+        self.assertEqual(tap, [])
+
+    def test_unsized_link_does_not_flag_small_tap_target(self):
+        profile = load_usability_profile(PROFILE)
+        html = '<!DOCTYPE html><html><body><a href="/x">Home</a></body></html>'
+        payload = scan_html_page(html, profile=profile)
+        tap = [entry for entry in payload["findings"] if entry["kind"] == "small_tap_target"]
+        self.assertEqual(tap, [])
+
+    def test_contrast_only_profile_uses_default_tap_target_min_px(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            profile_path = Path(tmp) / "contrast-only.yml"
+            profile_path.write_text("contrast:\n  minRatio: 4.5\n", encoding="utf-8")
+            loaded = load_usability_profile(profile_path)
+            self.assertEqual(loaded.profile.tap_target.min_px, 24)
+            html = '<!DOCTYPE html><html><body><button width="16" height="16">Go</button></body></html>'
+            payload = scan_html_page(html, profile=loaded)
+            self.assertEqual(len([f for f in payload["findings"] if f["kind"] == "small_tap_target"]), 1)
+
     def test_profile_rejects_unknown_keys(self):
         with tempfile.TemporaryDirectory() as tmp:
             bad_path = Path(tmp) / "bad-profile.yml"

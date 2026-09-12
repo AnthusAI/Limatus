@@ -1,6 +1,23 @@
 # CHANGELOG
 
 
+## v0.25.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`103ad6a`](https://github.com/AnthusAI/Limatus/commit/103ad6ada37dbd0b074e642b273ee2c47e7d472c))
+
+### Features
+
+- **usability**: Add missing_lang scan kind (LIM-1d9020)
+  ([#36](https://github.com/AnthusAI/Limatus/pull/36),
+  [`781060b`](https://github.com/AnthusAI/Limatus/commit/781060b1f34786804fadda1130fad6079f9c4368))
+
+Flag root html elements without a non-empty lang attribute, gated by lang.flagMissing in the
+  usability profile (default true).
+
+
 ## v0.24.0 (2026-09-12)
 
 ### Chores

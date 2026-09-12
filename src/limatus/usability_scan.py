@@ -108,6 +108,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
             tree, css_rules, min_px=profile.profile.tap_target.min_px
         )
     )
+    if profile.profile.focus.flag_suppressed_outline:
+        findings.extend(_find_suppressed_focus_outline(tree, css_rules))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -154,9 +156,15 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         raise UsabilityFindingsValidationError(f"{location} must be a mapping.")
     assert_no_forbidden_usability_keys(entry, location)
     kind = entry.get("kind")
-    if kind not in {"missing_alt", "low_contrast", "small_tap_target"}:
+    if kind not in {
+        "missing_alt",
+        "low_contrast",
+        "small_tap_target",
+        "suppressed_focus_outline",
+    }:
         raise UsabilityFindingsValidationError(
-            f"{location}.kind must be 'missing_alt', 'low_contrast', or 'small_tap_target'."
+            f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
+            "or 'suppressed_focus_outline'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -187,6 +195,15 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
             raise UsabilityFindingsValidationError(f"{location}.height must be a number.")
         result["width"] = float(width)
         result["height"] = float(height)
+    elif kind == "suppressed_focus_outline":
+        if "ratio" in entry:
+            raise UsabilityFindingsValidationError(
+                f"{location} must not include ratio for suppressed_focus_outline."
+            )
+        if "width" in entry or "height" in entry:
+            raise UsabilityFindingsValidationError(
+                f"{location} must not include width or height for suppressed_focus_outline."
+            )
     else:
         if "ratio" in entry:
             raise UsabilityFindingsValidationError(f"{location} must not include ratio for missing_alt.")
@@ -226,6 +243,130 @@ def _is_interactive_tap_target(node: _DomNode) -> bool:
         input_type = node.attrs.get("type", "text").lower()
         return input_type != "hidden"
     return tag in {"a", "button", "select", "textarea", "summary"}
+
+
+_FOCUS_PSEUDO_SUFFIXES = (":focus-visible", ":focus")
+_FOCUS_SELECTOR_BASE_RE = re.compile(r"^(?:[a-z][a-z0-9-]*|\.[a-zA-Z0-9_-]+|#[a-zA-Z0-9_-]+)$")
+_FOCUS_PSEUDO_SPECIFICITY_BONUS = 1000
+
+
+def _parse_simple_focus_selector(selector: str) -> tuple[str, bool] | None:
+    """Return (base_selector, is_focus_pseudo) for allowed simple selectors, else None."""
+    stripped = selector.strip()
+    if not stripped or any(char in stripped for char in " *>+~"):
+        return None
+    for suffix in _FOCUS_PSEUDO_SUFFIXES:
+        if stripped.endswith(suffix):
+            base = stripped[: -len(suffix)]
+            if _FOCUS_SELECTOR_BASE_RE.fullmatch(base):
+                return base, True
+            return None
+    if _FOCUS_SELECTOR_BASE_RE.fullmatch(stripped):
+        return stripped, False
+    return None
+
+
+def _base_selector_specificity(base_selector: str) -> int:
+    if base_selector.startswith("#"):
+        return 100
+    if base_selector.startswith("."):
+        return 10
+    return 1
+
+
+def _base_selector_matches_node(node: _DomNode, base_selector: str) -> bool:
+    return _single_selector_matches(node, base_selector)
+
+
+def _declarations_suppress_outline(declarations: dict[str, str]) -> bool:
+    outline = declarations.get("outline")
+    if outline is not None:
+        first_token = outline.strip().lower().split()[0] if outline.strip() else ""
+        if first_token in {"none", "0", "0px"}:
+            return True
+    outline_width = declarations.get("outline-width")
+    if outline_width is not None:
+        width_text = outline_width.strip().lower()
+        if width_text in {"0", "0px"}:
+            return True
+    return False
+
+
+def _declarations_have_non_none_box_shadow(declarations: dict[str, str]) -> bool:
+    box_shadow = declarations.get("box-shadow")
+    if box_shadow is None:
+        return False
+    return box_shadow.strip().lower() != "none"
+
+
+@dataclass(frozen=True)
+class _WinningOutlineBlock:
+    declarations: dict[str, str]
+    specificity: int
+    order: int
+
+
+def _resolve_focus_outline_block(
+    node: _DomNode, css_rules: list[_CssRule]
+) -> _WinningOutlineBlock | None:
+    winner: _WinningOutlineBlock | None = None
+    inline = _inline_style_dict(node.attrs.get("style", ""))
+    if "outline" in inline or "outline-width" in inline:
+        winner = _WinningOutlineBlock(
+            declarations=inline,
+            specificity=10_000,
+            order=10_000,
+        )
+    for order, rule in enumerate(css_rules):
+        for selector in rule.selectors:
+            parsed = _parse_simple_focus_selector(selector)
+            if parsed is None:
+                continue
+            base, is_focus_pseudo = parsed
+            if not _base_selector_matches_node(node, base):
+                continue
+            if "outline" not in rule.declarations and "outline-width" not in rule.declarations:
+                continue
+            specificity = _base_selector_specificity(base)
+            if is_focus_pseudo:
+                specificity += _FOCUS_PSEUDO_SPECIFICITY_BONUS
+            candidate = _WinningOutlineBlock(
+                declarations=rule.declarations,
+                specificity=specificity,
+                order=order,
+            )
+            if winner is None or candidate.specificity > winner.specificity or (
+                candidate.specificity == winner.specificity and candidate.order > winner.order
+            ):
+                winner = candidate
+    return winner
+
+
+def _find_suppressed_focus_outline(
+    node: _DomNode,
+    css_rules: list[_CssRule],
+) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    if node.tag != "document" and _is_interactive_tap_target(node):
+        block = _resolve_focus_outline_block(node, css_rules)
+        if block is not None and _declarations_suppress_outline(block.declarations):
+            if not _declarations_have_non_none_box_shadow(block.declarations):
+                selector = _element_selector(node)
+                finding_id = stable_usability_finding_id("suppressed_focus_outline", selector)
+                findings.append(
+                    {
+                        "id": finding_id,
+                        "kind": "suppressed_focus_outline",
+                        "selector": selector,
+                        "rationale": (
+                            "Interactive control suppresses visible focus outline without a "
+                            "non-none box-shadow in the same declaration block."
+                        ),
+                    }
+                )
+    for child in node.children:
+        findings.extend(_find_suppressed_focus_outline(child, css_rules))
+    return findings
 
 
 def _find_small_tap_target(

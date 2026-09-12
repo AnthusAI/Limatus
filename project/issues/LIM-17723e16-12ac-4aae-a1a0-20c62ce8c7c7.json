@@ -3,7 +3,7 @@
   "title": "Read-only tap-target size findings on HTML usability scan",
   "description": "# Read-only tap-target size findings on HTML usability scan\n\nNext slice of LIM-e872b1. Extends the existing `limatus usability scan` — do not add a new top-level command.\n\n## DoD\n\n- Same CLI: `limatus usability scan --page FILE.html --profile FILE.yml`\n- New finding kind: `small_tap_target`\n- Profile: `tapTarget.minPx` (CSS pixels, default **24**, WCAG 2.2 Target Size Minimum). Reject unknown keys. Existing `contrast.minRatio` must keep working; a profile with only `contrast` still loads (tap-target default applies).\n- Interactive elements this slice: `a`, `button`, `input` (except `type=hidden`), `select`, `textarea`, `summary`, and any element with `role=\"button\"` or `role=\"link\"`.\n- Size from (1) `width`/`height` HTML attributes on the element (px or unitless numbers), (2) inline `style` width/height, (3) the same single `<style>` simple `tag` / `.class` / `#id` rules already used for contrast. No layout engine, no viewport, no ancestor box model.\n- Flag only when **both** width and height are resolvable **and** either dimension is below `minPx`. If either dimension is unknown, skip (no invented 300x150 img defaults, no “inline is auto”).\n- CSS lengths: `px` and unitless numbers only. Skip `%`, `em`, `rem`, `vw`, `auto`, `fit-content`.\n- JSON: same envelope as today; `small_tap_target` includes numeric `width` and `height` (and `selector` + `rationale`). `missing_alt` / `low_contrast` unchanged.\n- Read-only; no rewrite keys; void-tag parser must stay correct.\n- Tests: page with a 16×16 `button` (inline or CSS) that flags; a 24×24 (or larger) control that does not; unknown-size `<a href>` with no width/height must **not** flag; existing both-findings + minimal fixtures still pass.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- spacing/offset exceptions from WCAG 2.5.8\n- focus rings, overflow, template-tells, decide/options/apply\n- SKILL.md\n- live URLs / screenshots\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-tap-target` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-tap-target`\n- PR target: **main**. Prefix LIM.\n\n## Inversion\n\n- Sparse pages with unsized links must stay clean.\n- Do not treat missing CSS size as “too small.”",
   "type": "task",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Started. Worktree /tmp/limatus-e872b1-tap-target branch feat/LIM-17723e-usability-tap-target from origin/main.",
       "created_at": "2026-09-12T11:29:51.728939Z",
       "comment_type": "default"
+    },
+    {
+      "id": "e3767f5e-f5ed-4398-943b-9affed1eb70f",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged AnthusAI/Limatus#32: small_tap_target on usability scan (tapTarget.minPx default 24; unknown sizes skipped). DoD met.",
+      "created_at": "2026-09-12T11:32:08.452333Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-12T11:29:46.903351Z",
-  "updated_at": "2026-09-12T11:29:51.728957Z",
-  "closed_at": null,
+  "updated_at": "2026-09-12T11:32:08.494529Z",
+  "closed_at": "2026-09-12T11:32:08.494505Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

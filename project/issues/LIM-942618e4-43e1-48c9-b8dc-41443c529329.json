@@ -1,0 +1,31 @@
+{
+  "id": "LIM-942618e4-43e1-48c9-b8dc-41443c529329",
+  "title": "Read-only suppressed focus-outline findings",
+  "description": "# Read-only suppressed focus-outline findings\n\nNext slice of LIM-e872b1. Extends `limatus usability scan` only.\n\n## DoD\n\n- Same CLI. New kind: `suppressed_focus_outline`.\n- Profile: `focus.flagSuppressedOutline` boolean, default **true**. Unknown keys rejected. Contrast + tapTarget must keep loading.\n- Interactive set: same as tap-targets (`a`, `button`, non-hidden `input`, `select`, `textarea`, `summary`, `role=button|link`).\n- Extend the existing simple stylesheet parser to accept **one** trailing pseudo on simple selectors: `tag:focus`, `.class:focus`, `#id:focus` (also `:focus-visible` treated the same). No combinators, no `*`.\n- Flag when the **focus** rule (or the element’s own inline `outline`) resolves to `none`, `0`, or `0px` / `outline-width: 0`.\n- Skip if that same winning declaration block also sets `box-shadow` to a value other than `none` (custom ring). If box-shadow is absent or `none`, flag.\n- Element-level `outline: none` without a `:focus` rule still flags (inline or non-pseudo rule matching the element).\n- JSON: `id`, `kind`, `selector`, `rationale`. No rewrite keys. Other kinds unchanged.\n- Tests: `button:focus { outline: none }` flags; `button:focus { outline: none; box-shadow: 0 0 0 2px #000 }` does not; unsized page / existing fixtures do not gain this kind; tempfile for extra profiles.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- Full cascade, `:focus-within`, keyboard vs mouse, tap-target/contrast regressions\n- SKILL.md, decide/apply, live URLs\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-focus-outline` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-focus-outline`\n- PR target: **main**\n\n## Inversion\n\n- Do not flag a custom box-shadow focus ring.\n- Do not invent focus styles when no outline rule is present (missing :focus is not this slice — only **suppressed** outline).",
+  "type": "task",
+  "status": "in_progress",
+  "priority": 1,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "5c6f68f6-9a95-4ece-ad18-8116a7fda0e0",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Started. Worktree /tmp/limatus-e872b1-focus-outline branch feat/LIM-942618-usability-focus-outline from origin/main.",
+      "created_at": "2026-09-12T11:32:28.336747Z",
+      "comment_type": "default"
+    }
+  ],
+  "created_at": "2026-09-12T11:32:08.535626Z",
+  "updated_at": "2026-09-12T11:32:28.336770Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

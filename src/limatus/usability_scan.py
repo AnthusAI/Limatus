@@ -122,6 +122,8 @@ def scan_html_page(page_html: str, *, profile: LoadedUsabilityProfile) -> dict[s
         findings.extend(_find_emoji_heading(tree))
     if profile.profile.template.flag_gradient_hero:
         findings.extend(_find_generic_gradient_hero(tree, css_rules))
+    if profile.profile.template.flag_feature_row:
+        findings.extend(_find_generic_feature_row(tree))
     payload = {"schemaVersion": SCHEMA_VERSION, "findings": findings}
     return validate_usability_findings(payload)
 
@@ -177,11 +179,12 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "missing_lang",
         "emoji_heading",
         "generic_gradient_hero",
+        "generic_feature_row",
     }:
         raise UsabilityFindingsValidationError(
             f"{location}.kind must be 'missing_alt', 'low_contrast', 'small_tap_target', "
             "'suppressed_focus_outline', 'missing_accessible_name', 'missing_lang', "
-            "'emoji_heading', or 'generic_gradient_hero'."
+            "'emoji_heading', 'generic_gradient_hero', or 'generic_feature_row'."
         )
     finding_id = entry.get("id")
     if not isinstance(finding_id, str) or not re.fullmatch(r"finding-[a-f0-9]{16}", finding_id):
@@ -227,6 +230,7 @@ def _validate_finding(entry: Any, location: str) -> dict[str, Any]:
         "missing_lang",
         "emoji_heading",
         "generic_gradient_hero",
+        "generic_feature_row",
     }:
         if "ratio" in entry:
             raise UsabilityFindingsValidationError(
@@ -316,6 +320,75 @@ def _find_generic_gradient_hero(
     findings: list[dict[str, Any]] = []
     flagged: set[str] = set()
     _collect_gradient_hero_nodes(node, css_rules, flagged, findings)
+    return findings
+
+
+def _first_class_token(node: _DomNode) -> str | None:
+    for class_name in node.attrs.get("class", "").split():
+        if class_name:
+            return class_name
+    return None
+
+
+def _has_img_or_svg_descendant(node: _DomNode) -> bool:
+    if node.tag in {"img", "svg"}:
+        return True
+    for child in node.children:
+        if _has_img_or_svg_descendant(child):
+            return True
+    return False
+
+
+def _parent_has_qualifying_feature_row_run(parent: _DomNode) -> bool:
+    children = parent.children
+    index = 0
+    while index < len(children):
+        token = _first_class_token(children[index])
+        if not token:
+            index += 1
+            continue
+        end = index + 1
+        while end < len(children) and _first_class_token(children[end]) == token:
+            end += 1
+        run_length = end - index
+        if run_length >= 3:
+            run = children[index:end]
+            if all(_has_img_or_svg_descendant(child) for child in run):
+                return True
+        index = end
+    return False
+
+
+def _collect_generic_feature_row_findings(
+    node: _DomNode,
+    flagged_parents: set[str],
+    findings: list[dict[str, Any]],
+) -> None:
+    if node.tag != "document" and _parent_has_qualifying_feature_row_run(node):
+        selector_label = _element_selector(node)
+        if selector_label not in flagged_parents:
+            flagged_parents.add(selector_label)
+            finding_id = stable_usability_finding_id("generic_feature_row", selector_label)
+            findings.append(
+                {
+                    "id": finding_id,
+                    "kind": "generic_feature_row",
+                    "selector": selector_label,
+                    "rationale": (
+                        "Parent contains three or more consecutive sibling elements sharing the "
+                        "same leading class, each with an image or SVG—a common generic "
+                        "feature-row template pattern."
+                    ),
+                }
+            )
+    for child in node.children:
+        _collect_generic_feature_row_findings(child, flagged_parents, findings)
+
+
+def _find_generic_feature_row(node: _DomNode) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    flagged_parents: set[str] = set()
+    _collect_generic_feature_row_findings(node, flagged_parents, findings)
     return findings
 
 

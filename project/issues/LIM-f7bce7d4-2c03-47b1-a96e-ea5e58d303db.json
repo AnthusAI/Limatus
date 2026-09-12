@@ -3,7 +3,7 @@
   "title": "Read-only emoji-in-heading findings (AI page tell)",
   "description": "# Read-only emoji-in-heading findings (AI page tell)\n\nNext slice of LIM-e872b1 generic-template tells. Extends `limatus usability scan` only. No layout engine.\n\n## DoD\n\n- Same CLI. New kind: `emoji_heading`.\n- Profile: `emoji.flagInHeadings` boolean, default **true**. Unknown keys rejected. Existing profiles still load.\n- When false, never emit this kind.\n- Flag `h1`–`h6` whose **direct plus descendant text** contains an emoji. Use the same Unicode ranges as editorial `_EMOJI_PATTERN` in `editorial_diagnosis.py` (`U+1F300–U+1FAFF`, `U+2600–U+27BF`, regional indicators). Prefer extracting that pattern to a tiny shared helper over duplicating the character class; do not refactor editorial finding logic.\n- Do **not** flag emoji in `p`, `li`, or other non-heading elements this slice.\n- JSON: `id`, `kind`, `selector`, `rationale`. Add `emoji_heading` to `SKILL.md` kinds list.\n- Tests (tempfile): `<h1>🚀 Launch</h1>` flags; `<h1>Launch</h1><p>🚀</p>` does not (this kind); existing fixtures unchanged; flag false suppresses.\n- `PYTHONPATH=src python -m pytest tests -q`\n\n## Out of scope\n\n- gradient heroes, three-icon rows, decide/apply, live URLs\n\n## Layout\n\n- Worktree: `/tmp/limatus-e872b1-emoji-heading` from `origin/main`\n- Branch: `feat/LIM-<this-id>-usability-emoji-heading`\n- PR target: **main**\n\n## Inversion\n\n- A sparse page with no emoji stays clean.\n- Decorative emoji in body copy is not this finding.",
   "type": "task",
-  "status": "in_progress",
+  "status": "closed",
   "priority": 1,
   "assignee": null,
   "creator": null,
@@ -20,11 +20,18 @@
       "text": "Started. Worktree /tmp/limatus-e872b1-emoji-heading branch feat/LIM-f7bce7-usability-emoji-heading from origin/main.",
       "created_at": "2026-09-12T11:41:29.255326Z",
       "comment_type": "default"
+    },
+    {
+      "id": "5312bd37-5390-4535-9f76-6f41dc282e60",
+      "author": "8458c498-f041-7092-e4e3-6418236765a7",
+      "text": "Merged AnthusAI/Limatus#37: emoji_heading; shared EMOJI_PATTERN with editorial. DoD met.",
+      "created_at": "2026-09-12T11:43:23.732329Z",
+      "comment_type": "default"
     }
   ],
   "created_at": "2026-09-12T11:41:12.445471Z",
-  "updated_at": "2026-09-12T11:41:29.255346Z",
-  "closed_at": null,
+  "updated_at": "2026-09-12T11:43:23.774422Z",
+  "closed_at": "2026-09-12T11:43:23.774383Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

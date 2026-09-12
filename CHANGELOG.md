@@ -1,6 +1,32 @@
 # CHANGELOG
 
 
+## v0.24.0 (2026-09-12)
+
+### Chores
+
+- **kanbus**: Commit board state (issues)
+  ([`9680d01`](https://github.com/AnthusAI/Limatus/commit/9680d01ffdf5f28bd865b3e194e32af2b8b7f1f5))
+
+- **kanbus**: Commit board state (issues)
+  ([`2ded0de`](https://github.com/AnthusAI/Limatus/commit/2ded0deac5fc9140309697d91ffae0b2e7affba0))
+
+### Documentation
+
+- **skill**: Lim-15fa45 document HTML usability scan in SKILL.md
+  ([#35](https://github.com/AnthusAI/Limatus/pull/35),
+  [`3349178`](https://github.com/AnthusAI/Limatus/commit/33491784f26e147087a6e73c3e76eb8c876f34a0))
+
+### Features
+
+- **usability**: Add missing_accessible_name scan (LIM-dbfe8e)
+  ([#34](https://github.com/AnthusAI/Limatus/pull/34),
+  [`74002a4`](https://github.com/AnthusAI/Limatus/commit/74002a47d4d33f5ca49f9f16932a1336cf2dba2b))
+
+Extend usability scan with accessibleName.flagMissing profile option and DOM checks for input,
+  select, and textarea naming.
+
+
 ## v0.23.0 (2026-09-12)
 
 ### Chores

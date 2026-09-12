@@ -1,0 +1,23 @@
+{
+  "id": "LIM-7e6a6ebc-77db-4333-acea-4b69e1fedb12",
+  "title": "Usability steer loop (decide / options / apply)",
+  "description": "# Usability steer loop (decide / options / apply)\n\nParked under LIM-e872b1. Editorial already has decide → options → compare → apply. Usability scan is diagnose-only; SKILL.md says so.\n\nThis slice is the sibling loop for HTML findings: steering decisions, optional patch options, apply to a working copy only (never the original page). No auto-apply.\n\nStay `open` until we choose whether apply means CSS/HTML patches vs diagnose-and-steer only (epic still lists that as an open question).",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-12T11:49:54.467254Z",
+  "updated_at": "2026-09-12T11:49:54.467281Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

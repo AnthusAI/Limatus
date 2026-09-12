@@ -1,0 +1,23 @@
+{
+  "id": "LIM-459ba5e8-f208-481d-8839-a77abad2cf6e",
+  "title": "Rendered layout / overflow usability scan",
+  "description": "# Rendered layout / overflow usability scan\n\nParked under LIM-e872b1. Viewport overflow, tap-target geometry from computed boxes, broken responsive behavior.\n\n**Blocked on a layout engine** (browser, Playwright, or similar). The current `limatus usability scan` parser has no cascade, no box model, and no viewport. Do not implement with more CSS string heuristics.\n\nStay `open` until that runtime exists. Do not start this against the static HTML parser.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-e872b121-47cb-4a96-b345-a9d0aef258a8",
+  "labels": [
+    "limatus",
+    "usability"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-09-12T11:49:54.421305Z",
+  "updated_at": "2026-09-12T11:49:54.421338Z",
+  "closed_at": null,
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

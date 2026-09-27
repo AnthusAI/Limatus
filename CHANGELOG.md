@@ -1,6 +1,14 @@
 # CHANGELOG
 
 
+## v0.29.0 (2026-09-27)
+
+### Features
+
+- **skills**: Add effective story writing guidance
+  ([`f124d29`](https://github.com/AnthusAI/Limatus/commit/f124d298e8e053cca9d66f1b1960677b373fcd76))
+
+
 ## v0.28.0 (2026-09-12)
 
 ### Chores

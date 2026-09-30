@@ -15,6 +15,7 @@ _KIND_TO_ARRAY: dict[str, str] = {
     "voice_mismatch": "voice_observations",
     "uniform_cadence": "voice_observations",
     "uncontracted_form": "voice_observations",
+    "punchline_cadence": "voice_observations",
 }
 
 

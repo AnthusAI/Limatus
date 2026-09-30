@@ -1,0 +1,38 @@
+{
+  "id": "LIM-8ae8be0c-d80c-4769-9602-99e9ce19a461",
+  "title": "Judge rubric: figurative substitution and riddle phrasing",
+  "description": "As a copy editor, I want the judge prompt to name figurative substitution and riddle phrasing as finding kinds with examples, so the model lane catches the forms no regex can.\n\nFeature: Judge voice prompt\n  Scenario: Judge system prompt names figurative substitution and riddle phrasing\n    When I read the judge system prompt\n    Then the judge system prompt names the figurative_substitution kind\n    And the judge system prompt names the riddle_phrasing kind",
+  "type": "story",
+  "status": "closed",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-238558a5-2ff4-4765-a440-16b6231e66eb",
+  "labels": [],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "b35a0db8-d37e-4e0d-ac46-97c26d95b671",
+      "author": "unknown",
+      "text": "Judge system prompt now defines figurative_substitution and riddle_phrasing with examples and the first-read test. JUDGE_PROMPT_VERSION 3 -> 4; canary manifest pin bumped to match. Not run against a live judge: no OPENAI_API_KEY in this environment, so live recalibration of the canary is still owed. Provenance: claude-code / claude-opus-5-5.",
+      "created_at": "2026-09-30T12:14:53.266056650Z",
+      "comment_type": "default",
+      "agent": {
+        "platform": "claude-code",
+        "model": "claude-opus-5-5",
+        "name": "anth-content-strategy-clients"
+      }
+    }
+  ],
+  "created_at": "2026-09-30T12:08:09.048317674Z",
+  "updated_at": "2026-09-30T12:14:53.467656826Z",
+  "closed_at": "2026-09-30T12:14:53.467610829Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "anth-content-strategy-clients"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

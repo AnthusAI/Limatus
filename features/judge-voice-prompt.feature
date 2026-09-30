@@ -30,3 +30,9 @@ Feature: Judge voice prompt
   Scenario: Judge system prompt is the body pass
     When I read the judge system prompt
     Then the judge system prompt says title and subtitle are a later pass
+
+  Scenario: Judge system prompt names the plain-statement kinds
+    When I read the judge system prompt
+    Then the judge system prompt names the "figurative_substitution" kind
+    And the judge system prompt names the "riddle_phrasing" kind
+    And the judge system prompt gives a plain rewrite test for both

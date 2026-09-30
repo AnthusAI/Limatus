@@ -26,6 +26,8 @@ DEFAULT_DIAGNOSE_CHECKS: dict[str, bool] = {
     "informationDensity": True,
     "overusedWords": True,
     "uncontractedForms": True,
+    "punchlineCadence": True,
+    "openingScreen": True,
 }
 
 DEFAULT_DENSITY_THRESHOLDS = {
@@ -45,6 +47,8 @@ RULES_FIELD_NAMES = frozenset(
         "bySurface",
     }
 )
+
+OPENING_SCREEN_FIELD_NAMES = frozenset({"insiderTerms", "requireNumber"})
 
 STANDFIRST_FIELD_NAMES = frozenset(
     {
@@ -115,6 +119,12 @@ class StandfirstRules:
 
 
 @dataclass(frozen=True)
+class OpeningScreenRules:
+    insider_terms: tuple[str, ...]
+    require_number: bool
+
+
+@dataclass(frozen=True)
 class HeadlineTitleConfig:
     key: str
 
@@ -163,6 +173,7 @@ class StyleProfile:
     judge: JudgeConfig | None
     editorial_aim: str | None
     compare_hard_constraints: tuple[str, ...]
+    opening_screen: OpeningScreenRules | None = None
 
 
 @dataclass(frozen=True)
@@ -266,6 +277,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     rules = _parse_rules(raw.get("rules"), profile_path)
     density = _parse_density(raw.get("density"), profile_path)
     standfirst = _parse_standfirst(raw.get("standfirst"), profile_path)
+    opening_screen = _parse_opening_screen(raw.get("opening"), profile_path)
     headline = _parse_headline(raw.get("headline"), profile_path)
     judge = _parse_judge(raw.get("judge"), profile_path)
     editorial_aim = _parse_editorial_aim(raw.get("editorialAim"), profile_path)
@@ -291,6 +303,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         judge=judge,
         editorial_aim=editorial_aim,
         compare_hard_constraints=compare_hard_constraints,
+        opening_screen=opening_screen,
     )
 
 
@@ -532,6 +545,22 @@ def _parse_standfirst(value: Any, profile_path: Path) -> StandfirstRules | None:
         insider_patterns=tuple(insider_patterns),
         max_description_overlap=float(max_description_overlap),
     )
+
+
+def _parse_opening_screen(value: Any, profile_path: Path) -> OpeningScreenRules | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"opening must be a mapping in {profile_path}")
+    unknown = set(value) - OPENING_SCREEN_FIELD_NAMES
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise StyleProfileValidationError(f"Unknown opening keys in {profile_path}: {joined}")
+    insider_terms = _optional_string_list(value.get("insiderTerms"), "opening.insiderTerms", profile_path)
+    require_number = value.get("requireNumber", False)
+    if not isinstance(require_number, bool):
+        raise StyleProfileValidationError(f"opening.requireNumber must be a boolean in {profile_path}")
+    return OpeningScreenRules(insider_terms=tuple(insider_terms), require_number=require_number)
 
 
 def _require_positive_int(value: Any, field_name: str, profile_path: Path) -> int:

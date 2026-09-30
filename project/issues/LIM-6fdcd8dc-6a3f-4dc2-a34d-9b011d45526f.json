@@ -1,0 +1,38 @@
+{
+  "id": "LIM-6fdcd8dc-6a3f-4dc2-a34d-9b011d45526f",
+  "title": "Punch-line cadence check",
+  "description": "As a copy editor, I want a very short sentence that lands right after a long one flagged when it closes a paragraph or recurs within one, so mic-drop rhythm is caught even when sentence lengths vary.\n\nFeature: Punch-line cadence\n  Scenario: Repeated drops in one paragraph are flagged\n    Given a paragraph where two very short sentences each follow a long sentence\n    When I diagnose it with the surface-rules profile\n    Then diagnosis reports punch-line cadence findings for both short sentences\n  Scenario: A short closing line after a long sentence is flagged\n  Scenario: One mid-paragraph short sentence is not flagged\n  Scenario: A profile can turn the check off",
+  "type": "story",
+  "status": "closed",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-238558a5-2ff4-4765-a440-16b6231e66eb",
+  "labels": [],
+  "dependencies": [],
+  "comments": [
+    {
+      "id": "8027da04-4cd4-4bfb-b586-364dc2fbce36",
+      "author": "unknown",
+      "text": "Implemented punchlineCadence (kind punchline_cadence, voice_observations). Rules: <=6 words after >=14 closing a paragraph or twice in one; terse <=4-word closer after a sentence twice its length in a 3+ sentence paragraph. Skips headings, lists, tables, JSX, list lead-ins, questions, quotations, link-only CTAs, code fences. 7 scenarios green. Anth.us corpus sweep (71 articles/solutions): 87 hits before tuning, 73 after; sampled hits are genuine mic-drops. Provenance: claude-code / claude-opus-5-5.",
+      "created_at": "2026-09-30T12:14:53.207737149Z",
+      "comment_type": "default",
+      "agent": {
+        "platform": "claude-code",
+        "model": "claude-opus-5-5",
+        "name": "anth-content-strategy-clients"
+      }
+    }
+  ],
+  "created_at": "2026-09-30T12:08:08.980497829Z",
+  "updated_at": "2026-09-30T12:14:53.335571770Z",
+  "closed_at": "2026-09-30T12:14:53.335539337Z",
+  "agent": {
+    "platform": "claude-code",
+    "model": "claude-opus-5-5",
+    "name": "anth-content-strategy-clients"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

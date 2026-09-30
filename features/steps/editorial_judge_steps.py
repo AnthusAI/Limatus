@@ -227,3 +227,15 @@ def step_then_system_prompt_later_headline(context):
     text = context.judge_system_prompt_text.lower()
     assert "later pass" in text
     assert "title" in text
+
+
+@then('the judge system prompt names the "{kind}" kind')
+def step_then_system_prompt_names_kind(context, kind):
+    assert kind in context.judge_system_prompt_text
+
+
+@then("the judge system prompt gives a plain rewrite test for both")
+def step_then_system_prompt_plain_rewrite_test(context):
+    text = context.judge_system_prompt_text.lower()
+    assert "first read" in text
+    assert "plain words" in text

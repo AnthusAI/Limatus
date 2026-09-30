@@ -11,7 +11,7 @@ from .editorial_diagnosis_schema import (
     stable_repetition_group_id,
     validate_diagnosis,
 )
-from .editorial_style import LoadedStyleProfile
+from .editorial_style import LoadedStyleProfile, OpeningScreenRules
 from .editorial_text import line_at_offset, paragraphs, sentence_spans, sentences, word_count
 from .emoji import EMOJI_PATTERN as _EMOJI_PATTERN
 
@@ -163,6 +163,10 @@ def diagnose_draft(
         unsupported_claims.extend(_check_unsupported_certainty(text))
     if checks["uniformCadence"]:
         voice_observations.extend(_check_uniform_cadence(text))
+    if checks["punchlineCadence"]:
+        voice_observations.extend(_check_punchline_cadence(text))
+    if checks["openingScreen"] and profile.opening_screen is not None:
+        generic_passages.extend(_check_opening_screen(text, profile.opening_screen))
     if checks["voiceMismatch"]:
         voice_observations.extend(_check_voice_mismatch(text, style_profile))
 
@@ -547,6 +551,153 @@ def _check_uniform_cadence(text: str) -> list[dict[str, Any]]:
             run_start = run_end
             continue
         run_start += 1
+    return findings
+
+
+# A punch line is a very short sentence landing right after a long one. Once
+# in a while that rhythm is emphasis. When it closes a paragraph, or happens
+# twice in one, it reads as a performed mic-drop rather than a statement, and
+# it is one of the clearest tells of machine-drafted prose. Equal-length runs
+# are a different tell, caught by the uniform-cadence check.
+_PUNCHLINE_MAXIMUM_WORDS = 6
+_PUNCHLINE_PRECEDING_MINIMUM_WORDS = 14
+
+_NON_PROSE_PARAGRAPH_PATTERN = re.compile(
+    r"^(?:#|\||<|>|\{|```|---|!\[|import\s|export\s|[-*+]\s|\d+[.)]\s)"
+)
+
+
+def _prose_paragraph_spans(text: str) -> list[tuple[str, int, int]]:
+    spans: list[tuple[str, int, int]] = []
+    cursor = 0
+    for paragraph in paragraphs(text):
+        paragraph_start = text.find(paragraph, cursor)
+        if paragraph_start < 0:
+            paragraph_start = cursor
+        cursor = paragraph_start + len(paragraph)
+        if _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph):
+            continue
+        spans.append((paragraph, paragraph_start, paragraph_start + len(paragraph)))
+    return spans
+
+
+def _sentence_spans_within(paragraph: str, paragraph_start: int) -> list[tuple[str, int, int]]:
+    spans: list[tuple[str, int, int]] = []
+    local_offset = 0
+    for sentence in sentences(paragraph):
+        local_start = paragraph.find(sentence, local_offset)
+        spans.append((sentence, paragraph_start + local_start, paragraph_start + local_start + len(sentence)))
+        local_offset = local_start + len(sentence)
+    return spans
+
+
+_TERSE_CLOSING_TAG_MAXIMUM_WORDS = 4
+_TERSE_CLOSING_TAG_MINIMUM_PARAGRAPH_SENTENCES = 3
+_MARKDOWN_LINK_ONLY_SENTENCE_PATTERN = re.compile(r"^\[[^\]]*\]\([^)]*\)[.!]?$")
+
+
+def _sentence_can_be_punchline(sentence: str) -> bool:
+    stripped_sentence = sentence.strip().strip("*_")
+    if not stripped_sentence or stripped_sentence[-1] in ":?\"\u201d'" or "```" in stripped_sentence:
+        return False
+    return not _MARKDOWN_LINK_ONLY_SENTENCE_PATTERN.match(stripped_sentence)
+
+
+def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
+    masked_text = _mask_for_redundancy_shingling(text)
+    findings: list[dict[str, Any]] = []
+    for paragraph, paragraph_start, _ in _prose_paragraph_spans(masked_text):
+        sentence_spans_in_paragraph = _sentence_spans_within(paragraph, paragraph_start)
+        sentence_word_counts = [word_count(sentence) for sentence, _, _ in sentence_spans_in_paragraph]
+        last_index = len(sentence_spans_in_paragraph) - 1
+        drop_indexes = [
+            index
+            for index in range(1, len(sentence_spans_in_paragraph))
+            if sentence_word_counts[index] <= _PUNCHLINE_MAXIMUM_WORDS
+            and sentence_word_counts[index - 1] >= _PUNCHLINE_PRECEDING_MINIMUM_WORDS
+            and _sentence_can_be_punchline(sentence_spans_in_paragraph[index][0])
+        ]
+        flagged_indexes = drop_indexes if len(drop_indexes) >= 2 else [i for i in drop_indexes if i == last_index]
+        closes_with_terse_tag = (
+            last_index + 1 >= _TERSE_CLOSING_TAG_MINIMUM_PARAGRAPH_SENTENCES
+            and sentence_word_counts[last_index] <= _TERSE_CLOSING_TAG_MAXIMUM_WORDS
+            and sentence_word_counts[last_index - 1] >= 2 * sentence_word_counts[last_index]
+            and _sentence_can_be_punchline(sentence_spans_in_paragraph[last_index][0])
+        )
+        if closes_with_terse_tag and last_index not in flagged_indexes:
+            flagged_indexes.append(last_index)
+        for index in flagged_indexes:
+            _, start, end = sentence_spans_in_paragraph[index]
+            placement = "more than once in this paragraph" if len(drop_indexes) >= 2 else "to close the paragraph"
+            findings.append(
+                _make_finding(
+                    "punchline_cadence",
+                    text,
+                    start,
+                    end,
+                    f"A very short sentence lands after a longer one {placement}. It reads as a performed "
+                    "punch line. Fold the point into the sentence before it, or state it plainly.",
+                )
+            )
+    return findings
+
+
+# The opening paragraph is the only one every reader sees. Terms a profile
+# lists as insider vocabulary must be defined in the sentence where they first
+# appear there, and a profile can require a concrete number on the first screen.
+_DEFINITION_AFTER_TERM_PATTERN = re.compile(r"^(?:\s*[,(:\u2014\u2013]|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)")
+_DEFINITION_BEFORE_TERM_PATTERN = re.compile(r"\b(?:called|named|known as)\s+(?:an?\s+|the\s+)?$", re.IGNORECASE)
+_DIGIT_PATTERN = re.compile(r"\d")
+
+
+def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str, Any]]:
+    prose_paragraphs = _prose_paragraph_spans(text)
+    if not prose_paragraphs:
+        return []
+    opening_paragraph, opening_start, _ = prose_paragraphs[0]
+    opening_sentences = _sentence_spans_within(opening_paragraph, opening_start)
+    findings: list[dict[str, Any]] = []
+
+    reported_term_spans: list[tuple[int, int]] = []
+    for term in sorted(rules.insider_terms, key=len, reverse=True):
+        term_pattern = re.compile(rf"\b{re.escape(term)}(?:e?s)?\b", re.IGNORECASE)
+        for sentence, sentence_start, _ in opening_sentences:
+            match = term_pattern.search(sentence)
+            if not match:
+                continue
+            term_start, term_end = sentence_start + match.start(), sentence_start + match.end()
+            if _spans_overlap(term_start, term_end, reported_term_spans):
+                break
+            reported_term_spans.append((term_start, term_end))
+            defined_after = _DEFINITION_AFTER_TERM_PATTERN.match(sentence[match.end() :])
+            defined_before = _DEFINITION_BEFORE_TERM_PATTERN.search(sentence[: match.start()])
+            if not defined_after and not defined_before:
+                findings.append(
+                    _make_finding(
+                        "opening_screen",
+                        text,
+                        term_start,
+                        term_end,
+                        f"'{match.group(0)}' is insider vocabulary in the opening paragraph and isn't defined "
+                        "where it first appears. Say what it is in the same sentence, or move it after the plain picture.",
+                    )
+                )
+            break
+
+    if rules.require_number and not _DIGIT_PATTERN.search(opening_paragraph):
+        later_prose_has_number = any(_DIGIT_PATTERN.search(paragraph) for paragraph, _, _ in prose_paragraphs[1:])
+        if later_prose_has_number and opening_sentences:
+            _, first_sentence_start, first_sentence_end = opening_sentences[0]
+            findings.append(
+                _make_finding(
+                    "opening_screen",
+                    text,
+                    first_sentence_start,
+                    first_sentence_end,
+                    "The opening paragraph carries no number, but later paragraphs do. "
+                    "Bring the one figure that shows what's at stake onto the first screen.",
+                )
+            )
     return findings
 
 

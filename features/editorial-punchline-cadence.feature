@@ -39,6 +39,11 @@ Feature: Punch-line cadence
     When I diagnose it with the surface-rules profile
     Then diagnosis reports punch-line cadence findings for "So we did."
 
+  Scenario: A short closer after a sentence in curly single quotes is still flagged
+    Given a paragraph where a sentence in curly single quotes is followed by a very short closing line
+    When I diagnose it with the surface-rules profile
+    Then diagnosis reports punch-line cadence findings for "So we did."
+
   Scenario: One short sentence in the middle of a paragraph is not flagged
     Given a paragraph with a single short sentence between two long ones
     When I diagnose it with the surface-rules profile

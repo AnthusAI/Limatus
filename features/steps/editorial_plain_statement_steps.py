@@ -112,6 +112,17 @@ def step_given_quoted_sentence_then_closer(context):
     )
 
 
+@given("a paragraph where a sentence in curly single quotes is followed by a very short closing line")
+def step_given_curly_quoted_sentence_then_closer(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            "The reviewer wrote \u2018Ship it, and keep the calibration step exactly where it is in the loop.\u2019",
+            "So we did.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(
@@ -239,6 +250,42 @@ def step_given_comma_clause_after_term(context):
             "Say you've got a hosted decision model, and it grades tickets for you all day.",
             "",
             "The second paragraph says more about it.",
+        ]
+    )
+
+
+@given("a draft whose only later digit is inside an HTML link address")
+def step_given_digit_only_in_html_link(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            'See <a href="https://arxiv.org/abs/2401.12345">the paper</a> for the details.',
+        ]
+    )
+
+
+@given('a draft whose opening paragraph follows "decision model" with a comma and "which is a"')
+def step_given_relative_clause_after_term(context):
+    context.draft_text = "\n".join(
+        [
+            "Say you've got a hosted decision model, which is a classifier that returns a verdict instead of prose.",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
+@given(
+    'an MDX draft with a markdown image and an italic caption before an opening paragraph that uses "scorecard"'
+)
+def step_given_image_caption_preamble(context):
+    context.draft_text = "\n".join(
+        [
+            "![Four gauges](cover.png)",
+            "*Figure one shows the four gauges on the dashboard.*",
+            "",
+            "Every month the client gets a scorecard with 4 rows on it.",
         ]
     )
 

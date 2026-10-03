@@ -8,7 +8,8 @@
 - A paragraph that opens with an inline tag (an emphasised product name, a link) counts as prose for the opening-screen, intent and cadence checks; one that opens with a block element or figure still does not.
 - The opening-screen checks run on masked text, so digits inside link addresses and component attributes are not numbers in the prose.
 - A comma after an insider term followed by a conjunction ("a decision model, and it grades tickets") no longer counts as a definition.
-- The sentence splitter breaks after a closing quotation mark, so a short closer after a quoted sentence is seen as its own sentence.
+- The sentence splitter breaks after a closing quotation mark, curly single quote included, so a short closer after a quoted sentence is seen as its own sentence.
+- Digits inside HTML tag attributes are not prose numbers; a relative clause after an insider term ("a decision model, which is a classifier that...") counts as a definition; an image with an italic caption is not an opening paragraph.
 
 ## v0.29.0 (2026-09-27)
 

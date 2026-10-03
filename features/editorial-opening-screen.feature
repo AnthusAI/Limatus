@@ -44,6 +44,21 @@ Feature: Opening screen
     When I diagnose it with the opening-screen profile
     Then diagnosis reports no opening-screen finding about a missing number
 
+  Scenario: A digit inside an HTML link attribute is not a number in the prose
+    Given a draft whose only later digit is inside an HTML link address
+    When I diagnose it with the opening-screen profile
+    Then diagnosis reports no opening-screen finding about a missing number
+
+  Scenario: A relative clause after the term defines it
+    Given a draft whose opening paragraph follows "decision model" with a comma and "which is a"
+    When I diagnose it with the opening-screen profile
+    Then diagnosis reports no opening-screen finding for "decision model"
+
+  Scenario: An image with a caption before the first paragraph is skipped
+    Given an MDX draft with a markdown image and an italic caption before an opening paragraph that uses "scorecard"
+    When I diagnose it with the opening-screen profile
+    Then diagnosis reports an opening-screen finding for "scorecard"
+
   Scenario: A comma that starts a new clause does not define the term
     Given a draft whose opening paragraph follows "decision model" with a comma and "and"
     When I diagnose it with the opening-screen profile

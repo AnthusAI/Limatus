@@ -5,13 +5,14 @@ from typing import Any
 
 from .editorial_density import analyze_density, density_summary_as_dict
 from .editorial_diagnosis_schema import (
+    ASD_STE100_FINDING_KINDS,
     FINDING_SOURCE_PROFILE,
     SCHEMA_VERSION,
     stable_finding_id,
     stable_repetition_group_id,
     validate_diagnosis,
 )
-from .editorial_style import LoadedStyleProfile, OpeningScreenRules
+from .editorial_style import AsdSte100Config, LoadedStyleProfile, OpeningScreenRules
 from .editorial_text import line_at_offset, paragraphs, sentence_spans, sentences, word_count
 from .emoji import EMOJI_PATTERN as _EMOJI_PATTERN
 
@@ -142,57 +143,69 @@ def diagnose_draft(
     profile = style_profile.profile
     checks = profile.checks
 
+    ste_config = profile.asd_ste100
+    ste_enabled = bool(checks["asdSte100"]) and ste_config is not None and ste_config.enabled
+    ste_only = ste_enabled and ste_config.exclusive
+
     generic_passages: list[dict[str, Any]] = []
     unsupported_claims: list[dict[str, Any]] = []
     voice_observations: list[dict[str, Any]] = []
     required_facts: list[dict[str, Any]] = []
-
-    if checks["emptyLeadin"]:
-        generic_passages.extend(_check_empty_leadins(text))
-    if checks["listShapedProse"]:
-        generic_passages.extend(_check_list_shaped_prose(text))
-    if checks["vagueClaim"]:
-        generic_passages.extend(_check_vague_claims(text, profile.lexicon_avoid))
-        generic_passages.extend(_check_intensifier_vague_claims(text))
-    if checks["overusedWords"]:
-        generic_passages.extend(_check_overused_words(text))
-    if checks["uncontractedForms"]:
-        voice_observations.extend(_check_uncontracted_forms(text))
-
-    if checks["unsupportedCertainty"]:
-        unsupported_claims.extend(_check_unsupported_certainty(text))
-    if checks["uniformCadence"]:
-        voice_observations.extend(_check_uniform_cadence(text))
-    if checks["punchlineCadence"]:
-        voice_observations.extend(_check_punchline_cadence(text))
-    if checks["openingScreen"] and profile.opening_screen is not None:
-        generic_passages.extend(_check_opening_screen(text, profile.opening_screen))
-    if checks["voiceMismatch"]:
-        voice_observations.extend(_check_voice_mismatch(text, style_profile))
-
-    repetition_groups = _check_redundancy(text) if checks["redundancy"] else []
-    if checks["missingAttribution"]:
-        required_facts.extend(_check_required_facts(text))
-
+repetition_groups: list[dict[str, Any]] = []
     density_summary: dict[str, Any] | None = None
-    if checks["informationDensity"]:
-        density_analysis = analyze_density(text, style_profile.profile.density)
-        density_summary = density_summary_as_dict(
-            density_analysis.summary,
-            thresholds=style_profile.profile.density,
-            findings=density_analysis.findings,
-        )
-        generic_passages.extend(density_analysis.findings)
 
-    rules_findings = _check_profile_rules(
-        text,
-        style_profile,
-        generic_passages=generic_passages,
-        voice_observations=voice_observations,
-        surface=surface,
-    )
-    generic_passages.extend(rules_findings["generic_passages"])
-    voice_observations.extend(rules_findings["voice_observations"])
+    if not ste_only:
+        if checks["emptyLeadin"]:
+            generic_passages.extend(_check_empty_leadins(text))
+        if checks["listShapedProse"]:
+            generic_passages.extend(_check_list_shaped_prose(text))
+        if checks["vagueClaim"]:
+            generic_passages.extend(_check_vague_claims(text, profile.lexicon_avoid))
+            generic_passages.extend(_check_intensifier_vague_claims(text))
+        if checks["overusedWords"]:
+            generic_passages.extend(_check_overused_words(text))
+        if checks["uncontractedForms"]:
+            voice_observations.extend(_check_uncontracted_forms(text))
+
+        if checks["unsupportedCertainty"]:
+            unsupported_claims.extend(_check_unsupported_certainty(text))
+        if checks["uniformCadence"]:
+            voice_observations.extend(_check_uniform_cadence(text))
+        if checks["punchlineCadence"]:
+            voice_observations.extend(_check_punchline_cadence(text))
+        if checks["openingScreen"] and profile.opening_screen is not None:
+            generic_passages.extend(_check_opening_screen(text, profile.opening_screen))
+        if checks["voiceMismatch"]:
+            voice_observations.extend(_check_voice_mismatch(text, style_profile))
+
+        repetition_groups = _check_redundancy(text) if checks["redundancy"] else []
+        if checks["missingAttribution"]:
+            required_facts.extend(_check_required_facts(text))
+
+        if checks["informationDensity"]:
+            density_analysis = analyze_density(text, style_profile.profile.density)
+            density_summary = density_summary_as_dict(
+                density_analysis.summary,
+                thresholds=style_profile.profile.density,
+                findings=density_analysis.findings,
+            )
+            generic_passages.extend(density_analysis.findings)
+
+        rules_findings = _check_profile_rules(
+            text,
+            style_profile,
+            generic_passages=generic_passages,
+            voice_observations=voice_observations,
+            surface=surface,
+        )
+        generic_passages.extend(rules_findings["generic_passages"])
+        voice_observations.extend(rules_findings["voice_observations"])
+
+    ste_summary: dict[str, Any] | None = None
+    if ste_enabled:
+        ste_findings = _check_asd_ste100(text, ste_config)
+        generic_passages.extend(ste_findings)
+        ste_summary = _asd_ste100_summary(ste_config, ste_findings)
 
     result = {
         "schemaVersion": SCHEMA_VERSION,
@@ -206,7 +219,31 @@ def diagnose_draft(
     }
     if density_summary is not None:
         result["density"] = density_summary
+    if ste_summary is not None:
+        result["asdSte100"] = ste_summary
     return validate_diagnosis(result)
+
+
+def _asd_ste100_summary(config: AsdSte100Config, findings: list[dict[str, Any]]) -> dict[str, Any]:
+    kinds = sorted({finding["kind"] for finding in findings if finding["kind"] in ASD_STE100_FINDING_KINDS})
+    return {
+        "mode": config.mode,
+        "maxWordsProcedure": config.max_words_procedure,
+        "maxWordsDescription": config.max_words_description,
+        "exclusive": config.exclusive,
+        "disabledRules": list(config.disabled_rules),
+        "kinds": kinds,
+    }
+
+
+def _check_asd_ste100(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
+    """Run the ASD-STE100 rule-set checks over the draft.
+
+    The rule registry is scaffolded here; each rule lands with its own
+    specification (vocabulary and dictionary rules, sentence-length and
+    voice/structure rules, procedure-vs-description mode handling).
+    """
+    return []
 
 
 def normalize_finding_decision(value: Any) -> str:

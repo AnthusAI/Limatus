@@ -3,7 +3,7 @@
   "title": "Update SKILL.md and CHANGELOG for the new rule set",
   "description": "Extend src/limatus/data/SKILL.md so copy-edit agents know when and how to use the STE rule set; add a CHANGELOG entry per semantic-release conventions (story -> feat).",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "8fb8e2fb-54fa-4eb4-a60d-3cab3a38b595",
+      "author": "example-user",
+      "text": "SKILL.md gained an ASD-STE100 technical-drafts section listing the finding kinds and steering guidance; CHANGELOG.md Unreleased gained the plugin entry.",
+      "created_at": "2026-10-03T16:34:40.992307Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:16.664285Z",
-  "updated_at": "2026-10-03T15:49:16.664324Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:34:41.575308Z",
+  "closed_at": "2026-10-03T16:34:41.575286Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

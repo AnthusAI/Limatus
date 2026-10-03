@@ -3,17 +3,25 @@
   "title": "Document intent from first prose paragraph; numeric closers are not punch lines",
   "description": "Found scanning 102 published Anth.us pieces with the Anthus profile. (1) document_intent took the first sentence of any paragraph, so for MDX it was the import line in 84 of 102 scans; it now takes the first prose paragraph. (2) Punch-line cadence flagged short closing sentences that state a number ('A coin flip gets 0.5.'); a numeric statement is a measurement, not a riddle, and is now exempt. Specs: features/editorial-document-intent.feature and a new scenario in editorial-punchline-cadence.feature. Site-board cross-reference: kanbus-9e6b11 in AnthusAI/Anth.us.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
   "parent": null,
   "labels": [],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "447bce72-5d36-4282-b72c-7422f1adfc18",
+      "author": "unknown",
+      "text": "Landed on develop via PR 43 (merged by Ryan) and PR 44 (review fixes, merged after gate approval and green CI). Residual low items live in LIM-ebcfa7 and LIM-fd0dca.",
+      "created_at": "2026-10-03T17:14:48.436544607Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:52:17.723776286Z",
-  "updated_at": "2026-10-03T15:52:17.723848349Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T17:14:48.447797467Z",
+  "closed_at": "2026-10-03T17:14:48.447770683Z",
   "agent": {
     "platform": "claude-code",
     "model": "claude-fable-5-1",

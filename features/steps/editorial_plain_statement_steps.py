@@ -101,6 +101,17 @@ def step_given_inline_markup_opener(context):
     )
 
 
+@given("a paragraph where a quoted sentence is followed by a very short closing line")
+def step_given_quoted_sentence_then_closer(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            'The reviewer wrote "Ship it, and keep the calibration step exactly where it is in the loop."',
+            "So we did.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(
@@ -206,6 +217,28 @@ def step_given_digit_only_in_link(context):
             "Reviewers kept disagreeing about the same case.",
             "",
             "See [the write-up](/posts/2025/loop) for the details.",
+        ]
+    )
+
+
+@given("a draft whose only later digit is inside a citation component attribute")
+def step_given_digit_only_in_component(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            'The paper says so too.<Citation key="smith2024" /> We read it twice.',
+        ]
+    )
+
+
+@given('a draft whose opening paragraph follows "decision model" with a comma and "and"')
+def step_given_comma_clause_after_term(context):
+    context.draft_text = "\n".join(
+        [
+            "Say you've got a hosted decision model, and it grades tickets for you all day.",
+            "",
+            "The second paragraph says more about it.",
         ]
     )
 

@@ -3,7 +3,7 @@
   "title": "Apply mode-specific limits per topic in diagnose output",
   "description": "Wire mode into the writing-rule checks so findings record which mode applied, and profiles can pin a mode per surface (extend the bySurface pattern used for standfirst-style rules).",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "293d180f-88ed-403e-97b1-6de73fec5693",
+      "author": "home",
+      "text": "Per-topic limits applied: sentence-length rationale records the resolved topic mode; mixed-draft scenario asserts procedure and description limits both fire. Full suite green: 198 pytest passed, 34 behave features / 110 scenarios, 6/6 offline eval checks.",
+      "created_at": "2026-10-03T16:29:58.558130Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:11.736401Z",
-  "updated_at": "2026-10-03T15:49:11.736465Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:29:59.334211Z",
+  "closed_at": "2026-10-03T16:29:59.334189Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

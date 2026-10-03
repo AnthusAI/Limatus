@@ -3,7 +3,7 @@
   "title": "Spec: Gherkin for procedure-vs-description mode detection",
   "description": "Spec-first. Scenarios: a numbered/stepped section is detected as a procedure and judged with procedure limits; running prose is detected as description and judged with description limits; mixed topics report the mode used per finding; unclassifiable text falls back to description limits.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "a80aadde-75b0-45ec-9ac4-cc856540f407",
+      "author": "home",
+      "text": "Spec complete: 6 Gherkin scenarios for auto mode detection (numbered topics, imperative prose, prose descriptions, mixed documents, detectedMode summary, explicit-mode override); confirmed red (2 failed + 2 errored) before implementation.",
+      "created_at": "2026-10-03T16:29:56.075826Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:10.216325Z",
-  "updated_at": "2026-10-03T15:49:10.216364Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:29:56.715530Z",
+  "closed_at": "2026-10-03T16:29:56.715500Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

@@ -3,7 +3,7 @@
   "title": "Add gold must-fail and must-pass fixture drafts",
   "description": "Copy the field-reject-to-fixture loop from README: STE-violating drafts under features/fixtures/editorial-diagnosis/must-fail/ with expectTerms, and clean STE drafts as mustPass rows; minimized excerpts that reproduce the behavior.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "661f77fe-5b41-468a-95ed-ba420e85ee45",
+      "author": "example-user",
+      "text": "Gold fixtures added under features/fixtures/asd-ste100/gold/: must-fail gold-vocabulary (asd_unapproved_word), gold-structure (asd_sentence_too_long + asd_multiple_instructions), gold-voice (asd_passive_voice + asd_ing_form + asd_missing_article); must-pass gold-clean-procedure and gold-clean-description with maxFindings 0.",
+      "created_at": "2026-10-03T16:32:48.976387Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:13.117469Z",
-  "updated_at": "2026-10-03T15:49:13.117508Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:32:49.772230Z",
+  "closed_at": "2026-10-03T16:32:49.772209Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

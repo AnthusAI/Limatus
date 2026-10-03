@@ -3,7 +3,7 @@
   "title": "Write end-to-end features/asd-ste100.feature",
   "description": "The product narrative for the plugin: one Feature covering diagnose against an STE profile across vocabulary, writing rules, mode handling, and CLI output, ordered happy path then variations then errors, matching how features/editorial-diagnosis.feature reads.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "73e4ec74-9de0-460b-9ddc-acb70008fbf4",
+      "author": "example-user",
+      "text": "End-to-end spec complete: features/asd-ste100.feature now carries 29 scenarios covering registration, exclusive/beside gating, validation failures, vocabulary, writing rules, mode detection and the gold-corpus eval run.",
+      "created_at": "2026-10-03T16:32:47.692810Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:12.385287Z",
-  "updated_at": "2026-10-03T15:49:12.385324Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:32:48.407616Z",
+  "closed_at": "2026-10-03T16:32:48.407586Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

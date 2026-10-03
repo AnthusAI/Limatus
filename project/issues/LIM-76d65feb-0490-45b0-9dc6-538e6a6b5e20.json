@@ -3,7 +3,7 @@
   "title": "Spec: Gherkin for loading and gating the ASD-STE100 rule set",
   "description": "Spec-first. Write features/ scenarios (Given/When/Then) for: a style profile enabling the asd-ste100 rule set, unknown-option validation errors, and checks gating that turns bot-slop heuristics off when STE-only mode is requested. Behavior only, no internals. Watch it fail before implementation.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,25 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "6918373d-e5e7-4abb-a904-a2eeb1d39a16",
+      "author": "home",
+      "text": "Spec landed: features/asd-ste100.feature with six registration scenarios.",
+      "created_at": "2026-10-03T16:04:43.605537Z",
+      "comment_type": "default"
+    },
+    {
+      "id": "37b6b9e7-95d6-44b5-a514-c4dcc8f4d852",
+      "author": "home",
+      "text": "Spec details: six scenarios in features/asd-ste100.feature; steps in features/steps/asd_ste100_steps.py; synthetic fixtures (profiles, procedure/sloppy drafts, five reference samples) under features/fixtures/asd-ste100/. Red before implementation (6 failing scenarios), green after.",
+      "created_at": "2026-10-03T16:04:50.017107Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:01.021621Z",
-  "updated_at": "2026-10-03T15:49:01.021647Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:04:50.017133Z",
+  "closed_at": "2026-10-03T16:04:44.217755Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

@@ -3,7 +3,7 @@
   "title": "Implement active-voice and imperative-procedure checks",
   "description": "Add heuristics detecting passive voice and non-imperative procedure steps, reusing and extending the passive-voice regex approach already present in editorial_diagnosis.py.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "33b8e56d-fa52-42ff-a3c3-0d0c124fe633",
+      "author": "home",
+      "text": "Implemented asd_passive_voice (be-verb + participle pattern) and asd_non_imperative_step (subject-opener heuristic, procedure mode only). Verified via behave scenarios and tests/test_asd_ste100_writing_rules.py.",
+      "created_at": "2026-10-03T16:19:49.298480Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:08.844986Z",
-  "updated_at": "2026-10-03T15:49:08.845024Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:19:49.852414Z",
+  "closed_at": "2026-10-03T16:19:49.852395Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

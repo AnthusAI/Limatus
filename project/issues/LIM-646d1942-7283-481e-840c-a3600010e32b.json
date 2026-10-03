@@ -1,0 +1,27 @@
+{
+  "id": "LIM-646d1942-7283-481e-840c-a3600010e32b",
+  "title": "Add editorial-corpus eval rows and meet precision/recall targets",
+  "description": "Extend features/fixtures/editorial-diagnosis/editorial-corpus/manifest.yml with STE rows (expectKinds per rule) and run limatus eval until precision and recall are acceptable for every STE kind, recording the baseline numbers on this task.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-beea9e7c-ea9e-4baf-9576-248f55e47331",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:13.722155Z",
+  "updated_at": "2026-10-03T15:49:13.722190Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

@@ -1,0 +1,27 @@
+{
+  "id": "LIM-ece3dcab-ad4e-4f90-a5e8-4fc0c5b08d75",
+  "title": "Ship an ASD-STE100 example profile fixture and README usage docs",
+  "description": "Check in an example asd-ste100 profile under features/fixtures/ (YAML and/or JSON like portable-profile.json) and document enabling the rule set, the limits, and the dictionary overrides in README.md.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-b4c2f7e9-4357-4413-bc93-2bbad072959a",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:15.979524Z",
+  "updated_at": "2026-10-03T15:49:15.979557Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

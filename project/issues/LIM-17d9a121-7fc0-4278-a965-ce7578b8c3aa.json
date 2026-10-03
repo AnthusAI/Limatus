@@ -1,0 +1,27 @@
+{
+  "id": "LIM-17d9a121-7fc0-4278-a965-ce7578b8c3aa",
+  "title": "Register ASD-STE100 finding kinds and stable ids",
+  "description": "Extend src/limatus/editorial_diagnosis_schema.py so STE findings (unapproved word, sentence too long, passive voice, non-imperative step, -ing form, missing article, multiple instructions) carry kinds and stable finding ids exactly like existing diagnosis kinds. Update schema fixtures.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-b5f481cb-03d7-4c59-9cc6-304aa80aa99a",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:02.515659Z",
+  "updated_at": "2026-10-03T15:49:02.515694Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

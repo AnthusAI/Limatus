@@ -1,0 +1,27 @@
+{
+  "id": "LIM-0f40b3d4-750f-45ce-953d-ef699cab7978",
+  "title": "Implement sentence-length and one-instruction-per-sentence checks",
+  "description": "Add checks over sentence_spans from src/limatus/editorial_text.py, with word counts and per-mode limits wired to the procedure-vs-description mode; follow _make_finding and _occupied_spans conventions.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-34df426a-51ec-417d-a213-5847e7196c32",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:08.213637Z",
+  "updated_at": "2026-10-03T15:49:08.213688Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

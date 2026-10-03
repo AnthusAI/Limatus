@@ -127,6 +127,19 @@ python -m limatus eval --manifest path/to/editorial-corpus/manifest.yml
 python -m limatus canary --manifest path/to/editorial-canary/manifest.yml
 ```
 
+### ASD-STE100 technical drafts
+
+When the style profile enables `checks.asdSte100`, scan output carries
+ASD-STE100 Simplified Technical English findings: unapproved words
+(`asd_unapproved_word`), one-meaning violations (`asd_multi_meaning`),
+sentence-length and one-instruction limits (`asd_sentence_too_long`,
+`asd_multiple_instructions`), voice and structure rules (`asd_passive_voice`,
+`asd_non_imperative_step`, `asd_ing_form`, `asd_missing_article`). The
+diagnosis `asdSte100` summary reports the configured limits and the detected
+procedure/description mode. Treat STE findings like any other findings:
+decide first, then steer; the rule set never rewrites. See the README's
+ASD-STE100 section for profile keys and the checked-in example profile.
+
 ## HTML usability
 
 Use this path for static HTML pages (landing pages, articles rendered to HTML)—not for markdown copy-edit drafts. It is **read-only**: Limatus reports findings; it does not rewrite the page. There is no `usability options`, `usability apply`, or other usability write commands.

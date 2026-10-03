@@ -226,6 +226,62 @@ The command leaves the draft unchanged and writes validated diagnostic JSON.
 The same command works with a YAML profile by changing only the `--profile`
 path, for example `features/fixtures/editorial-diagnosis/style-profile.yml`.
 
+### ASD-STE100 Simplified Technical English rule set
+
+Limatus ships an opt-in rule-set plugin modeled on ASD-STE100 Simplified
+Technical English for technical publications and maintenance documentation.
+The packaged dictionary is a synthetic starter seed — the real ASD-STE100
+approved-word list is licensed content and is not bundled. Enable it in a
+profile's `checks` mapping and configure it in a top-level `asdSte100` block:
+
+```yaml
+checks:
+  asdSte100: true
+asdSte100:
+  enabled: true
+  exclusive: false
+  mode: auto            # auto | procedure | description
+  maxWordsProcedure: 20
+  maxWordsDescription: 25
+  disableRules: []      # sentenceLength, oneInstructionPerSentence, activeVoice,
+                        # imperativeProcedures, noIngForms, articles,
+                        # approvedWords, oneMeaningPerWord
+  approvedWords: []     # profile-specific approvals
+  technicalNames: []    # multi-word technical names protected from checks
+  unapprovedWords:      # extend the packaged dictionary
+    - word: reboot
+      approvedAlternative: restart
+```
+
+A checked-in example profile lives at
+`features/fixtures/asd-ste100/asd-ste100-profile.yml`.
+
+`mode: auto` classifies each paragraph topic: paragraphs with list items or
+imperative-first lines are procedure topics (20-word sentence limit, one
+instruction per sentence, imperative steps required); everything else is
+description (25-word limit). Explicit modes apply document-wide. The
+diagnosis `asdSte100` summary reports the configured limits and, in auto
+mode, the detected document mode.
+
+Finding kinds:
+
+- `asd_unapproved_word` — word not on the approved list (alternative suggested)
+- `asd_multi_meaning` — word used outside its single approved meaning
+- `asd_sentence_too_long` — sentence over the topic word limit
+- `asd_multiple_instructions` — several instructions in one procedure sentence
+- `asd_passive_voice` — passive construction
+- `asd_non_imperative_step` — procedure step without an imperative verb
+- `asd_ing_form` — `-ing` verb form outside approved technical nouns
+- `asd_missing_article` — singular noun without `a`, `an`, or `the`
+
+With `exclusive: true`, the bot-slop heuristic checks are skipped so the
+diagnosis is pure STE; otherwise STE runs beside them. Run the checked-in
+gold corpus end to end:
+
+```bash
+limatus eval --manifest features/fixtures/asd-ste100/eval-manifest.yml
+```
+
 ## Offline editorial eval corpus
 
 `limatus eval` runs a deterministic, network-free regression over checked-in drafts

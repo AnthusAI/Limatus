@@ -334,3 +334,27 @@ def step_then_asd_gold_coverage(context):
         assert f"PASS {entry_id}" in context.eval_result.stdout, context.eval_result.stdout
     assert "offline eval: 5 passed, 0 failed" in context.eval_result.stdout
     assert "finding metrics: precision=1.0000 recall=1.0000" in context.eval_result.stdout
+
+
+@when("I diagnose the {draft_key} draft with the Python SDK")
+def step_when_diagnose_with_sdk(context, draft_key):
+    from limatus.editorial_diagnosis import diagnose_draft
+    from limatus.editorial_style import load_style_profile
+
+    _given_draft(context, draft_key)
+    loaded = load_style_profile(context.profile_path)
+    context.sdk_diagnosis = diagnose_draft(
+        context.draft_path.read_text(encoding="utf-8"), style_profile=loaded
+    )
+
+
+@then("the SDK diagnosis includes an asdSte100 summary")
+def step_then_sdk_summary(context):
+    assert "asdSte100" in context.sdk_diagnosis, context.sdk_diagnosis.keys()
+    assert isinstance(context.sdk_diagnosis["asdSte100"], dict)
+
+
+@then("the SDK diagnosis reports an asd_{expected_kind} finding")
+def step_then_sdk_finding(context, expected_kind):
+    kinds = _collect_kinds(context.sdk_diagnosis)
+    assert f"asd_{expected_kind}" in kinds, sorted(kinds)

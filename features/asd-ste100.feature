@@ -154,3 +154,15 @@ Feature: ASD-STE100 rule-set plugin registration
     When I run the offline eval command
     Then the offline eval exits successfully
     And it reports the ASD-STE100 gold coverage
+
+  Scenario: The Python SDK surfaces STE findings to callers
+    Given an ASD-STE100 style profile with default limits
+    When I diagnose the unapproved draft with the Python SDK
+    Then the SDK diagnosis includes an asdSte100 summary
+    And the SDK diagnosis reports an asd_unapproved_word finding
+
+  Scenario: The example STE profile fixture runs the rule set end to end
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the procedure draft
+    Then the diagnosis includes an asdSte100 summary
+    And the diagnosis reports no asd_ findings

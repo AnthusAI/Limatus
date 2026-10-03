@@ -31,6 +31,8 @@ BOT_SLOP_KINDS = {
     "uncontracted_form",
     "unsupported_certainty",
     "uniform_cadence",
+    "punchline_cadence",
+    "opening_screen",
     "voice_mismatch",
     "missing_attribution",
     "redundancy",

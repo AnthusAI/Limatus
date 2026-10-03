@@ -16,7 +16,14 @@ from .editorial_diagnosis_schema import (
     validate_diagnosis,
 )
 from .editorial_style import AsdSte100Config, LoadedStyleProfile, OpeningScreenRules
-from .editorial_text import line_at_offset, paragraphs, sentence_spans, sentences, word_count
+from .editorial_text import (
+    line_at_offset,
+    paragraphs,
+    sentence_spans,
+    sentences,
+    tokenize,
+    word_count,
+)
 from .emoji import EMOJI_PATTERN as _EMOJI_PATTERN
 
 PROFILE_RULE_PREFIX = "Profile rule:"
@@ -240,17 +247,216 @@ def _asd_ste100_summary(config: AsdSte100Config, findings: list[dict[str, Any]])
 
 
 def _check_asd_ste100(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
-    """Run the ASD-STE100 rule-set checks over the draft.
-
-    The rule registry is scaffolded here; each rule lands with its own
-    specification (vocabulary and dictionary rules, sentence-length and
-    voice/structure rules, procedure-vs-description mode handling).
-    """
+    """Run the ASD-STE100 rule-set checks over the draft."""
     findings: list[dict[str, Any]] = []
     if "approvedWords" not in config.disabled_rules:
         findings.extend(_check_asd_vocabulary(text, config))
     if "oneMeaningPerWord" not in config.disabled_rules:
         findings.extend(_check_asd_multi_meaning(text, config))
+    mode = _asd_effective_mode(config)
+    verbs, nouns = _asd_word_classes(config)
+    disabled = set(config.disabled_rules)
+    if "sentenceLength" not in disabled:
+        findings.extend(_check_asd_sentence_length(text, config, mode))
+    if "oneInstructionPerSentence" not in disabled:
+        findings.extend(_check_asd_multiple_instructions(text, config, mode, verbs))
+    if "activeVoice" not in disabled:
+        findings.extend(_check_asd_passive_voice(text, config))
+    if "imperativeProcedures" not in disabled:
+        findings.extend(_check_asd_non_imperative(text, config, mode))
+    if "noIngForms" not in disabled:
+        findings.extend(_check_asd_ing_forms(text, config))
+    if "articles" not in disabled:
+        findings.extend(_check_asd_missing_article(text, config, nouns))
+    return findings
+
+
+_ASD_STE100_WRITING_RULE_TO_KIND = {
+    "sentenceLength": "asd_sentence_too_long",
+    "oneInstructionPerSentence": "asd_multiple_instructions",
+    "activeVoice": "asd_passive_voice",
+    "imperativeProcedures": "asd_non_imperative_step",
+    "noIngForms": "asd_ing_form",
+    "articles": "asd_missing_article",
+}
+
+_ASD_LIST_MARKER_PATTERN = re.compile(r"^\s*(?:\d+[.)]\s*|[-*+]\s+)")
+
+_ASD_PASSIVE_PATTERN = re.compile(
+    r"\b(?:is|are|was|were|been|being)\s+(?:\w+ed|made|done|given|taken|held|kept|put|set|sent|shown)\b",
+    re.IGNORECASE,
+)
+
+_ASD_INSTRUCTION_CONNECTOR_PATTERN = re.compile(r"\b(?:and then|then|and|or)\b", re.IGNORECASE)
+
+_ASD_SUBJECT_OPENER_TOKENS = {
+    "you",
+    "we",
+    "the",
+    "a",
+    "an",
+    "it",
+    "they",
+    "he",
+    "she",
+    "there",
+    "user",
+    "users",
+    "operator",
+    "operators",
+    "person",
+    "people",
+}
+
+_ASD_ING_TOKEN_PATTERN = re.compile(r"\b\w+ing\b")
+
+_ASD_FIRST_WORD_PATTERN = re.compile(r"[A-Za-z0-9']+")
+
+
+def _asd_effective_mode(config: AsdSte100Config) -> str:
+    """Resolve the document mode used for STE limits.
+
+    Explicit procedure/description modes apply directly. Auto mode falls back
+    to description limits until per-topic detection replaces the fallback.
+    """
+    if config.mode in {"procedure", "description"}:
+        return config.mode
+    return "description"
+
+
+def _asd_word_classes(config: AsdSte100Config) -> tuple[set[str], set[str]]:
+    dictionary = _load_asd_dictionary()
+    approved = set(dictionary.get("approvedWords", [])) | {word.lower() for word in config.approved_words}
+    verbs = {str(word).lower() for word in dictionary.get("verbs", [])}
+    nouns = approved - verbs
+    technical_names = set(dictionary.get("technicalNames", [])) | {name.lower() for name in config.technical_names}
+    nouns |= {part.lower() for name in technical_names for part in str(name).split()}
+    return verbs, nouns
+
+
+def _asd_sentence_units(text: str) -> list[tuple[str, int, int]]:
+    """Return sentence-like units with list markers stripped.
+
+    Numbered and bulleted list items lose their marker prefix so word counts
+    and imperative checks see the step text; prose lines yield their
+    sentences. Units carry (text, start, end) offsets into the draft.
+    """
+    units: list[tuple[str, int, int]] = []
+    for line_match in re.finditer(r"[^\n]+", text):
+        line = line_match.group(0)
+        line_start = line_match.start()
+        marker = _ASD_LIST_MARKER_PATTERN.match(line)
+        content_offset = marker.end() if marker else 0
+        content = line[content_offset:]
+        if not content.strip():
+            continue
+        cursor = 0
+        for sentence in sentences(content):
+            pos = content.find(sentence, cursor)
+            if pos < 0:
+                pos = cursor
+            cursor = pos + len(sentence)
+            start = line_start + content_offset + pos
+            units.append((sentence, start, start + len(sentence)))
+    return units
+
+
+def _check_asd_sentence_length(text: str, config: AsdSte100Config, mode: str) -> list[dict[str, Any]]:
+    limit = config.max_words_procedure if mode == "procedure" else config.max_words_description
+    findings: list[dict[str, Any]] = []
+    for unit, start, end in _asd_sentence_units(text):
+        words = tokenize(unit)
+        if len(words) > limit:
+            rationale = (
+                f"Sentence has {len(words)} words; the {mode} limit is {limit} words."
+            )
+            findings.append(_make_finding("asd_sentence_too_long", text, start, end, rationale))
+    return findings
+
+
+def _check_asd_multiple_instructions(
+    text: str, config: AsdSte100Config, mode: str, verbs: set[str]
+) -> list[dict[str, Any]]:
+    if mode != "procedure":
+        return []
+    findings: list[dict[str, Any]] = []
+    for unit, start, end in _asd_sentence_units(text):
+        segments = [part for part in _ASD_INSTRUCTION_CONNECTOR_PATTERN.split(unit) if part.strip()]
+        imperative_segments = [
+            segment
+            for segment in segments
+            if (tokenize(segment) or [""])[0] in verbs
+        ]
+        if len(imperative_segments) >= 2:
+            rationale = (
+                "Procedure sentence contains multiple instructions; keep one instruction per sentence."
+            )
+            findings.append(_make_finding("asd_multiple_instructions", text, start, end, rationale))
+    return findings
+
+
+def _check_asd_passive_voice(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
+    findings: list[dict[str, Any]] = []
+    for unit, start, _ in _asd_sentence_units(text):
+        for match in _ASD_PASSIVE_PATTERN.finditer(unit):
+            rationale = "Passive voice detected; write the sentence in active voice."
+            findings.append(
+                _make_finding("asd_passive_voice", text, start + match.start(), start + match.end(), rationale)
+            )
+    return findings
+
+
+def _check_asd_non_imperative(text: str, config: AsdSte100Config, mode: str) -> list[dict[str, Any]]:
+    if mode != "procedure":
+        return []
+    findings: list[dict[str, Any]] = []
+    for unit, start, end in _asd_sentence_units(text):
+        tokens = tokenize(unit)
+        if tokens and tokens[0] in _ASD_SUBJECT_OPENER_TOKENS:
+            rationale = "Procedure step does not start with an imperative verb."
+            findings.append(_make_finding("asd_non_imperative_step", text, start, end, rationale))
+    return findings
+
+
+def _check_asd_ing_forms(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
+    dictionary = _load_asd_dictionary()
+    allowlist = {str(word).lower() for word in dictionary.get("ingNouns", [])}
+    allowlist |= {str(word).lower() for word in dictionary.get("approvedWords", [])}
+    allowlist |= {word.lower() for word in config.approved_words}
+    allowlist |= {name.lower() for name in config.technical_names}
+    technical_names = set(dictionary.get("technicalNames", [])) | {name.lower() for name in config.technical_names}
+    occupied = _asd_technical_name_spans(text.lower(), technical_names)
+    findings: list[dict[str, Any]] = []
+    for unit, start, _ in _asd_sentence_units(text):
+        for match in _ASD_ING_TOKEN_PATTERN.finditer(unit.lower()):
+            word = match.group(0)
+            if word in allowlist:
+                continue
+            abs_start = start + match.start()
+            abs_end = start + match.end()
+            if _spans_overlap(abs_start, abs_end, occupied):
+                continue
+            rationale = f"'{word}' uses the -ing verb form; rewrite without the -ing form."
+            findings.append(_make_finding("asd_ing_form", text, abs_start, abs_end, rationale))
+    return findings
+
+
+def _check_asd_missing_article(text: str, config: AsdSte100Config, nouns: set[str]) -> list[dict[str, Any]]:
+    dictionary = _load_asd_dictionary()
+    unknown_pos = {str(entry["word"]).lower() for entry in dictionary.get("unapprovedWords", [])}
+    unknown_pos |= {str(entry["word"]).lower() for entry in config.unapproved_words}
+    findings: list[dict[str, Any]] = []
+    for unit, start, _ in _asd_sentence_units(text):
+        first_word = _ASD_FIRST_WORD_PATTERN.match(unit)
+        if first_word is None:
+            continue
+        first_token = first_word.group(0).lower()
+        if first_token not in nouns or first_token in unknown_pos:
+            continue
+        rationale = f"Singular noun '{first_word.group(0)}' starts the sentence without 'a', 'an', or 'the'."
+        abs_start = start + first_word.start()
+        abs_end = start + first_word.end()
+        findings.append(_make_finding("asd_missing_article", text, abs_start, abs_end, rationale))
     return findings
 
 
@@ -330,7 +536,12 @@ def _check_asd_multi_meaning(text: str, config: AsdSte100Config) -> list[dict[st
                 sentence_start + (len(sentence) - len(sentence.lstrip())) == match.start()
                 for sentence, sentence_start, _ in sentence_list
             )
-            used_as_verb = sentence_initial or previous_word in _ASD_MODAL_OR_INFINITIVE_MARKERS
+            used_as_verb = previous_word in _ASD_MODAL_OR_INFINITIVE_MARKERS
+            if not used_as_verb and sentence_initial:
+                _, nouns = _asd_word_classes(config)
+                following = re.search(r"[a-z0-9']+", lowered[match.end() :])
+                next_word = following.group(0) if following else ""
+                used_as_verb = next_word not in nouns
             violated = (allowed == "verb" and used_as_noun) or (allowed == "noun" and used_as_verb)
             if not violated:
                 continue

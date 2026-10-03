@@ -38,6 +38,38 @@ approvedWords:
   - oil
   - new
   - again
+verbs:
+  - press
+  - wait
+  - remove
+  - insert
+  - hold
+  - pull
+  - slide
+  - disconnect
+  - reconnect
+  - clean
+  - check
+  - follow
+  - keep
+ingNouns:
+  - casing
+  - housing
+  - fitting
+  - opening
+  - warning
+  - reading
+  - during
+  - string
+  - ring
+  - thing
+  - bring
+  - spring
+  - morning
+  - nothing
+  - something
+  - anything
+  - everything
 oneMeaningRules:
   - word: check
     allowedMeaning: verb

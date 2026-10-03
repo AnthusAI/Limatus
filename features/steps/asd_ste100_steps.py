@@ -29,6 +29,7 @@ BOT_SLOP_KINDS = {
 
 PROFILES = {
     "default": "asd-ste100-profile.yml",
+    "procedure": "asd-ste100-procedure-profile.yml",
     "beside": "asd-ste100-beside-profile.yml",
     "exclusive": "asd-ste100-exclusive-profile.yml",
     "overrides": "asd-ste100-overrides-profile.yml",
@@ -44,6 +45,17 @@ DRAFTS = {
     "multi-meaning": "multi-meaning-draft.md",
     "override-approved": "override-approved-draft.md",
     "override-unapproved": "override-unapproved-draft.md",
+    "long-description": "long-description-draft.md",
+    "at-limit-description": "at-limit-description-draft.md",
+    "long-procedure": "long-procedure-draft.md",
+    "at-limit-procedure": "at-limit-procedure-draft.md",
+    "two-instructions": "two-instructions-draft.md",
+    "non-imperative": "non-imperative-draft.md",
+    "passive": "passive-draft.md",
+    "ing-form": "ing-form-draft.md",
+    "technical-ing": "technical-ing-draft.md",
+    "missing-article": "missing-article-draft.md",
+    "article-clean": "article-clean-draft.md",
 }
 
 
@@ -236,3 +248,37 @@ def step_then_reports_no_asd_findings(context):
     context.diagnosis = json.loads(context.cli_result.stdout)
     asd_kinds = {k for k in _collect_kinds(context.diagnosis) if str(k).startswith("asd_")}
     assert not asd_kinds, sorted(asd_kinds)
+
+
+@given("an ASD-STE100 style profile in procedure mode")
+def step_given_asd_procedure_profile(context):
+    _given_profile(context, "procedure")
+    _given_draft(context, "procedure")
+
+
+@when("I run the diagnose command on the {draft_key} draft")
+def step_when_run_diagnose_named_draft(context, draft_key):
+    _given_draft(context, draft_key)
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@then("the diagnosis reports an asd_{expected_kind} finding")
+def step_then_reports_asd_finding(context, expected_kind):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    kinds = _collect_kinds(context.diagnosis)
+    assert f"asd_{expected_kind}" in kinds, sorted(kinds)
+
+
+@then(
+    "the diagnosis reports an asd_sentence_too_long finding naming the {expected_words:d}-word"
+    " {expected_mode} limit"
+)
+def step_then_reports_sentence_too_long(context, expected_words, expected_mode):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    findings = [f for f in context.diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"]
+    assert findings, sorted(_collect_kinds(context.diagnosis))
+    for finding in findings:
+        assert str(expected_words) in finding["rationale"], finding["rationale"]
+        assert expected_mode in finding["rationale"], finding["rationale"]

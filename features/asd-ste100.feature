@@ -62,3 +62,58 @@ Feature: ASD-STE100 rule-set plugin registration
     Given an ASD-STE100 style profile with dictionary overrides
     When I run the diagnose command on the override-unapproved draft
     Then the diagnosis reports an asd_unapproved_word finding naming the approved alternative
+
+  Scenario: A description sentence over the description word limit is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the long-description draft
+    Then the diagnosis reports an asd_sentence_too_long finding naming the 25-word description limit
+
+  Scenario: A description sentence at the description word limit stays clean
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the at-limit-description draft
+    Then the diagnosis reports no asd_ findings
+
+  Scenario: A procedure sentence over the procedure word limit is flagged
+    Given an ASD-STE100 style profile in procedure mode
+    When I run the diagnose command on the long-procedure draft
+    Then the diagnosis reports an asd_sentence_too_long finding naming the 20-word procedure limit
+
+  Scenario: A procedure sentence at the procedure word limit stays clean
+    Given an ASD-STE100 style profile in procedure mode
+    When I run the diagnose command on the at-limit-procedure draft
+    Then the diagnosis reports no asd_ findings
+
+  Scenario: Two instructions in one procedure sentence are flagged
+    Given an ASD-STE100 style profile in procedure mode
+    When I run the diagnose command on the two-instructions draft
+    Then the diagnosis reports an asd_multiple_instructions finding
+
+  Scenario: A non-imperative procedure step is flagged
+    Given an ASD-STE100 style profile in procedure mode
+    When I run the diagnose command on the non-imperative draft
+    Then the diagnosis reports an asd_non_imperative_step finding
+
+  Scenario: A passive sentence is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the passive draft
+    Then the diagnosis reports an asd_passive_voice finding
+
+  Scenario: An -ing verb form outside technical nouns is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the ing-form draft
+    Then the diagnosis reports an asd_ing_form finding
+
+  Scenario: A technical -ing noun is not flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the technical-ing draft
+    Then the diagnosis reports no asd_ findings
+
+  Scenario: A missing article before a singular noun is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the missing-article draft
+    Then the diagnosis reports an asd_missing_article finding
+
+  Scenario: An article before the noun keeps the sentence clean
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the article-clean draft
+    Then the diagnosis reports no asd_ findings

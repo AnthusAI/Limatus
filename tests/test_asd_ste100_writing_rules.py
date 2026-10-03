@@ -205,3 +205,65 @@ def test_dictionary_carries_verbs_and_ing_nouns():
     assert "verbs" in dictionary
     assert "ingNouns" in dictionary
     assert "housing" in dictionary["ingNouns"]
+
+
+def test_auto_mode_detects_numbered_topic_as_procedure():
+    long_step = "Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit level"
+    diagnosis = _diagnose(f"1. {long_step}", _config(mode="auto"))
+    finding = [f for f in diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"][0]
+    assert "procedure" in finding["rationale"]
+    assert diagnosis["asdSte100"]["detectedMode"] == "procedure"
+
+
+def test_auto_mode_detects_imperative_prose_as_procedure():
+    sentence = "Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit level"
+    diagnosis = _diagnose(sentence, _config(mode="auto"))
+    finding = [f for f in diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"][0]
+    assert "procedure" in finding["rationale"]
+
+
+def test_auto_mode_detects_prose_topic_as_description():
+    sentence = (
+        "The indicator lamp is a small lamp and the oil level is the level of oil inside"
+        " the filter housing of the plastic tray enclosure panel"
+    )
+    diagnosis = _diagnose(f"{sentence}.", _config(mode="auto"))
+    finding = [f for f in diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"][0]
+    assert "description" in finding["rationale"]
+    assert diagnosis["asdSte100"]["detectedMode"] == "description"
+
+
+def test_mixed_document_applies_per_topic_limits():
+    step = "Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit level"
+    prose = (
+        "The indicator lamp is a small lamp and the oil level is the level of oil inside"
+        " the filter housing of the plastic tray enclosure panel"
+    )
+    diagnosis = _diagnose(f"1. {step}\n\n{prose}.", _config(mode="auto"))
+    findings = [f for f in diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"]
+    rationales = [f["rationale"] for f in findings]
+    assert any("procedure" in r for r in rationales)
+    assert any("description" in r for r in rationales)
+
+
+def test_explicit_description_mode_overrides_detection():
+    step = "Insert the new filter into the filter housing of the tray enclosure of the plastic panel surface of the unit level"
+    diagnosis = _diagnose(f"1. {step}", _config(mode="description"))
+    assert _asd_kinds(diagnosis) == []
+    assert "detectedMode" not in diagnosis["asdSte100"]
+
+
+def test_explicit_procedure_mode_skips_topic_detection():
+    diagnosis = _diagnose(
+        "The operator should press the power button.",
+        _config(mode="procedure"),
+    )
+    assert "asd_non_imperative_step" in _asd_kinds(diagnosis)
+
+
+def test_topic_modes_classify_paragraphs():
+    from limatus.editorial_diagnosis import _asd_topic_modes
+
+    text = "1. Press the power button.\n\nThe filter housing is plastic."
+    modes = _asd_topic_modes(text, _config(mode="auto"), {"press"})
+    assert [mode for _, _, mode in modes] == ["procedure", "description"]

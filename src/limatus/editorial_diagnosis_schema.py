@@ -177,6 +177,8 @@ def _validate_asd_ste100_summary(summary: Any) -> None:
         raise EditorialDiagnosisValidationError(
             f"asdSte100.kinds contains unregistered kinds: {', '.join(sorted(unknown))}."
         )
+    if "detectedMode" in summary and summary["detectedMode"] not in {"procedure", "description"}:
+        raise EditorialDiagnosisValidationError("asdSte100.detectedMode must be procedure or description.")
 
 
 def coerce_rubric(rubric: Any) -> dict[str, Any] | None:

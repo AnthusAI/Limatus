@@ -117,3 +117,34 @@ Feature: ASD-STE100 rule-set plugin registration
     Given an ASD-STE100 style profile with default limits
     When I run the diagnose command on the article-clean draft
     Then the diagnosis reports no asd_ findings
+
+  Scenario: A numbered procedure topic is detected in auto mode
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the long-procedure draft
+    Then the diagnosis reports an asd_sentence_too_long finding naming the 20-word procedure limit
+
+  Scenario: A prose description topic is detected in auto mode
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the long-description draft
+    Then the diagnosis reports an asd_sentence_too_long finding naming the 25-word description limit
+
+  Scenario: Mixed documents apply per-topic limits
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the mixed draft
+    Then the diagnosis reports a procedure-limit finding for the numbered step
+    And the diagnosis reports a description-limit finding for the prose sentence
+
+  Scenario: An imperative prose paragraph is detected as a procedure topic
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the imperative-prose draft
+    Then the diagnosis reports an asd_sentence_too_long finding naming the 20-word procedure limit
+
+  Scenario: The summary reports the detected document mode
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the long-procedure draft
+    Then the asdSte100 summary reports detectedMode procedure
+
+  Scenario: Explicit description mode overrides topic detection
+    Given an ASD-STE100 style profile in description mode
+    When I run the diagnose command on the long-procedure draft
+    Then the diagnosis reports no asd_ findings

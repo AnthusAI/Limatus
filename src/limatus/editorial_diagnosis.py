@@ -215,7 +215,10 @@ def diagnose_draft(
     if ste_enabled:
         ste_findings = _check_asd_ste100(text, ste_config)
         generic_passages.extend(ste_findings)
-        ste_summary = _asd_ste100_summary(ste_config, ste_findings)
+        topic_modes = _asd_topic_modes(text, ste_config, _asd_word_classes(ste_config)[0])
+        ste_summary = _asd_ste100_summary(
+            ste_config, ste_findings, _asd_document_mode(text, ste_config, topic_modes)
+        )
 
     result = {
         "schemaVersion": SCHEMA_VERSION,
@@ -234,9 +237,11 @@ def diagnose_draft(
     return validate_diagnosis(result)
 
 
-def _asd_ste100_summary(config: AsdSte100Config, findings: list[dict[str, Any]]) -> dict[str, Any]:
+def _asd_ste100_summary(
+    config: AsdSte100Config, findings: list[dict[str, Any]], detected_mode: str | None = None
+) -> dict[str, Any]:
     kinds = sorted({finding["kind"] for finding in findings if finding["kind"] in ASD_STE100_FINDING_KINDS})
-    return {
+    summary: dict[str, Any] = {
         "mode": config.mode,
         "maxWordsProcedure": config.max_words_procedure,
         "maxWordsDescription": config.max_words_description,
@@ -244,6 +249,9 @@ def _asd_ste100_summary(config: AsdSte100Config, findings: list[dict[str, Any]])
         "disabledRules": list(config.disabled_rules),
         "kinds": kinds,
     }
+    if config.mode == "auto" and detected_mode is not None:
+        summary["detectedMode"] = detected_mode
+    return summary
 
 
 def _check_asd_ste100(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
@@ -253,17 +261,17 @@ def _check_asd_ste100(text: str, config: AsdSte100Config) -> list[dict[str, Any]
         findings.extend(_check_asd_vocabulary(text, config))
     if "oneMeaningPerWord" not in config.disabled_rules:
         findings.extend(_check_asd_multi_meaning(text, config))
-    mode = _asd_effective_mode(config)
     verbs, nouns = _asd_word_classes(config)
+    topic_modes = _asd_topic_modes(text, config, verbs)
     disabled = set(config.disabled_rules)
     if "sentenceLength" not in disabled:
-        findings.extend(_check_asd_sentence_length(text, config, mode))
+        findings.extend(_check_asd_sentence_length(text, config, topic_modes))
     if "oneInstructionPerSentence" not in disabled:
-        findings.extend(_check_asd_multiple_instructions(text, config, mode, verbs))
+        findings.extend(_check_asd_multiple_instructions(text, config, topic_modes, verbs))
     if "activeVoice" not in disabled:
         findings.extend(_check_asd_passive_voice(text, config))
     if "imperativeProcedures" not in disabled:
-        findings.extend(_check_asd_non_imperative(text, config, mode))
+        findings.extend(_check_asd_non_imperative(text, config, topic_modes))
     if "noIngForms" not in disabled:
         findings.extend(_check_asd_ing_forms(text, config))
     if "articles" not in disabled:
@@ -313,14 +321,54 @@ _ASD_ING_TOKEN_PATTERN = re.compile(r"\b\w+ing\b")
 _ASD_FIRST_WORD_PATTERN = re.compile(r"[A-Za-z0-9']+")
 
 
-def _asd_effective_mode(config: AsdSte100Config) -> str:
-    """Resolve the document mode used for STE limits.
+def _asd_topic_modes(text: str, config: AsdSte100Config, verbs: set[str]) -> list[tuple[int, int, str]]:
+    """Classify each paragraph topic as procedure or description.
 
-    Explicit procedure/description modes apply directly. Auto mode falls back
-    to description limits until per-topic detection replaces the fallback.
+    An explicit config mode applies to every topic. In auto mode, paragraphs
+    containing list items or starting with an imperative verb (an approved
+    verb token) are procedure topics; everything else is description.
     """
     if config.mode in {"procedure", "description"}:
+        return []
+    modes: list[tuple[int, int, str]] = []
+    cursor = 0
+    for paragraph in paragraphs(text):
+        start = text.find(paragraph, cursor)
+        if start < 0:
+            start = cursor
+        cursor = start + len(paragraph)
+        lines = paragraph.split("\n")
+        mode = "description"
+        if any(_ASD_LIST_MARKER_PATTERN.match(line) for line in lines):
+            mode = "procedure"
+        else:
+            first_line = next((line for line in lines if line.strip()), "")
+            tokens = tokenize(first_line)
+            if tokens and tokens[0] in verbs:
+                mode = "procedure"
+        modes.append((start, start + len(paragraph), mode))
+    return modes
+
+
+def _asd_unit_mode(
+    unit_start: int, topic_modes: list[tuple[int, int, str]], fallback: str = "description"
+) -> str:
+    for start, end, mode in topic_modes:
+        if start <= unit_start < end:
+            return mode
+    return fallback
+
+
+def _asd_explicit_mode(config: AsdSte100Config) -> str:
+    """Collapse the config mode to a concrete topic mode."""
+    return config.mode if config.mode in {"procedure", "description"} else "description"
+
+
+def _asd_document_mode(text: str, config: AsdSte100Config, topic_modes: list[tuple[int, int, str]]) -> str:
+    if config.mode != "auto":
         return config.mode
+    if any(mode == "procedure" for _, _, mode in topic_modes):
+        return "procedure"
     return "description"
 
 
@@ -361,10 +409,13 @@ def _asd_sentence_units(text: str) -> list[tuple[str, int, int]]:
     return units
 
 
-def _check_asd_sentence_length(text: str, config: AsdSte100Config, mode: str) -> list[dict[str, Any]]:
-    limit = config.max_words_procedure if mode == "procedure" else config.max_words_description
+def _check_asd_sentence_length(
+    text: str, config: AsdSte100Config, topic_modes: list[tuple[int, int, str]]
+) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     for unit, start, end in _asd_sentence_units(text):
+        mode = _asd_unit_mode(start, topic_modes, _asd_explicit_mode(config))
+        limit = config.max_words_procedure if mode == "procedure" else config.max_words_description
         words = tokenize(unit)
         if len(words) > limit:
             rationale = (
@@ -375,12 +426,12 @@ def _check_asd_sentence_length(text: str, config: AsdSte100Config, mode: str) ->
 
 
 def _check_asd_multiple_instructions(
-    text: str, config: AsdSte100Config, mode: str, verbs: set[str]
+    text: str, config: AsdSte100Config, topic_modes: list[tuple[int, int, str]], verbs: set[str]
 ) -> list[dict[str, Any]]:
-    if mode != "procedure":
-        return []
     findings: list[dict[str, Any]] = []
     for unit, start, end in _asd_sentence_units(text):
+        if _asd_unit_mode(start, topic_modes, _asd_explicit_mode(config)) != "procedure":
+            continue
         segments = [part for part in _ASD_INSTRUCTION_CONNECTOR_PATTERN.split(unit) if part.strip()]
         imperative_segments = [
             segment
@@ -406,11 +457,13 @@ def _check_asd_passive_voice(text: str, config: AsdSte100Config) -> list[dict[st
     return findings
 
 
-def _check_asd_non_imperative(text: str, config: AsdSte100Config, mode: str) -> list[dict[str, Any]]:
-    if mode != "procedure":
-        return []
+def _check_asd_non_imperative(
+    text: str, config: AsdSte100Config, topic_modes: list[tuple[int, int, str]]
+) -> list[dict[str, Any]]:
     findings: list[dict[str, Any]] = []
     for unit, start, end in _asd_sentence_units(text):
+        if _asd_unit_mode(start, topic_modes, _asd_explicit_mode(config)) != "procedure":
+            continue
         tokens = tokenize(unit)
         if tokens and tokens[0] in _ASD_SUBJECT_OPENER_TOKENS:
             rationale = "Procedure step does not start with an imperative verb."

@@ -30,6 +30,7 @@ BOT_SLOP_KINDS = {
 PROFILES = {
     "default": "asd-ste100-profile.yml",
     "procedure": "asd-ste100-procedure-profile.yml",
+    "description": "asd-ste100-description-profile.yml",
     "beside": "asd-ste100-beside-profile.yml",
     "exclusive": "asd-ste100-exclusive-profile.yml",
     "overrides": "asd-ste100-overrides-profile.yml",
@@ -56,6 +57,8 @@ DRAFTS = {
     "technical-ing": "technical-ing-draft.md",
     "missing-article": "missing-article-draft.md",
     "article-clean": "article-clean-draft.md",
+    "mixed": "mixed-draft.md",
+    "imperative-prose": "imperative-prose-draft.md",
 }
 
 
@@ -282,3 +285,33 @@ def step_then_reports_sentence_too_long(context, expected_words, expected_mode):
     for finding in findings:
         assert str(expected_words) in finding["rationale"], finding["rationale"]
         assert expected_mode in finding["rationale"], finding["rationale"]
+
+
+@then("the diagnosis reports a procedure-limit finding for the numbered step")
+def step_then_reports_procedure_limit_finding(context):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    findings = [f for f in context.diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"]
+    assert any("procedure" in f["rationale"] and "20" in f["rationale"] for f in findings), findings
+
+
+@then("the diagnosis reports a description-limit finding for the prose sentence")
+def step_then_reports_description_limit_finding(context):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    findings = [f for f in context.diagnosis["generic_passages"] if f["kind"] == "asd_sentence_too_long"]
+    assert any("description" in f["rationale"] and "25" in f["rationale"] for f in findings), findings
+
+
+@then("the asdSte100 summary reports detectedMode {expected_mode}")
+def step_then_summary_detected_mode(context, expected_mode):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    summary = context.diagnosis["asdSte100"]
+    assert summary.get("detectedMode") == expected_mode, summary
+
+
+@given("an ASD-STE100 style profile in description mode")
+def step_given_asd_description_profile(context):
+    _given_profile(context, "description")
+    _given_draft(context, "procedure")

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "event_id": "b3bb614f-9525-4337-bff7-92174b2fc9fc",
+  "issue_id": "LIM-ebcfa787-a2b3-44d5-a6fa-f96c07b92387",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-03T16:08:24.199Z",
+  "actor_id": "unknown",
+  "payload": {
+    "title": "Opening-screen definition heuristic accepts bare punctuation after a term",
+    "description": "From the review of PR 43. _DEFINITION_AFTER_TERM_PATTERN accepts any comma, paren, colon or dash right after an insider term as 'defined here', so 'Say you've got a decision model, and it grades tickets' and 'a decision model (we built one)' count as defined. The legitimate case ('a decision model, a fast AI model that answers a bounded question') uses the same punctuation, so punctuation alone can't decide. Needs a rule for what follows the punctuation (an appositive noun phrase, 'which is', 'that is') and specs for both sides before changing the heuristic.",
+    "issue_type": "task",
+    "status": "open",
+    "priority": 3,
+    "assignee": null,
+    "parent": null,
+    "labels": [],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-fable-5-1",
+      "name": "anthus-content-review"
+    }
+  }
+}

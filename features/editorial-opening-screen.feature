@@ -34,6 +34,11 @@ Feature: Opening screen
     When I diagnose it with the opening-screen profile
     Then diagnosis reports an opening-screen finding about a missing number
 
+  Scenario: A digit inside a link address is not a number in the prose
+    Given a draft whose only later digit is inside a link address
+    When I diagnose it with the opening-screen profile
+    Then diagnosis reports no opening-screen finding about a missing number
+
   Scenario: A profile without opening rules reports nothing
     Given a draft whose opening paragraph uses "decision model" without defining it
     When I diagnose it with the surface-rules profile

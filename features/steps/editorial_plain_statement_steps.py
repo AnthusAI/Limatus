@@ -79,6 +79,28 @@ def step_given_closing_numeric_statement(context):
     )
 
 
+@given("a paragraph that ends on a stand-alone ellipsis after a long sentence")
+def step_given_closing_ellipsis(context):
+    context.draft_text = " ".join(
+        [
+            "The reviewers kept disagreeing with the same kind of verdict.",
+            LONG_SENTENCE_ABOUT_APPROVAL,
+            "...",
+        ]
+    )
+
+
+@given("a draft whose opening paragraph starts with an inline emphasis tag")
+def step_given_inline_markup_opener(context):
+    context.draft_text = "\n".join(
+        [
+            "<em>Plexus</em> is the platform we run the whole loop on.",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(
@@ -177,6 +199,17 @@ def step_given_mdx_preamble(context):
     )
 
 
+@given("a draft whose only later digit is inside a link address")
+def step_given_digit_only_in_link(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            "See [the write-up](/posts/2025/loop) for the details.",
+        ]
+    )
+
+
 @given("a draft whose first number arrives in its second paragraph")
 def step_given_number_arrives_late(context):
     context.draft_text = (
@@ -209,6 +242,16 @@ def step_then_opening_finding_for_term(context, term):
 def step_then_no_opening_finding_for_term(context, term):
     findings = _opening_findings_mentioning(context, term)
     assert not findings, findings
+
+
+@then("diagnosis reports no opening-screen finding about a missing number")
+def step_then_no_opening_missing_number(context):
+    findings = [
+        finding
+        for finding in _findings_of_kind(context, "opening_screen")
+        if "no number" in finding["rationale"]
+    ]
+    assert findings == [], findings
 
 
 @then("diagnosis reports an opening-screen finding about a missing number")

@@ -13,3 +13,8 @@ Feature: Document intent
     Given a paragraph that ends on a very short sentence after a long one
     When I diagnose it with the surface-rules profile
     Then the document intent is "The reviewers kept disagreeing with the same kind of verdict."
+
+  Scenario: An opening paragraph that starts with inline markup is still the opener
+    Given a draft whose opening paragraph starts with an inline emphasis tag
+    When I diagnose it with the surface-rules profile
+    Then the document intent is "<em>Plexus</em> is the platform we run the whole loop on."

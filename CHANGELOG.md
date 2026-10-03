@@ -4,7 +4,9 @@
 ## Unreleased
 
 - Document intent comes from the first prose paragraph, so an MDX import line or front matter no longer stands in for what the draft is about.
-- Punch-line cadence no longer flags a short closing sentence that states a number; a numeric statement is a measurement, not a line to decode.
+- Punch-line cadence no longer flags a short closing sentence that states a number, or a closing ellipsis with no words in it; a numeric statement is a measurement, not a line to decode.
+- A paragraph that opens with an inline tag (an emphasised product name, a link) counts as prose for the opening-screen, intent and cadence checks; one that opens with a block element or figure still does not.
+- The opening-screen number check ignores digits inside link addresses.
 
 ## v0.29.0 (2026-09-27)
 

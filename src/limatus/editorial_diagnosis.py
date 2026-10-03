@@ -564,8 +564,23 @@ _PUNCHLINE_MAXIMUM_WORDS = 6
 _PUNCHLINE_PRECEDING_MINIMUM_WORDS = 14
 
 _NON_PROSE_PARAGRAPH_PATTERN = re.compile(
-    r"^(?:#|\||<|>|\{|```|---|!\[|import\s|export\s|[-*+]\s|\d+[.)]\s)"
+    r"^(?:#|\||>|\{|```|---|import\s|export\s|[-*+]\s|\d+[.)]\s)"
 )
+# A paragraph that opens with an inline tag or an image is still prose when
+# words remain once the markup is taken out, as with an opening sentence that
+# starts on an emphasised product name. A paragraph that opens with a block
+# element (figure, div, p, a component) is markup, caption included.
+_MARKUP_LED_PARAGRAPH_PATTERN = re.compile(r"^(?:<|!\[)")
+_INLINE_TAG_LED_PARAGRAPH_PATTERN = re.compile(r"^<(?:em|strong|a|mark|code|i|b|span|abbr|cite|q|s|u)\b", re.IGNORECASE)
+_HTML_TAG_PATTERN = re.compile(r"<[^>]*>")
+_MINIMUM_WORDS_FOR_PROSE_AFTER_MARKUP = 3
+
+
+def _markup_led_paragraph_is_prose(paragraph: str) -> bool:
+    if paragraph.startswith("<") and not _INLINE_TAG_LED_PARAGRAPH_PATTERN.match(paragraph):
+        return False
+    without_markup = _HTML_TAG_PATTERN.sub(" ", _mask_image_markup(paragraph))
+    return len(re.findall(r"[A-Za-z]+", without_markup)) >= _MINIMUM_WORDS_FOR_PROSE_AFTER_MARKUP
 
 
 def _prose_paragraph_spans(text: str) -> list[tuple[str, int, int]]:
@@ -577,6 +592,8 @@ def _prose_paragraph_spans(text: str) -> list[tuple[str, int, int]]:
             paragraph_start = cursor
         cursor = paragraph_start + len(paragraph)
         if _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph):
+            continue
+        if _MARKUP_LED_PARAGRAPH_PATTERN.match(paragraph) and not _markup_led_paragraph_is_prose(paragraph):
             continue
         spans.append((paragraph, paragraph_start, paragraph_start + len(paragraph)))
     return spans
@@ -606,7 +623,7 @@ def _sentence_can_be_punchline(sentence: str) -> bool:
     stripped_sentence = sentence.strip().strip("*_")
     if not stripped_sentence or stripped_sentence[-1] in ":?\"\u201d'" or "```" in stripped_sentence:
         return False
-    if _NUMERIC_STATEMENT_PATTERN.search(stripped_sentence):
+    if _NUMERIC_STATEMENT_PATTERN.search(stripped_sentence) or word_count(stripped_sentence) == 0:
         return False
     return not _MARKDOWN_LINK_ONLY_SENTENCE_PATTERN.match(stripped_sentence)
 
@@ -628,7 +645,7 @@ def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
         flagged_indexes = drop_indexes if len(drop_indexes) >= 2 else [i for i in drop_indexes if i == last_index]
         closes_with_terse_tag = (
             last_index + 1 >= _TERSE_CLOSING_TAG_MINIMUM_PARAGRAPH_SENTENCES
-            and sentence_word_counts[last_index] <= _TERSE_CLOSING_TAG_MAXIMUM_WORDS
+            and 0 < sentence_word_counts[last_index] <= _TERSE_CLOSING_TAG_MAXIMUM_WORDS
             and sentence_word_counts[last_index - 1] >= 2 * sentence_word_counts[last_index]
             and _sentence_can_be_punchline(sentence_spans_in_paragraph[last_index][0])
         )
@@ -656,6 +673,7 @@ def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
 _DEFINITION_AFTER_TERM_PATTERN = re.compile(r"^(?:\s*[,(:\u2014\u2013]|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)")
 _DEFINITION_BEFORE_TERM_PATTERN = re.compile(r"\b(?:called|named|known as)\s+(?:an?\s+|the\s+)?$", re.IGNORECASE)
 _DIGIT_PATTERN = re.compile(r"\d")
+_MARKDOWN_LINK_ADDRESS_PATTERN = re.compile(r"\]\([^)]*\)")
 
 
 def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str, Any]]:
@@ -693,7 +711,10 @@ def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str
             break
 
     if rules.require_number and not _DIGIT_PATTERN.search(opening_paragraph):
-        later_prose_has_number = any(_DIGIT_PATTERN.search(paragraph) for paragraph, _, _ in prose_paragraphs[1:])
+        later_prose_has_number = any(
+            _DIGIT_PATTERN.search(_MARKDOWN_LINK_ADDRESS_PATTERN.sub("]", paragraph))
+            for paragraph, _, _ in prose_paragraphs[1:]
+        )
         if later_prose_has_number and opening_sentences:
             _, first_sentence_start, first_sentence_end = opening_sentences[0]
             findings.append(

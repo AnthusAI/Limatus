@@ -191,6 +191,26 @@ Issue types map directly to release categories.
 
 Release notes are a record, not commentary.
 
+## Git
+
+This repository is its own git repo. Do not commit Limatus into the parent
+`~/Projects` checkout.
+
+`develop` is the continuous-integration branch. Merge accepted, green work
+there as soon as it is ready. Do not park completed work on long-lived
+feature branches waiting for `main`.
+
+`main` is the release branch. Semantic-release runs only from `main`.
+Do not treat a merge to `develop` as a production release. The release
+workflow is local to this repo and authenticates with `GITHUB_TOKEN`;
+do not call the platform-ci reusable workflow, which requires an
+`anthusbot_gh_token` this repository does not have.
+
+Open pull requests against `develop`. Merge them there as soon as
+sub-agent review is addressed and CI is green. Do not park completed
+work on feature branches. Promote `develop` to `main` when you intend a
+release, not as the daily integration path.
+
 ## Example: Hello World
 
 Even the smallest program must pass through The Way.

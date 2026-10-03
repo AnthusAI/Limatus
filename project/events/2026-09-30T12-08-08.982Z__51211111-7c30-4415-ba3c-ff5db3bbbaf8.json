@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "event_id": "51211111-7c30-4415-ba3c-ff5db3bbbaf8",
+  "issue_id": "LIM-6fdcd8dc-6a3f-4dc2-a34d-9b011d45526f",
+  "event_type": "issue_created",
+  "occurred_at": "2026-09-30T12:08:08.982Z",
+  "actor_id": "unknown",
+  "payload": {
+    "title": "Punch-line cadence check",
+    "description": "As a copy editor, I want a very short sentence that lands right after a long one flagged when it closes a paragraph or recurs within one, so mic-drop rhythm is caught even when sentence lengths vary.\n\nFeature: Punch-line cadence\n  Scenario: Repeated drops in one paragraph are flagged\n    Given a paragraph where two very short sentences each follow a long sentence\n    When I diagnose it with the surface-rules profile\n    Then diagnosis reports punch-line cadence findings for both short sentences\n  Scenario: A short closing line after a long sentence is flagged\n  Scenario: One mid-paragraph short sentence is not flagged\n  Scenario: A profile can turn the check off",
+    "issue_type": "story",
+    "status": "open",
+    "priority": 2,
+    "assignee": null,
+    "parent": "LIM-238558a5-2ff4-4765-a440-16b6231e66eb",
+    "labels": [],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-opus-5-5",
+      "name": "anth-content-strategy-clients"
+    }
+  }
+}

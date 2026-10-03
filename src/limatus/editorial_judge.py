@@ -20,7 +20,7 @@ from .editorial_style import (
     StyleProfile,
 )
 
-JUDGE_PROMPT_VERSION = "3"
+JUDGE_PROMPT_VERSION = "4"
 
 JUDGE_REFERENCE_EXCERPT_CHARS = 500
 
@@ -268,6 +268,16 @@ def _system_prompt() -> str:
         "profile lane may miss. Do not rewrite the draft. Return only JSON matching the schema. "
         "Findings must cite exact character spans in the draft (start inclusive, end exclusive). "
         "Use kinds such as vague_claim, unsupported_certainty, voice_mismatch, or generic issues. "
+        "Flag prose that imitates the texture of a person writing without carrying the content. "
+        "Use kind figurative_substitution for a metaphor or character trait standing in for the fact it "
+        "should state (\"the calibration became the weather\", \"its confidence got honest\", \"the "
+        "pipeline learned to hesitate\"); a comparison is fine only when the plain fact is already on the "
+        "page. Use kind riddle_phrasing for a line that sounds final or knowing but has to be decoded: "
+        "aphorisms equating a concrete thing with an abstraction (\"the scorecard is the contract\"), "
+        "closers that announce a point instead of making it (\"that's the whole argument\"), fragment-pair "
+        "slogans, borrowed idioms used slightly wrong, and compression that skips a step. The test for both: "
+        "a reader who has never seen the publication understands the sentence on first read and could "
+        "restate it in plain words without guessing at an allusion. "
         "When judging voice, use sentence style, voice patterns, structure, and reference sample "
         "excerpts as register anchors only; do not copy reference prose. Do not optimize for "
         "detector scores or synthetic imperfection. "

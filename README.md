@@ -160,6 +160,9 @@ density:
   minWords: 400
   minLexicalDensity: 0.45
   maxGzipRatio: 0.35
+opening:
+  insiderTerms: [decision model, scorecard]
+  requireNumber: true
 ```
 
 Reference `path` values are resolved relative to the profile file, not the
@@ -173,6 +176,25 @@ omitted, every check is enabled. `rules` is optional and defaults to no custom
 rules. `density` is optional and defaults to `minWords: 400`,
 `minLexicalDensity: 0.45`, and `maxGzipRatio: 0.35`. Unknown control names and
 invalid values fail profile validation before a draft is analyzed.
+
+### Plain statements on first read
+
+Three checks target prose that imitates the texture of a person writing
+without carrying the content:
+
+- `punchlineCadence` flags a very short sentence that lands right after a long
+  one when it closes a paragraph or happens twice in one, and a terse tag of four
+  words or fewer that closes a paragraph of shortening sentences. List lead-ins,
+  questions, quotations, link-only calls to action, and code are skipped.
+- `openingScreen` reads only the first prose paragraph, after imports, figures,
+  and headings. It flags each `opening.insiderTerms` entry that isn't defined in
+  the sentence where it first appears, and, when `opening.requireNumber` is true,
+  an opening with no number when later paragraphs have one. It does nothing
+  unless the profile has an `opening` section.
+- The judge lane reports `figurative_substitution`, a metaphor or character trait
+  standing in for the fact, and `riddle_phrasing`, a line that sounds final or
+  knowing but has to be decoded. No regular expression can catch these reliably,
+  so they need the judge.
 
 Optional `editorialAim` is a non-empty string describing how the publication
 balances priorities (for example, cite-first versus ordinary-language clarity).

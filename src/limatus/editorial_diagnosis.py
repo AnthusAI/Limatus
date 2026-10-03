@@ -670,14 +670,20 @@ def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
 # The opening paragraph is the only one every reader sees. Terms a profile
 # lists as insider vocabulary must be defined in the sentence where they first
 # appear there, and a profile can require a concrete number on the first screen.
-_DEFINITION_AFTER_TERM_PATTERN = re.compile(r"^(?:\s*[,(:\u2014\u2013]|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)")
+_DEFINITION_AFTER_TERM_PATTERN = re.compile(
+    r"^(?:\s*[,(:\u2014\u2013](?!\s*(?:and|but|or|so|then|which|where|when)\b)|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)"
+)
 _DEFINITION_BEFORE_TERM_PATTERN = re.compile(r"\b(?:called|named|known as)\s+(?:an?\s+|the\s+)?$", re.IGNORECASE)
 _DIGIT_PATTERN = re.compile(r"\d")
 _MARKDOWN_LINK_ADDRESS_PATTERN = re.compile(r"\]\([^)]*\)")
 
 
+def _prose_has_number(paragraph: str) -> bool:
+    return bool(_DIGIT_PATTERN.search(_MARKDOWN_LINK_ADDRESS_PATTERN.sub("]", paragraph)))
+
+
 def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str, Any]]:
-    prose_paragraphs = _prose_paragraph_spans(text)
+    prose_paragraphs = _prose_paragraph_spans(_mask_for_redundancy_shingling(text))
     if not prose_paragraphs:
         return []
     opening_paragraph, opening_start, _ = prose_paragraphs[0]
@@ -710,11 +716,8 @@ def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str
                 )
             break
 
-    if rules.require_number and not _DIGIT_PATTERN.search(opening_paragraph):
-        later_prose_has_number = any(
-            _DIGIT_PATTERN.search(_MARKDOWN_LINK_ADDRESS_PATTERN.sub("]", paragraph))
-            for paragraph, _, _ in prose_paragraphs[1:]
-        )
+    if rules.require_number and not _prose_has_number(opening_paragraph):
+        later_prose_has_number = any(_prose_has_number(paragraph) for paragraph, _, _ in prose_paragraphs[1:])
         if later_prose_has_number and opening_sentences:
             _, first_sentence_start, first_sentence_end = opening_sentences[0]
             findings.append(

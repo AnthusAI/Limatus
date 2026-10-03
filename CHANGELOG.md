@@ -6,7 +6,9 @@
 - Document intent comes from the first prose paragraph, so an MDX import line or front matter no longer stands in for what the draft is about.
 - Punch-line cadence no longer flags a short closing sentence that states a number, or a closing ellipsis with no words in it; a numeric statement is a measurement, not a line to decode.
 - A paragraph that opens with an inline tag (an emphasised product name, a link) counts as prose for the opening-screen, intent and cadence checks; one that opens with a block element or figure still does not.
-- The opening-screen number check ignores digits inside link addresses.
+- The opening-screen checks run on masked text, so digits inside link addresses and component attributes are not numbers in the prose.
+- A comma after an insider term followed by a conjunction ("a decision model, and it grades tickets") no longer counts as a definition.
+- The sentence splitter breaks after a closing quotation mark, so a short closer after a quoted sentence is seen as its own sentence.
 
 ## v0.29.0 (2026-09-27)
 

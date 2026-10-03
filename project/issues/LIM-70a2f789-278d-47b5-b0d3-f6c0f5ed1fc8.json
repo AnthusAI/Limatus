@@ -3,7 +3,7 @@
   "title": "Implement topic and document mode detection",
   "description": "Add mode detection over paragraphs and list structure using editorial_text helpers, exposing mode per section so rule checks can select the right limits.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "9a403e23-dc11-4621-9332-6b5230e9b573",
+      "author": "home",
+      "text": "Implemented _asd_topic_modes paragraph classification (list markers or imperative-initial first token -> procedure; explicit config mode applies to all topics) and _asd_document_mode for the summary detectedMode field; schema accepts optional detectedMode.",
+      "created_at": "2026-10-03T16:29:57.285065Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:11.018508Z",
-  "updated_at": "2026-10-03T15:49:11.018541Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:29:57.833921Z",
+  "closed_at": "2026-10-03T16:29:57.833896Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

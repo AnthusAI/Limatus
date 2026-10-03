@@ -5,6 +5,7 @@
 
 - Document intent comes from the first prose paragraph, so an MDX import line or front matter no longer stands in for what the draft is about.
 - Punch-line cadence no longer flags a short closing sentence that states a number; a numeric statement is a measurement, not a line to decode.
+- **asd-ste100**: Add the ASD-STE100 Simplified Technical English rule-set plugin. Opt in with `checks.asdSte100` and a profile `asdSte100` block (mode, word limits, `disableRules`, `exclusive` gating, dictionary overrides). New finding kinds: `asd_unapproved_word`, `asd_multi_meaning`, `asd_sentence_too_long`, `asd_multiple_instructions`, `asd_passive_voice`, `asd_non_imperative_step`, `asd_ing_form`, `asd_missing_article`. Ships a synthetic starter dictionary (the licensed ASD-STE100 word list is not bundled), a gold must-fail/must-pass eval corpus (`features/fixtures/asd-ste100/eval-manifest.yml`), example profile fixtures, and README/SKILL usage docs.
 
 ## v0.29.0 (2026-09-27)
 

@@ -3,7 +3,7 @@
   "title": "Ship an ASD-STE100 example profile fixture and README usage docs",
   "description": "Check in an example asd-ste100 profile under features/fixtures/ (YAML and/or JSON like portable-profile.json) and document enabling the rule set, the limits, and the dictionary overrides in README.md.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "88381c56-dfe4-47d9-8d93-feacd75b9549",
+      "author": "example-user",
+      "text": "Example profile fixture documented and checked in at features/fixtures/asd-ste100/asd-ste100-profile.yml; README gained an ASD-STE100 section covering checks.asdSte100, the asdSte100 block (mode, limits, disableRules, exclusive, overrides), finding kinds, and the gold eval command.",
+      "created_at": "2026-10-03T16:34:39.772831Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:15.979524Z",
-  "updated_at": "2026-10-03T15:49:15.979557Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:34:40.389589Z",
+  "closed_at": "2026-10-03T16:34:40.389562Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

@@ -40,6 +40,21 @@ FORBIDDEN_OUTPUT_KEYS = frozenset(
 
 FINDING_DECISIONS = frozenset({"skip", "rewrite", "delete", "keep", "add"})
 
+ASD_STE100_FINDING_KINDS = frozenset(
+    {
+        "asd_unapproved_word",
+        "asd_multi_meaning",
+        "asd_sentence_too_long",
+        "asd_multiple_instructions",
+        "asd_passive_voice",
+        "asd_non_imperative_step",
+        "asd_ing_form",
+        "asd_missing_article",
+    }
+)
+
+ASD_STE100_SUMMARY_MODES = frozenset({"auto", "procedure", "description"})
+
 STABLE_ID_PATTERN = re.compile(r"^finding-[a-f0-9]{16}$")
 
 FINDING_SOURCE_PROFILE = "profile"
@@ -130,7 +145,40 @@ def validate_diagnosis(payload: dict[str, Any]) -> dict[str, Any]:
     if rubric is not None:
         _validate_rubric(rubric)
 
+    asd_ste100 = payload.get("asdSte100")
+    if asd_ste100 is not None:
+        _validate_asd_ste100_summary(asd_ste100)
+
     return payload
+
+
+def _validate_asd_ste100_summary(summary: Any) -> None:
+    if not isinstance(summary, dict):
+        raise EditorialDiagnosisValidationError("asdSte100 must be a mapping.")
+    mode = summary.get("mode")
+    if mode not in ASD_STE100_SUMMARY_MODES:
+        raise EditorialDiagnosisValidationError(
+            f"asdSte100.mode must be one of {', '.join(sorted(ASD_STE100_SUMMARY_MODES))}."
+        )
+    for field in ("maxWordsProcedure", "maxWordsDescription"):
+        value = summary.get(field)
+        if not isinstance(value, int) or isinstance(value, bool) or value <= 0:
+            raise EditorialDiagnosisValidationError(f"asdSte100.{field} must be a positive integer.")
+    if not isinstance(summary.get("exclusive"), bool):
+        raise EditorialDiagnosisValidationError("asdSte100.exclusive must be a boolean.")
+    disabled_rules = summary.get("disabledRules")
+    if not isinstance(disabled_rules, list) or not all(isinstance(name, str) for name in disabled_rules):
+        raise EditorialDiagnosisValidationError("asdSte100.disabledRules must be a list of strings.")
+    kinds = summary.get("kinds")
+    if not isinstance(kinds, list) or not all(isinstance(kind, str) for kind in kinds):
+        raise EditorialDiagnosisValidationError("asdSte100.kinds must be a list of strings.")
+    unknown = set(kinds) - ASD_STE100_FINDING_KINDS
+    if unknown:
+        raise EditorialDiagnosisValidationError(
+            f"asdSte100.kinds contains unregistered kinds: {', '.join(sorted(unknown))}."
+        )
+    if "detectedMode" in summary and summary["detectedMode"] not in {"procedure", "description"}:
+        raise EditorialDiagnosisValidationError("asdSte100.detectedMode must be procedure or description.")
 
 
 def coerce_rubric(rubric: Any) -> dict[str, Any] | None:

@@ -3,7 +3,7 @@
   "title": "Register ASD-STE100 finding kinds and stable ids",
   "description": "Extend src/limatus/editorial_diagnosis_schema.py so STE findings (unapproved word, sentence too long, passive voice, non-imperative step, -ing form, missing article, multiple instructions) carry kinds and stable finding ids exactly like existing diagnosis kinds. Update schema fixtures.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "89d6d81d-f905-4c81-9088-ff5b2948c0fe",
+      "author": "home",
+      "text": "Registered in src/limatus/editorial_diagnosis_schema.py: ASD_STE100_FINDING_KINDS (8 kinds: asd_unapproved_word, asd_multi_meaning, asd_sentence_too_long, asd_multiple_instructions, asd_passive_voice, asd_non_imperative_step, asd_ing_form, asd_missing_article); validate_diagnosis validates the asdSte100 summary block including registered-kinds-only check; diagnose_draft emits the summary.",
+      "created_at": "2026-10-03T16:04:52.073629Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:02.515659Z",
-  "updated_at": "2026-10-03T15:49:02.515694Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:04:52.739050Z",
+  "closed_at": "2026-10-03T16:04:52.738979Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

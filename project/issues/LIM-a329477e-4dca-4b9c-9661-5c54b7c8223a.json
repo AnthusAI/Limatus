@@ -3,7 +3,7 @@
   "title": "Implement -ing-form and article checks",
   "description": "Add checks for -ing verb forms outside approved technical nouns (e.g. casing, fitting) and for missing articles, with allowlists for headings, code spans, and frontmatter via the existing masking helpers.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "52c88eeb-697c-451f-bdef-16ab05dd2d83",
+      "author": "home",
+      "text": "Implemented asd_ing_form (dictionary ingNouns allowlist + technical-name spans) and asd_missing_article (noun-initial sentence heuristic, unknown-POS words skipped). Dictionary extended with verbs and ingNouns seeds. Full suite green: 191 pytest, 34 behave features / 104 scenarios, 6/6 evals.",
+      "created_at": "2026-10-03T16:19:50.458427Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:09.479121Z",
-  "updated_at": "2026-10-03T15:49:09.479156Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:19:51.101305Z",
+  "closed_at": "2026-10-03T16:19:51.101286Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

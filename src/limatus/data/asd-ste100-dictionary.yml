@@ -1,0 +1,106 @@
+schemaVersion: 1
+description: >-
+  Synthetic starter seed for the ASD-STE100 rule set. The real ASD-STE100
+  approved-word list and its example sentences are licensed content and are
+  not bundled here. This seed is enough to drive the vocabulary checks and is
+  meant to be extended or replaced through profile overrides in production.
+approvedWords:
+  - press
+  - wait
+  - remove
+  - insert
+  - hold
+  - pull
+  - slide
+  - disconnect
+  - reconnect
+  - clean
+  - check
+  - follow
+  - keep
+  - filter
+  - cover
+  - indicator
+  - power
+  - button
+  - tray
+  - frame
+  - latch
+  - handle
+  - panel
+  - surface
+  - cable
+  - lamp
+  - housing
+  - enclosure
+  - plastic
+  - level
+  - oil
+  - new
+  - again
+verbs:
+  - press
+  - wait
+  - remove
+  - insert
+  - hold
+  - pull
+  - slide
+  - disconnect
+  - reconnect
+  - clean
+  - check
+  - follow
+  - keep
+ingNouns:
+  - casing
+  - housing
+  - fitting
+  - opening
+  - warning
+  - reading
+  - during
+  - string
+  - ring
+  - thing
+  - bring
+  - spring
+  - morning
+  - nothing
+  - something
+  - anything
+  - everything
+oneMeaningRules:
+  - word: check
+    allowedMeaning: verb
+  - word: follow
+    allowedMeaning: verb
+  - word: power
+    allowedMeaning: noun
+  - word: filter
+    allowedMeaning: noun
+  - word: handle
+    allowedMeaning: noun
+technicalNames:
+  - filter cover
+  - filter housing
+  - power button
+  - indicator lamp
+  - oil level
+unapprovedWords:
+  - word: utilize
+    approvedAlternative: use
+  - word: commence
+    approvedAlternative: start
+  - word: terminate
+    approvedAlternative: stop
+  - word: purchase
+    approvedAlternative: buy
+  - word: assist
+    approvedAlternative: help
+  - word: demonstrate
+    approvedAlternative: show
+  - word: prior
+    approvedAlternative: before
+  - word: sufficient
+    approvedAlternative: enough

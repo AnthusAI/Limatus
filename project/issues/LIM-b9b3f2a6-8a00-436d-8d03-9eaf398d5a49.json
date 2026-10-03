@@ -3,7 +3,7 @@
   "title": "Spec: Gherkin for CLI and SDK surfacing of STE findings",
   "description": "Spec-first. Scenarios: limatus diagnose with an STE profile emits STE kinds in the validated JSON; the SDK diagnose() call exposes the same; profile validation errors are reported on load; no rewrite payloads in diagnosis output.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "d32f4cc2-d5c0-4b91-b749-976bc466e7d7",
+      "author": "example-user",
+      "text": "Spec complete: Gherkin scenarios codify CLI and SDK surfacing of STE findings (SDK diagnose returns the asdSte100 summary and asd_ kinds; the example profile fixture runs end to end). These are regression specs of landed behavior, verified green: 31 asd-ste100 scenarios pass.",
+      "created_at": "2026-10-03T16:34:38.370048Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:15.240775Z",
-  "updated_at": "2026-10-03T15:49:15.240815Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:34:39.121956Z",
+  "closed_at": "2026-10-03T16:34:39.121919Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

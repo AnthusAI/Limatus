@@ -3,7 +3,7 @@
   "title": "Scaffold asd-ste100 rule-set profile preset and check registry",
   "description": "Extend src/limatus/editorial_style.py (load_style_profile, DEFAULT_DIAGNOSE_CHECKS pattern, ALLOWED_* frozensets) with the asd-ste100 rule-set keys and validation, following how EditorialRules and the checks mapping already work. Smallest code to make the spec pass.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "c9f46ce6-520a-476c-91cb-51c3251d7ac6",
+      "author": "home",
+      "text": "Scaffolded in src/limatus/editorial_style.py: AsdSte100Config dataclass, _parse_asd_ste100 with unknown-key/mode/limit/disableRules validation, DEFAULT_DIAGNOSE_CHECKS gains opt-in asdSte100=false, StyleProfile.asd_ste100 wired through _parse_profile.",
+      "created_at": "2026-10-03T16:04:50.641439Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:01.830618Z",
-  "updated_at": "2026-10-03T15:49:01.830655Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:04:51.321221Z",
+  "closed_at": "2026-10-03T16:04:51.321148Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

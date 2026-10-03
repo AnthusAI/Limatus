@@ -1,0 +1,54 @@
+schemaVersion: 1
+profile: asd-ste100-profile.yml
+mustFail:
+  - id: gold-vocabulary
+    path: gold/must-fail/gold-vocabulary.md
+    expectKinds:
+      - asd_unapproved_word
+    expectTerms:
+      - utilize
+      - purchase
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+  - id: gold-structure
+    path: gold/must-fail/gold-structure.md
+    expectKinds:
+      - asd_sentence_too_long
+      - asd_multiple_instructions
+    expectTerms:
+      - unit level
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+  - id: gold-voice
+    path: gold/must-fail/gold-voice.md
+    expectKinds:
+      - asd_passive_voice
+      - asd_ing_form
+      - asd_missing_article
+    expectTerms:
+      - replaced
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+mustPass:
+  - id: gold-clean-procedure
+    path: gold/must-pass/gold-clean-procedure.md
+    expectKinds: []
+    maxFindings: 0
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options
+  - id: gold-clean-description
+    path: gold/must-pass/gold-clean-description.md
+    expectKinds: []
+    maxFindings: 0
+    optionSafety:
+      forbidKeys:
+        - revised_text
+        - options

@@ -3,7 +3,7 @@
   "title": "Curate starter STE approved-word dictionary data",
   "description": "Create the dictionary data file (packaged under src/limatus/data/ next to SKILL.md) with approved words, one-meaning-per-word entries, and non-approved alternatives, seeded from the ASD-STE100 approved-word list. Data-only task; checks consume it later.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "40815799-6096-499c-9200-b04505f29bec",
+      "author": "home",
+      "text": "Dictionary data: src/limatus/data/asd-ste100-dictionary.yml (synthetic starter seed: 33 approved words, 5 one-meaning rules, 5 technical names, 8 unapproved words with alternatives; description documents that the licensed ASD-STE100 word list is not bundled). Wired into package-data in pyproject.toml and loaded via _load_asd_dictionary().",
+      "created_at": "2026-10-03T16:12:11.202293Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:04.635529Z",
-  "updated_at": "2026-10-03T15:49:04.635554Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:12:12.287645Z",
+  "closed_at": "2026-10-03T16:12:12.287618Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

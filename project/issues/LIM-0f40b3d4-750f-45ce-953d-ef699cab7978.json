@@ -3,7 +3,7 @@
   "title": "Implement sentence-length and one-instruction-per-sentence checks",
   "description": "Add checks over sentence_spans from src/limatus/editorial_text.py, with word counts and per-mode limits wired to the procedure-vs-description mode; follow _make_finding and _occupied_spans conventions.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "583da01c-1d6a-4280-a9f7-e7008deb8f65",
+      "author": "home",
+      "text": "Implemented asd_sentence_too_long (per-mode limits, list markers stripped) and asd_multiple_instructions (imperative segment heuristic) in editorial_diagnosis.py. behave: 22 scenarios passed on asd-ste100.feature; pytest: 191 passed.",
+      "created_at": "2026-10-03T16:19:47.969117Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:08.213637Z",
-  "updated_at": "2026-10-03T15:49:08.213688Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:19:48.670590Z",
+  "closed_at": "2026-10-03T16:19:48.670567Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

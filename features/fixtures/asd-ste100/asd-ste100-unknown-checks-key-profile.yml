@@ -1,0 +1,52 @@
+schemaVersion: 1
+publicationKey: ste-manual-example
+voice:
+  name: Simplified technical manual voice
+audience: Equipment operators following maintenance procedures.
+tone:
+  - Direct and impersonal.
+sentenceStyle:
+  - One instruction per sentence.
+  - Active voice.
+structure:
+  - Numbered steps for procedures.
+  - Short descriptive sentences for descriptions.
+lexicon:
+  prefer:
+    - press
+    - wait
+    - remove
+    - insert
+    - indicator
+    - filter
+  avoid:
+    - game-changing
+    - leverage
+    - seamless
+evidenceRules:
+  - Follow the approved word list.
+  - Do not invent steps.
+referenceSamples:
+  - id: sample-one
+    title: Synthetic sample one
+    url: https://example.com/samples/one
+    path: reference-samples/sample-one.md
+  - id: sample-two
+    title: Synthetic sample two
+    url: https://example.com/samples/two
+    path: reference-samples/sample-two.md
+  - id: sample-three
+    title: Synthetic sample three
+    url: https://example.com/samples/three
+    path: reference-samples/sample-three.md
+  - id: sample-four
+    title: Synthetic sample four
+    url: https://example.com/samples/four
+    path: reference-samples/sample-four.md
+  - id: sample-five
+    title: Synthetic sample five
+    url: https://example.com/samples/five
+    path: reference-samples/sample-five.md
+checks:
+  asdSte100: true
+  asdVocabulary: true

@@ -3,7 +3,7 @@
   "title": "Allow dictionary overrides through style-profile rules",
   "description": "Let profiles extend or override the packaged dictionary (project-specific approved words and technical names) via the rules section, reusing the RULES_FIELD_NAMES validation pattern; unknown keys must fail validation.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "974d9b16-e1b0-4583-8f7e-030ac75fed04",
+      "author": "home",
+      "text": "Overrides via the asdSte100 profile section: approvedWords, technicalNames, unapprovedWords ({word, approvedAlternative}) with strict validation (_parse_asd_unapproved_words, unknown entry keys fail). Deviation from the filed wording: implemented in the asdSte100 section rather than the generic rules section, to keep rule-set config together; same RULES_FIELD_NAMES-style validation pattern.",
+      "created_at": "2026-10-03T16:12:14.397767Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:06.215502Z",
-  "updated_at": "2026-10-03T15:49:06.215545Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:12:15.055824Z",
+  "closed_at": "2026-10-03T16:12:15.055802Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

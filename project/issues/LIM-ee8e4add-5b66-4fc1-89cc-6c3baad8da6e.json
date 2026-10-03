@@ -3,7 +3,7 @@
   "title": "Spec: Gherkin for sentence-length and one-instruction-per-sentence limits",
   "description": "Spec-first. Scenarios: a procedure sentence over 20 words surfaces a finding; a description sentence over 25 words surfaces a finding; a sentence with two instructions surfaces a finding; boundary cases (exactly at limit) stay clean.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "a1d542aa-2d44-4fac-9194-eba068df53d8",
+      "author": "home",
+      "text": "Spec complete: Gherkin scenarios for sentence-length (20/25-word limits) and one-instruction-per-sentence added to features/asd-ste100.feature with synthetic fixture drafts; confirmed red (7 new flag scenarios failed) before implementation.",
+      "created_at": "2026-10-03T16:19:45.243576Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:06.803134Z",
-  "updated_at": "2026-10-03T15:49:06.803168Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:19:46.027721Z",
+  "closed_at": "2026-10-03T16:19:46.027694Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

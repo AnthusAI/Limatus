@@ -28,6 +28,9 @@ DEFAULT_DIAGNOSE_CHECKS: dict[str, bool] = {
     "uncontractedForms": True,
     "punchlineCadence": True,
     "openingScreen": True,
+    # Rule-set plugins are opt-in: the bot-slop heuristics stay on by default,
+    # but a controlled-natural-language rule set only runs when the profile asks for it.
+    "asdSte100": False,
 }
 
 DEFAULT_DENSITY_THRESHOLDS = {
@@ -72,6 +75,35 @@ ALLOWED_HEADLINE_SUBTITLE_ROLES = frozenset({"articleSummary"})
 DEFAULT_HEADLINE_ORDER = ("title", "subtitle")
 
 COMPARE_SECTION_FIELD_NAMES = frozenset({"hardConstraints"})
+
+ASD_STE100_FIELD_NAMES = frozenset(
+    {
+        "enabled",
+        "exclusive",
+        "mode",
+        "maxWordsProcedure",
+        "maxWordsDescription",
+        "disableRules",
+        "approvedWords",
+        "technicalNames",
+        "unapprovedWords",
+    }
+)
+ALLOWED_ASD_STE100_MODES = frozenset({"auto", "procedure", "description"})
+ALLOWED_ASD_STE100_RULE_NAMES = frozenset(
+    {
+        "approvedWords",
+        "oneMeaningPerWord",
+        "sentenceLength",
+        "oneInstructionPerSentence",
+        "activeVoice",
+        "imperativeProcedures",
+        "noIngForms",
+        "articles",
+    }
+)
+DEFAULT_ASD_STE100_MAX_WORDS_PROCEDURE = 20
+DEFAULT_ASD_STE100_MAX_WORDS_DESCRIPTION = 25
 
 COMPARE_HARD_CONSTRAINT_UNSUPPORTED_CLAIMS_INCREASE = "unsupported_claims_increase"
 
@@ -153,6 +185,21 @@ DEFAULT_JUDGE_MODEL = "gpt-5.6-terra"
 
 
 @dataclass(frozen=True)
+class AsdSte100Config:
+    """Rule-set plugin configuration for ASD-STE100 Simplified Technical English."""
+
+    enabled: bool = True
+    exclusive: bool = False
+    mode: str = "auto"
+    max_words_procedure: int = DEFAULT_ASD_STE100_MAX_WORDS_PROCEDURE
+    max_words_description: int = DEFAULT_ASD_STE100_MAX_WORDS_DESCRIPTION
+    disabled_rules: tuple[str, ...] = ()
+    approved_words: tuple[str, ...] = ()
+    technical_names: tuple[str, ...] = ()
+    unapproved_words: tuple[dict[str, str], ...] = ()
+
+
+@dataclass(frozen=True)
 class StyleProfile:
     publication_key: str
     voice_name: str
@@ -174,6 +221,7 @@ class StyleProfile:
     editorial_aim: str | None
     compare_hard_constraints: tuple[str, ...]
     opening_screen: OpeningScreenRules | None = None
+    asd_ste100: AsdSte100Config | None = None
 
 
 @dataclass(frozen=True)
@@ -282,6 +330,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
     judge = _parse_judge(raw.get("judge"), profile_path)
     editorial_aim = _parse_editorial_aim(raw.get("editorialAim"), profile_path)
     compare_hard_constraints = _parse_compare_section(raw.get("compare"), profile_path)
+    asd_ste100 = _parse_asd_ste100(raw.get("asdSte100"), profile_path)
 
     return StyleProfile(
         publication_key=publication_key,
@@ -304,6 +353,7 @@ def _parse_profile(raw: dict[str, Any], profile_path: Path) -> StyleProfile:
         editorial_aim=editorial_aim,
         compare_hard_constraints=compare_hard_constraints,
         opening_screen=opening_screen,
+        asd_ste100=asd_ste100,
     )
 
 
@@ -345,6 +395,82 @@ def _parse_compare_section(value: Any, profile_path: Path) -> tuple[str, ...]:
             )
         names.append(name)
     return tuple(names)
+
+
+def _parse_asd_ste100(value: Any, profile_path: Path) -> AsdSte100Config | None:
+    if value is None:
+        return None
+    if not isinstance(value, dict):
+        raise StyleProfileValidationError(f"asdSte100 must be a mapping in {profile_path}")
+    unknown = set(value) - ASD_STE100_FIELD_NAMES
+    if unknown:
+        joined = ", ".join(sorted(str(key) for key in unknown))
+        raise StyleProfileValidationError(f"Unknown asdSte100 keys in {profile_path}: {joined}")
+    enabled = value.get("enabled", True)
+    if not isinstance(enabled, bool):
+        raise StyleProfileValidationError(f"asdSte100.enabled must be a boolean in {profile_path}")
+    exclusive = value.get("exclusive", False)
+    if not isinstance(exclusive, bool):
+        raise StyleProfileValidationError(f"asdSte100.exclusive must be a boolean in {profile_path}")
+    mode = value.get("mode", "auto")
+    if mode not in ALLOWED_ASD_STE100_MODES:
+        raise StyleProfileValidationError(
+            f"asdSte100.mode must be one of {', '.join(sorted(ALLOWED_ASD_STE100_MODES))} in {profile_path}"
+        )
+    max_words_procedure = _require_positive_int(
+        value.get("maxWordsProcedure", DEFAULT_ASD_STE100_MAX_WORDS_PROCEDURE),
+        "asdSte100.maxWordsProcedure",
+        profile_path,
+    )
+    max_words_description = _require_positive_int(
+        value.get("maxWordsDescription", DEFAULT_ASD_STE100_MAX_WORDS_DESCRIPTION),
+        "asdSte100.maxWordsDescription",
+        profile_path,
+    )
+    disabled_rules: list[str] = []
+    for index, name in enumerate(_optional_string_list(value.get("disableRules"), "asdSte100.disableRules", profile_path)):
+        if name not in ALLOWED_ASD_STE100_RULE_NAMES:
+            raise StyleProfileValidationError(
+                f"Unknown asdSte100.disableRules name '{name}' in {profile_path}; "
+                f"allowed: {', '.join(sorted(ALLOWED_ASD_STE100_RULE_NAMES))}"
+            )
+        disabled_rules.append(name)
+    approved_words = _optional_string_list(value.get("approvedWords"), "asdSte100.approvedWords", profile_path)
+    technical_names = _optional_string_list(value.get("technicalNames"), "asdSte100.technicalNames", profile_path)
+    unapproved_words = _parse_asd_unapproved_words(value.get("unapprovedWords"), profile_path)
+    return AsdSte100Config(
+        enabled=enabled,
+        exclusive=exclusive,
+        mode=mode,
+        max_words_procedure=max_words_procedure,
+        max_words_description=max_words_description,
+        disabled_rules=tuple(disabled_rules),
+        approved_words=tuple(approved_words),
+        technical_names=tuple(technical_names),
+        unapproved_words=unapproved_words,
+    )
+
+
+def _parse_asd_unapproved_words(value: Any, profile_path: Path) -> tuple[dict[str, str], ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, list):
+        raise StyleProfileValidationError(f"asdSte100.unapprovedWords must be a list in {profile_path}")
+    entries: list[dict[str, str]] = []
+    for index, entry in enumerate(value):
+        if not isinstance(entry, dict) or set(entry) - {"word", "approvedAlternative"}:
+            raise StyleProfileValidationError(
+                f"asdSte100.unapprovedWords[{index}] must be a mapping with 'word' and 'approvedAlternative' "
+                f"in {profile_path}"
+            )
+        word = _require_non_empty_string(entry.get("word"), f"asdSte100.unapprovedWords[{index}].word", profile_path)
+        alternative = _require_non_empty_string(
+            entry.get("approvedAlternative"),
+            f"asdSte100.unapprovedWords[{index}].approvedAlternative",
+            profile_path,
+        )
+        entries.append({"word": word, "approvedAlternative": alternative})
+    return tuple(entries)
 
 
 def _parse_judge(value: Any, profile_path: Path) -> JudgeConfig | None:

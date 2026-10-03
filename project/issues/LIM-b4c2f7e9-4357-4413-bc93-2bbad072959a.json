@@ -3,7 +3,7 @@
   "title": "ASD-STE100 CLI and docs",
   "description": "As an operator or copy-edit agent, I want the CLI, SDK, SKILL.md, and README to surface and document ASD-STE100 findings, so that the rule set is discoverable and usable without reading source.",
   "type": "epic",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "a032fc17-09eb-4573-b36c-b9b6219bc65b",
+      "author": "example-user",
+      "text": "Epic complete: CLI/SDK surfacing spec, README usage docs with example profile, SKILL.md and CHANGELOG.md updated. Full suite: 198 pytest, 34 behave features / 113 scenarios, 6/6 corpus evals, 5/5 STE gold evals.",
+      "created_at": "2026-10-03T16:34:42.213928Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:48:26.127266Z",
-  "updated_at": "2026-10-03T15:48:26.127304Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:34:42.576940Z",
+  "closed_at": "2026-10-03T16:34:42.576922Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

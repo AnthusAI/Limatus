@@ -3,7 +3,7 @@
   "title": "Verify STE and bot-slop checks coexist via checks gating",
   "description": "Add a validation scenario proving an STE profile can enable or disable individual bot-slop checks and STE checks independently, mirroring the checks mapping contract in README (unknown keys fail profile validation).",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "27e77d98-3ffa-4619-aa6d-6512d7877ee9",
+      "author": "home",
+      "text": "Coexistence proven: exclusive=true gates every bot-slop heuristic block off in diagnose_draft; default mode leaves them untouched. Gherkin STE-only and beside scenarios cover both directions; tests/test_asd_ste100_plugin.py asserts kinds.",
+      "created_at": "2026-10-03T16:04:53.380352Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:03.262068Z",
-  "updated_at": "2026-10-03T15:49:03.262113Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:04:54.169528Z",
+  "closed_at": "2026-10-03T16:04:54.169451Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

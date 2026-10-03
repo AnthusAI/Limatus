@@ -3,7 +3,7 @@
   "title": "Implement behave steps for asd-ste100 scenarios",
   "description": "Add step definitions under features/steps/ following the existing editorial scan/diagnosis steps so behave runs the new feature green.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "2089b244-4340-4438-8a68-ff3479f3f68c",
+      "author": "example-user",
+      "text": "Behave steps for asd-ste100 scenarios implemented across the epic (parse-based draft/finding steps, eval-manifest step and gold coverage assertion). All scenarios pass.",
+      "created_at": "2026-10-03T16:32:51.544222Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:14.513160Z",
-  "updated_at": "2026-10-03T15:49:14.513209Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:32:52.132841Z",
+  "closed_at": "2026-10-03T16:32:52.132819Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

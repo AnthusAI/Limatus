@@ -3,7 +3,7 @@
   "title": "ASD-STE100 writing rules: sentence length, voice, structure",
   "description": "As a technical writer, I want sentence-length limits (20 words for procedures, 25 for descriptions), one instruction per sentence, active voice, imperative procedures, no -ing forms (except -ing technical nouns), and article rules enforced, so that prose meets the STE writing rules. Spec first: Gherkin per rule group before heuristics.",
   "type": "epic",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "fbd5432b-4e32-4f5b-8f71-d62f87fa55d0",
+      "author": "home",
+      "text": "Epic complete: all five writing-rule tasks closed. Sentence-length (20/25), one-instruction-per-sentence, active voice, imperative procedures, -ing forms and articles implemented spec-first with synthetic fixtures. Suites: 191 pytest passed, 34 behave features (104 scenarios) passed, 6/6 offline eval checks passed.",
+      "created_at": "2026-10-03T16:19:53.779620Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:48:24.631657Z",
-  "updated_at": "2026-10-03T15:48:24.631687Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:19:54.211099Z",
+  "closed_at": "2026-10-03T16:19:54.211076Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

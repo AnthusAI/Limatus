@@ -3,7 +3,7 @@
   "title": "ASD-STE100 plugin",
   "description": "Enforce the ASD-STE100 Simplified Technical English specification in Limatus as a first-class rule-set plugin alongside the existing bot-slop diagnosis heuristics. As a technical-publication operator, I want Limatus to check drafts against ASD-STE100 (controlled vocabulary, one meaning per word, sentence-length limits, one instruction per sentence, active voice, imperative procedures, no -ing forms, article rules), so that procedure and description text is verifiably STE-compliant before publication. Planning only: specs and gold examples come first per The Way; no implementation in this pass.",
   "type": "initiative",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "59dbd6e8-08c8-419e-90c4-df62d09a4f80",
+      "author": "example-user",
+      "text": "Initiative complete: all six epics landed (scaffolding, vocabulary, writing rules, procedure-vs-description handling, evals/gold corpus, CLI/docs) across Epics 1-6. Final suite: 198 pytest passed, 34 behave features / 113 scenarios passed, offline evals 6/6 and STE gold 5/5 with precision=1.0000 recall=1.0000. Delivered on PR branch cursor/limatus-ste100-impl-ddf6.",
+      "created_at": "2026-10-03T16:34:42.996617Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:47:50.471981Z",
-  "updated_at": "2026-10-03T15:47:50.472014Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:34:43.236042Z",
+  "closed_at": "2026-10-03T16:34:43.236006Z",
   "right_now_summary": null,
   "right_now_updated_at": null,
   "custom": {}

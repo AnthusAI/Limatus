@@ -18,3 +18,8 @@ Feature: Document intent
     Given a draft whose opening paragraph starts with an inline emphasis tag
     When I diagnose it with the surface-rules profile
     Then the document intent is "<em>Plexus</em> is the platform we run the whole loop on."
+
+  Scenario: An italic opening paragraph is still prose
+    Given a draft whose opening paragraph is set entirely in italics
+    When I diagnose it with the surface-rules profile
+    Then the document intent is "*Every month the client gets a scorecard with four rows on it, and nobody reads past the second.*"

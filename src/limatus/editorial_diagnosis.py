@@ -574,8 +574,9 @@ _MARKUP_LED_PARAGRAPH_PATTERN = re.compile(r"^(?:<|!\[)")
 _INLINE_TAG_LED_PARAGRAPH_PATTERN = re.compile(r"^<(?:em|strong|a|mark|code|i|b|span|abbr|cite|q|s|u)\b", re.IGNORECASE)
 _HTML_TAG_PATTERN = re.compile(r"<[^>]*>")
 _MINIMUM_WORDS_FOR_PROSE_AFTER_MARKUP = 3
-# A paragraph that is one emphasised run and nothing else is a caption under
-# an image, not an opening paragraph.
+# A paragraph that is one emphasised run and nothing else, right after an
+# image or a block of markup, is a caption, not an opening paragraph. The same
+# run with prose before it is an italic lede and stays prose.
 _CAPTION_PARAGRAPH_PATTERN = re.compile(r"(?:\*[^*\n]+\*|_[^_\n]+_)")
 
 
@@ -589,15 +590,21 @@ def _markup_led_paragraph_is_prose(paragraph: str) -> bool:
 def _prose_paragraph_spans(text: str) -> list[tuple[str, int, int]]:
     spans: list[tuple[str, int, int]] = []
     cursor = 0
+    previous_paragraph_was_markup = False
     for paragraph in paragraphs(text):
         paragraph_start = text.find(paragraph, cursor)
         if paragraph_start < 0:
             paragraph_start = cursor
         cursor = paragraph_start + len(paragraph)
         paragraph_text = paragraph.strip()
-        if _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph_text) or _CAPTION_PARAGRAPH_PATTERN.fullmatch(paragraph_text):
+        follows_markup = previous_paragraph_was_markup
+        is_markup = bool(_MARKUP_LED_PARAGRAPH_PATTERN.match(paragraph_text)) and not _markup_led_paragraph_is_prose(
+            paragraph_text
+        )
+        previous_paragraph_was_markup = is_markup
+        if is_markup or _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph_text):
             continue
-        if _MARKUP_LED_PARAGRAPH_PATTERN.match(paragraph_text) and not _markup_led_paragraph_is_prose(paragraph_text):
+        if follows_markup and _CAPTION_PARAGRAPH_PATTERN.fullmatch(paragraph_text):
             continue
         spans.append((paragraph, paragraph_start, paragraph_start + len(paragraph)))
     return spans
@@ -688,7 +695,7 @@ def _prose_has_number(paragraph: str) -> bool:
 
 
 def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str, Any]]:
-    prose_paragraphs = _prose_paragraph_spans(_mask_for_redundancy_shingling(text))
+    prose_paragraphs = _prose_paragraph_spans(text)
     if not prose_paragraphs:
         return []
     opening_paragraph, opening_start, _ = prose_paragraphs[0]

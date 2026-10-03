@@ -123,6 +123,27 @@ def step_given_curly_quoted_sentence_then_closer(context):
     )
 
 
+@given('a paragraph that closes on a quoted question followed by "she asked."')
+def step_given_quoted_question_with_attribution(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            '"Did the calibration step actually change anything for the reviewers this time?" she asked.',
+        ]
+    )
+
+
+@given("a draft whose opening paragraph is set entirely in italics")
+def step_given_italic_opening_paragraph(context):
+    context.draft_text = "\n".join(
+        [
+            "*Every month the client gets a scorecard with four rows on it, and nobody reads past the second.*",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(

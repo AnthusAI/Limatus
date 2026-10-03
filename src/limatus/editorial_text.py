@@ -10,7 +10,7 @@ def paragraphs(text: str) -> list[str]:
 
 
 def sentences(text: str) -> list[str]:
-    parts = re.split(r"(?<=[.!?])\s+|(?<=[.!?][\"\u201d\u2019'])\s+", text.strip())
+    parts = re.split(r"(?<=[.!?])\s+|(?<=[.!?][\"\u201d\u2019'])\s+(?=[A-Z\"\u201c\u2018(])", text.strip())
     return [part.strip() for part in parts if part.strip()]
 
 

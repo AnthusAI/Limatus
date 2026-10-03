@@ -79,6 +79,71 @@ def step_given_closing_numeric_statement(context):
     )
 
 
+@given("a paragraph that ends on a stand-alone ellipsis after a long sentence")
+def step_given_closing_ellipsis(context):
+    context.draft_text = " ".join(
+        [
+            "The reviewers kept disagreeing with the same kind of verdict.",
+            LONG_SENTENCE_ABOUT_APPROVAL,
+            "...",
+        ]
+    )
+
+
+@given("a draft whose opening paragraph starts with an inline emphasis tag")
+def step_given_inline_markup_opener(context):
+    context.draft_text = "\n".join(
+        [
+            "<em>Plexus</em> is the platform we run the whole loop on.",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
+@given("a paragraph where a quoted sentence is followed by a very short closing line")
+def step_given_quoted_sentence_then_closer(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            'The reviewer wrote "Ship it, and keep the calibration step exactly where it is in the loop."',
+            "So we did.",
+        ]
+    )
+
+
+@given("a paragraph where a sentence in curly single quotes is followed by a very short closing line")
+def step_given_curly_quoted_sentence_then_closer(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            "The reviewer wrote \u2018Ship it, and keep the calibration step exactly where it is in the loop.\u2019",
+            "So we did.",
+        ]
+    )
+
+
+@given('a paragraph that closes on a quoted question followed by "she asked."')
+def step_given_quoted_question_with_attribution(context):
+    context.draft_text = " ".join(
+        [
+            LONG_SENTENCE_ABOUT_REVIEW,
+            '"Did the calibration step actually change anything for the reviewers this time?" she asked.',
+        ]
+    )
+
+
+@given("a draft whose opening paragraph is set entirely in italics")
+def step_given_italic_opening_paragraph(context):
+    context.draft_text = "\n".join(
+        [
+            "*Every month the client gets a scorecard with four rows on it, and nobody reads past the second.*",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(
@@ -177,6 +242,75 @@ def step_given_mdx_preamble(context):
     )
 
 
+@given("a draft whose only later digit is inside a link address")
+def step_given_digit_only_in_link(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            "See [the write-up](/posts/2025/loop) for the details.",
+        ]
+    )
+
+
+@given("a draft whose only later digit is inside a citation component attribute")
+def step_given_digit_only_in_component(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            'The paper says so too.<Citation key="smith2024" /> We read it twice.',
+        ]
+    )
+
+
+@given('a draft whose opening paragraph follows "decision model" with a comma and "and"')
+def step_given_comma_clause_after_term(context):
+    context.draft_text = "\n".join(
+        [
+            "Say you've got a hosted decision model, and it grades tickets for you all day.",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
+@given("a draft whose only later digit is inside an HTML link address")
+def step_given_digit_only_in_html_link(context):
+    context.draft_text = "\n".join(
+        [
+            "Reviewers kept disagreeing about the same case.",
+            "",
+            'See <a href="https://arxiv.org/abs/2401.12345">the paper</a> for the details.',
+        ]
+    )
+
+
+@given('a draft whose opening paragraph follows "decision model" with a comma and "which is a"')
+def step_given_relative_clause_after_term(context):
+    context.draft_text = "\n".join(
+        [
+            "Say you've got a hosted decision model, which is a classifier that returns a verdict instead of prose.",
+            "",
+            "The second paragraph says more about it.",
+        ]
+    )
+
+
+@given(
+    'an MDX draft with a markdown image and an italic caption before an opening paragraph that uses "scorecard"'
+)
+def step_given_image_caption_preamble(context):
+    context.draft_text = "\n".join(
+        [
+            "![Four gauges](cover.png)",
+            "*Figure one shows the four gauges on the dashboard.*",
+            "",
+            "Every month the client gets a scorecard with 4 rows on it.",
+        ]
+    )
+
+
 @given("a draft whose first number arrives in its second paragraph")
 def step_given_number_arrives_late(context):
     context.draft_text = (
@@ -209,6 +343,16 @@ def step_then_opening_finding_for_term(context, term):
 def step_then_no_opening_finding_for_term(context, term):
     findings = _opening_findings_mentioning(context, term)
     assert not findings, findings
+
+
+@then("diagnosis reports no opening-screen finding about a missing number")
+def step_then_no_opening_missing_number(context):
+    findings = [
+        finding
+        for finding in _findings_of_kind(context, "opening_screen")
+        if "no number" in finding["rationale"]
+    ]
+    assert findings == [], findings
 
 
 @then("diagnosis reports an opening-screen finding about a missing number")

@@ -1,0 +1,23 @@
+{
+  "schema_version": 1,
+  "event_id": "75ea5ccf-84d1-46e1-8553-25f977f0022b",
+  "issue_id": "LIM-fd0dcadc-63d2-469c-a2c3-f93d3d0a0fc7",
+  "event_type": "issue_created",
+  "occurred_at": "2026-10-03T16:45:05.496Z",
+  "actor_id": "unknown",
+  "payload": {
+    "title": "Punch-line and caption edge cases left from PR 44 review",
+    "description": "Low items from the review of PR 44, none blocking. (1) _sentence_can_be_punchline excludes closers ending in straight or curly double quotes but not the curly right single quote U+2019. (2) A capitalised attribution after a quoted question ('...?' Ryan asked.) still splits and the attribution reads as a terse closer. (3) _check_punchline_cadence computes prose spans on masked text, so an image paragraph vanishes and a multi-sentence italic caption after it is treated as prose for cadence only; computing is_markup on raw text would make intent, opening-screen and cadence agree. (4) The image-plus-caption fixture joins them with one newline, so the follows_markup caption branch has no scenario; add one with a blank line between image and caption.",
+    "issue_type": "task",
+    "status": "open",
+    "priority": 3,
+    "assignee": null,
+    "parent": null,
+    "labels": [],
+    "agent": {
+      "platform": "claude-code",
+      "model": "claude-fable-5-1",
+      "name": "anthus-content-review"
+    }
+  }
+}

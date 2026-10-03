@@ -564,19 +564,47 @@ _PUNCHLINE_MAXIMUM_WORDS = 6
 _PUNCHLINE_PRECEDING_MINIMUM_WORDS = 14
 
 _NON_PROSE_PARAGRAPH_PATTERN = re.compile(
-    r"^(?:#|\||<|>|\{|```|---|!\[|import\s|export\s|[-*+]\s|\d+[.)]\s)"
+    r"^(?:#|\||>|\{|```|---|import\s|export\s|[-*+]\s|\d+[.)]\s)"
 )
+# A paragraph that opens with an inline tag is still prose when words remain
+# once the tags are taken out, as with an opening sentence that starts on an
+# emphasised product name. A paragraph that opens with a block element
+# (figure, div, p, a component) or with an image is markup, caption included.
+_MARKUP_LED_PARAGRAPH_PATTERN = re.compile(r"^(?:<|!\[)")
+_INLINE_TAG_LED_PARAGRAPH_PATTERN = re.compile(r"^<(?:em|strong|a|mark|code|i|b|span|abbr|cite|q|s|u)\b", re.IGNORECASE)
+_HTML_TAG_PATTERN = re.compile(r"<[^>]*>")
+_MINIMUM_WORDS_FOR_PROSE_AFTER_MARKUP = 3
+# A paragraph that is one emphasised run and nothing else, right after an
+# image or a block of markup, is a caption, not an opening paragraph. The same
+# run with prose before it is an italic lede and stays prose.
+_CAPTION_PARAGRAPH_PATTERN = re.compile(r"(?:\*[^*\n]+\*|_[^_\n]+_)")
+
+
+def _markup_led_paragraph_is_prose(paragraph: str) -> bool:
+    if not _INLINE_TAG_LED_PARAGRAPH_PATTERN.match(paragraph):
+        return False
+    without_markup = _HTML_TAG_PATTERN.sub(" ", paragraph)
+    return len(re.findall(r"[A-Za-z]+", without_markup)) >= _MINIMUM_WORDS_FOR_PROSE_AFTER_MARKUP
 
 
 def _prose_paragraph_spans(text: str) -> list[tuple[str, int, int]]:
     spans: list[tuple[str, int, int]] = []
     cursor = 0
+    previous_paragraph_was_markup = False
     for paragraph in paragraphs(text):
         paragraph_start = text.find(paragraph, cursor)
         if paragraph_start < 0:
             paragraph_start = cursor
         cursor = paragraph_start + len(paragraph)
-        if _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph):
+        paragraph_text = paragraph.strip()
+        follows_markup = previous_paragraph_was_markup
+        is_markup = bool(_MARKUP_LED_PARAGRAPH_PATTERN.match(paragraph_text)) and not _markup_led_paragraph_is_prose(
+            paragraph_text
+        )
+        previous_paragraph_was_markup = is_markup
+        if is_markup or _NON_PROSE_PARAGRAPH_PATTERN.match(paragraph_text):
+            continue
+        if follows_markup and _CAPTION_PARAGRAPH_PATTERN.fullmatch(paragraph_text):
             continue
         spans.append((paragraph, paragraph_start, paragraph_start + len(paragraph)))
     return spans
@@ -606,7 +634,7 @@ def _sentence_can_be_punchline(sentence: str) -> bool:
     stripped_sentence = sentence.strip().strip("*_")
     if not stripped_sentence or stripped_sentence[-1] in ":?\"\u201d'" or "```" in stripped_sentence:
         return False
-    if _NUMERIC_STATEMENT_PATTERN.search(stripped_sentence):
+    if _NUMERIC_STATEMENT_PATTERN.search(stripped_sentence) or word_count(stripped_sentence) == 0:
         return False
     return not _MARKDOWN_LINK_ONLY_SENTENCE_PATTERN.match(stripped_sentence)
 
@@ -628,7 +656,7 @@ def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
         flagged_indexes = drop_indexes if len(drop_indexes) >= 2 else [i for i in drop_indexes if i == last_index]
         closes_with_terse_tag = (
             last_index + 1 >= _TERSE_CLOSING_TAG_MINIMUM_PARAGRAPH_SENTENCES
-            and sentence_word_counts[last_index] <= _TERSE_CLOSING_TAG_MAXIMUM_WORDS
+            and 0 < sentence_word_counts[last_index] <= _TERSE_CLOSING_TAG_MAXIMUM_WORDS
             and sentence_word_counts[last_index - 1] >= 2 * sentence_word_counts[last_index]
             and _sentence_can_be_punchline(sentence_spans_in_paragraph[last_index][0])
         )
@@ -653,9 +681,17 @@ def _check_punchline_cadence(text: str) -> list[dict[str, Any]]:
 # The opening paragraph is the only one every reader sees. Terms a profile
 # lists as insider vocabulary must be defined in the sentence where they first
 # appear there, and a profile can require a concrete number on the first screen.
-_DEFINITION_AFTER_TERM_PATTERN = re.compile(r"^(?:\s*[,(:\u2014\u2013]|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)")
+_DEFINITION_AFTER_TERM_PATTERN = re.compile(
+    r"^(?:\s*[,(:\u2014\u2013](?!\s*(?:and|but|or|so|then)\b)|\s+-\s|\s+(?:is|are|means)\s+(?:a|an|the)\b)"
+)
 _DEFINITION_BEFORE_TERM_PATTERN = re.compile(r"\b(?:called|named|known as)\s+(?:an?\s+|the\s+)?$", re.IGNORECASE)
 _DIGIT_PATTERN = re.compile(r"\d")
+_MARKDOWN_LINK_ADDRESS_PATTERN = re.compile(r"\]\([^)]*\)")
+
+
+def _prose_has_number(paragraph: str) -> bool:
+    without_markup = _HTML_TAG_PATTERN.sub(" ", _MARKDOWN_LINK_ADDRESS_PATTERN.sub("]", paragraph))
+    return bool(_DIGIT_PATTERN.search(without_markup))
 
 
 def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str, Any]]:
@@ -692,8 +728,8 @@ def _check_opening_screen(text: str, rules: OpeningScreenRules) -> list[dict[str
                 )
             break
 
-    if rules.require_number and not _DIGIT_PATTERN.search(opening_paragraph):
-        later_prose_has_number = any(_DIGIT_PATTERN.search(paragraph) for paragraph, _, _ in prose_paragraphs[1:])
+    if rules.require_number and not _prose_has_number(opening_paragraph):
+        later_prose_has_number = any(_prose_has_number(paragraph) for paragraph, _, _ in prose_paragraphs[1:])
         if later_prose_has_number and opening_sentences:
             _, first_sentence_start, first_sentence_end = opening_sentences[0]
             findings.append(

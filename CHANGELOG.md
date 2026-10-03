@@ -1,6 +1,11 @@
 # CHANGELOG
 
 
+## Unreleased
+
+- Document intent comes from the first prose paragraph, so an MDX import line or front matter no longer stands in for what the draft is about.
+- Punch-line cadence no longer flags a short closing sentence that states a number; a numeric statement is a measurement, not a line to decode.
+
 ## v0.29.0 (2026-09-27)
 
 ### Features

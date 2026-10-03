@@ -267,7 +267,8 @@ def findings_marked_rewrite(
 
 
 def _extract_document_intent(text: str) -> str:
-    for paragraph in paragraphs(text):
+    prose_paragraphs = [paragraph for paragraph, _, _ in _prose_paragraph_spans(text)]
+    for paragraph in prose_paragraphs or paragraphs(text):
         for sentence in sentences(paragraph):
             cleaned = sentence.strip()
             if cleaned:
@@ -596,9 +597,16 @@ _TERSE_CLOSING_TAG_MINIMUM_PARAGRAPH_SENTENCES = 3
 _MARKDOWN_LINK_ONLY_SENTENCE_PATTERN = re.compile(r"^\[[^\]]*\]\([^)]*\)[.!]?$")
 
 
+# A short sentence that carries a number states a measurement; it is not a
+# line the reader has to decode.
+_NUMERIC_STATEMENT_PATTERN = re.compile(r"\d|%")
+
+
 def _sentence_can_be_punchline(sentence: str) -> bool:
     stripped_sentence = sentence.strip().strip("*_")
     if not stripped_sentence or stripped_sentence[-1] in ":?\"\u201d'" or "```" in stripped_sentence:
+        return False
+    if _NUMERIC_STATEMENT_PATTERN.search(stripped_sentence):
         return False
     return not _MARKDOWN_LINK_ONLY_SENTENCE_PATTERN.match(stripped_sentence)
 

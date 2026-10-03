@@ -68,6 +68,17 @@ def step_given_closing_drop(context):
     )
 
 
+@given("a paragraph that ends on a short sentence with a number in it after a long one")
+def step_given_closing_numeric_statement(context):
+    context.draft_text = " ".join(
+        [
+            "The reviewers kept disagreeing with the same kind of verdict.",
+            LONG_SENTENCE_ABOUT_APPROVAL,
+            "A coin flip gets 0.5.",
+        ]
+    )
+
+
 @given("a paragraph with a single short sentence between two long ones")
 def step_given_single_mid_paragraph_short(context):
     context.draft_text = " ".join(
@@ -104,6 +115,11 @@ def step_then_two_punchline_findings(context, first, second):
 def step_then_one_punchline_finding(context, only):
     excerpts = {finding["excerpt"] for finding in _findings_of_kind(context, "punchline_cadence")}
     assert excerpts == {only}, excerpts
+
+
+@then('the document intent is "{expected}"')
+def step_then_document_intent(context, expected):
+    assert context.diagnosis["document_intent"] == expected, context.diagnosis["document_intent"]
 
 
 @then("diagnosis reports no punch-line cadence finding")

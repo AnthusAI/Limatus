@@ -1,7 +1,10 @@
 from __future__ import annotations
 
 import re
+from pathlib import Path
 from typing import Any
+
+import yaml
 
 from .editorial_density import analyze_density, density_summary_as_dict
 from .editorial_diagnosis_schema import (
@@ -243,7 +246,100 @@ def _check_asd_ste100(text: str, config: AsdSte100Config) -> list[dict[str, Any]
     specification (vocabulary and dictionary rules, sentence-length and
     voice/structure rules, procedure-vs-description mode handling).
     """
-    return []
+    findings: list[dict[str, Any]] = []
+    if "approvedWords" not in config.disabled_rules:
+        findings.extend(_check_asd_vocabulary(text, config))
+    if "oneMeaningPerWord" not in config.disabled_rules:
+        findings.extend(_check_asd_multi_meaning(text, config))
+    return findings
+
+
+_ASD_STE100_DICTIONARY: dict[str, Any] | None = None
+
+
+def _load_asd_dictionary() -> dict[str, Any]:
+    global _ASD_STE100_DICTIONARY
+    if _ASD_STE100_DICTIONARY is None:
+        path = Path(__file__).parent / "data" / "asd-ste100-dictionary.yml"
+        _ASD_STE100_DICTIONARY = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+    return _ASD_STE100_DICTIONARY
+
+
+def _asd_technical_name_spans(lowered_text: str, technical_names: set[str]) -> list[tuple[int, int]]:
+    spans: list[tuple[int, int]] = []
+    for phrase in sorted(technical_names, key=len, reverse=True):
+        if not phrase:
+            continue
+        for match in re.finditer(r"\b" + re.escape(phrase) + r"\b", lowered_text):
+            spans.append((match.start(), match.end()))
+    return spans
+
+
+def _check_asd_vocabulary(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
+    dictionary = _load_asd_dictionary()
+    lowered = text.lower()
+    technical_names = set(dictionary.get("technicalNames", [])) | {
+        name.lower() for name in config.technical_names
+    }
+    occupied = _asd_technical_name_spans(lowered, technical_names)
+    approved = set(dictionary.get("approvedWords", [])) | {word.lower() for word in config.approved_words}
+    unapproved: dict[str, str] = {
+        str(entry["word"]).lower(): str(entry.get("approvedAlternative", "")).strip()
+        for entry in dictionary.get("unapprovedWords", [])
+    }
+    unapproved.update(
+        {str(entry["word"]).lower(): str(entry["approvedAlternative"]).strip() for entry in config.unapproved_words}
+    )
+    unapproved = {word: alt for word, alt in unapproved.items() if word not in approved}
+    findings: list[dict[str, Any]] = []
+    for word, alternative in sorted(unapproved.items()):
+        if not word:
+            continue
+        for match in re.finditer(r"\b" + re.escape(word) + r"\b", lowered):
+            if _spans_overlap(match.start(), match.end(), occupied):
+                continue
+            rationale = f"'{word}' is not on the approved word list."
+            if alternative:
+                rationale += f" Approved alternative: '{alternative}'."
+            findings.append(_make_finding("asd_unapproved_word", text, match.start(), match.end(), rationale))
+    return findings
+
+
+_ASD_MODAL_OR_INFINITIVE_MARKERS = {"to", "will", "must", "can", "should", "do", "does", "did", "please", "not"}
+
+
+def _check_asd_multi_meaning(text: str, config: AsdSte100Config) -> list[dict[str, Any]]:
+    dictionary = _load_asd_dictionary()
+    lowered = text.lower()
+    technical_names = set(dictionary.get("technicalNames", [])) | {
+        name.lower() for name in config.technical_names
+    }
+    occupied = _asd_technical_name_spans(lowered, technical_names)
+    findings: list[dict[str, Any]] = []
+    sentence_list = sentence_spans(text)
+    for rule in dictionary.get("oneMeaningRules", []):
+        word = str(rule["word"]).lower()
+        allowed = str(rule.get("allowedMeaning", "")).lower()
+        for match in re.finditer(r"\b" + re.escape(word) + r"\b", lowered):
+            if _spans_overlap(match.start(), match.end(), occupied):
+                continue
+            before = lowered[: match.start()].split()
+            previous_word = before[-1] if before else ""
+            used_as_noun = previous_word in {"a", "an", "the"}
+            sentence_initial = any(
+                sentence_start + (len(sentence) - len(sentence.lstrip())) == match.start()
+                for sentence, sentence_start, _ in sentence_list
+            )
+            used_as_verb = sentence_initial or previous_word in _ASD_MODAL_OR_INFINITIVE_MARKERS
+            violated = (allowed == "verb" and used_as_noun) or (allowed == "noun" and used_as_verb)
+            if not violated:
+                continue
+            rationale = (
+                f"'{word}' has one approved meaning ({allowed}); this usage reads as the "
+                f"{'noun' if allowed == 'verb' else 'verb'} form."
+            )
+            findings.append(_make_finding("asd_multi_meaning", text, match.start(), match.end(), rationale))
+    return findings
 
 
 def normalize_finding_decision(value: Any) -> str:

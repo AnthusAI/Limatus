@@ -56,6 +56,8 @@ checks:
   uniformCadence: false
   punchlineCadence: false
   openingScreen: false
+  punchlineCadence: false
+  openingScreen: false
   redundancy: false
   voiceMismatch: false
   missingAttribution: false
@@ -64,3 +66,10 @@ checks:
   uncontractedForms: false
 asdSte100:
   enabled: true
+  approvedWords:
+    - utilize
+    - service
+    - hatch
+  unapprovedWords:
+    - word: hover
+      approvedAlternative: hold

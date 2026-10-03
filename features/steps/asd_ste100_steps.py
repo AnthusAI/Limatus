@@ -20,6 +20,8 @@ BOT_SLOP_KINDS = {
     "uncontracted_form",
     "unsupported_certainty",
     "uniform_cadence",
+    "punchline_cadence",
+    "opening_screen",
     "voice_mismatch",
     "missing_attribution",
     "redundancy",
@@ -29,6 +31,7 @@ PROFILES = {
     "default": "asd-ste100-profile.yml",
     "beside": "asd-ste100-beside-profile.yml",
     "exclusive": "asd-ste100-exclusive-profile.yml",
+    "overrides": "asd-ste100-overrides-profile.yml",
     "unknown-option": "asd-ste100-unknown-option-profile.yml",
     "invalid-limit": "asd-ste100-invalid-limit-profile.yml",
     "unknown-checks-key": "asd-ste100-unknown-checks-key-profile.yml",
@@ -36,6 +39,11 @@ PROFILES = {
 DRAFTS = {
     "procedure": "procedure-draft.md",
     "sloppy": "sloppy-draft.md",
+    "unapproved": "unapproved-word-draft.md",
+    "clean-technical": "clean-technical-draft.md",
+    "multi-meaning": "multi-meaning-draft.md",
+    "override-approved": "override-approved-draft.md",
+    "override-unapproved": "override-unapproved-draft.md",
 }
 
 
@@ -93,6 +101,11 @@ def step_given_asd_beside_profile(context):
     _given_draft(context, "sloppy")
 
 
+@given("an ASD-STE100 style profile with dictionary overrides")
+def step_given_asd_overrides_profile(context):
+    _given_profile(context, "overrides")
+
+
 @given("an ASD-STE100 style profile with an unknown option")
 def step_given_asd_unknown_option_profile(context):
     _given_profile(context, "unknown-option")
@@ -118,6 +131,36 @@ def step_when_run_diagnose_procedure(context):
 
 @when("I run the diagnose command on a sloppy draft")
 def step_when_run_diagnose_sloppy(context):
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@when("I run the diagnose command on the unapproved-word draft")
+def step_when_run_diagnose_unapproved(context):
+    _given_draft(context, "unapproved")
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@when("I run the diagnose command on the clean technical draft")
+def step_when_run_diagnose_clean_technical(context):
+    _given_draft(context, "clean-technical")
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@when("I run the diagnose command on the multi-meaning draft")
+def step_when_run_diagnose_multi_meaning(context):
+    _given_draft(context, "multi-meaning")
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@when("I run the diagnose command on the override-approved draft")
+def step_when_run_diagnose_override_approved(context):
+    _given_draft(context, "override-approved")
+    context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
+
+
+@when("I run the diagnose command on the override-unapproved draft")
+def step_when_run_diagnose_override_unapproved(context):
+    _given_draft(context, "override-unapproved")
     context.cli_result = _run_diagnose_cli(context.profile_path, context.draft_path)
 
 
@@ -166,3 +209,30 @@ def step_then_fails_invalid_limit(context):
 def step_then_fails_unknown_checks_key(context):
     assert context.cli_result.returncode != 0, context.cli_result.stdout
     assert "asdVocabulary" in context.cli_result.stderr
+
+
+@then("the diagnosis reports an asd_unapproved_word finding naming the approved alternative")
+def step_then_reports_unapproved_word(context):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    kinds = _collect_kinds(context.diagnosis)
+    assert "asd_unapproved_word" in kinds, sorted(kinds)
+    findings = [f for f in context.diagnosis["generic_passages"] if f["kind"] == "asd_unapproved_word"]
+    assert findings, "expected an asd_unapproved_word finding with an approved alternative"
+    assert any("approved alternative" in f["rationale"].lower() for f in findings)
+
+
+@then("the diagnosis reports an asd_multi_meaning finding for the noun usage")
+def step_then_reports_multi_meaning(context):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    kinds = _collect_kinds(context.diagnosis)
+    assert "asd_multi_meaning" in kinds, sorted(kinds)
+
+
+@then("the diagnosis reports no asd_ findings")
+def step_then_reports_no_asd_findings(context):
+    assert context.cli_result.returncode == 0, context.cli_result.stderr
+    context.diagnosis = json.loads(context.cli_result.stdout)
+    asd_kinds = {k for k in _collect_kinds(context.diagnosis) if str(k).startswith("asd_")}
+    assert not asd_kinds, sorted(asd_kinds)

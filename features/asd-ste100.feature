@@ -37,3 +37,28 @@ Feature: ASD-STE100 rule-set plugin registration
     Given an ASD-STE100 style profile with an unknown checks key
     When I run the diagnose command on a procedure draft
     Then the command fails naming the unknown checks key
+
+  Scenario: An unapproved word with a known alternative is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the unapproved-word draft
+    Then the diagnosis reports an asd_unapproved_word finding naming the approved alternative
+
+  Scenario: Approved words and technical names are not flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the clean technical draft
+    Then the diagnosis reports no asd_ findings
+
+  Scenario: A verb-only word used as a noun is flagged
+    Given an ASD-STE100 style profile with default limits
+    When I run the diagnose command on the multi-meaning draft
+    Then the diagnosis reports an asd_multi_meaning finding for the noun usage
+
+  Scenario: Profile-approved words override the packaged dictionary
+    Given an ASD-STE100 style profile with dictionary overrides
+    When I run the diagnose command on the override-approved draft
+    Then the diagnosis reports no asd_ findings
+
+  Scenario: Profile-unapproved words extend the packaged dictionary
+    Given an ASD-STE100 style profile with dictionary overrides
+    When I run the diagnose command on the override-unapproved draft
+    Then the diagnosis reports an asd_unapproved_word finding naming the approved alternative

@@ -33,7 +33,7 @@ build-backend = "setuptools.build_meta"
 where = ["src"]
 
 [tool.setuptools.package-data]
-limatus = ["data/SKILL.md"]
+limatus = ["data/SKILL.md", "data/asd-ste100-dictionary.yml"]
 
 [tool.semantic_release]
 version_toml = ["pyproject.toml:project.version"]

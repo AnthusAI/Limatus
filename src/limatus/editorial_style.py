@@ -84,6 +84,9 @@ ASD_STE100_FIELD_NAMES = frozenset(
         "maxWordsProcedure",
         "maxWordsDescription",
         "disableRules",
+        "approvedWords",
+        "technicalNames",
+        "unapprovedWords",
     }
 )
 ALLOWED_ASD_STE100_MODES = frozenset({"auto", "procedure", "description"})
@@ -191,6 +194,9 @@ class AsdSte100Config:
     max_words_procedure: int = DEFAULT_ASD_STE100_MAX_WORDS_PROCEDURE
     max_words_description: int = DEFAULT_ASD_STE100_MAX_WORDS_DESCRIPTION
     disabled_rules: tuple[str, ...] = ()
+    approved_words: tuple[str, ...] = ()
+    technical_names: tuple[str, ...] = ()
+    unapproved_words: tuple[dict[str, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -429,6 +435,9 @@ def _parse_asd_ste100(value: Any, profile_path: Path) -> AsdSte100Config | None:
                 f"allowed: {', '.join(sorted(ALLOWED_ASD_STE100_RULE_NAMES))}"
             )
         disabled_rules.append(name)
+    approved_words = _optional_string_list(value.get("approvedWords"), "asdSte100.approvedWords", profile_path)
+    technical_names = _optional_string_list(value.get("technicalNames"), "asdSte100.technicalNames", profile_path)
+    unapproved_words = _parse_asd_unapproved_words(value.get("unapprovedWords"), profile_path)
     return AsdSte100Config(
         enabled=enabled,
         exclusive=exclusive,
@@ -436,7 +445,32 @@ def _parse_asd_ste100(value: Any, profile_path: Path) -> AsdSte100Config | None:
         max_words_procedure=max_words_procedure,
         max_words_description=max_words_description,
         disabled_rules=tuple(disabled_rules),
+        approved_words=tuple(approved_words),
+        technical_names=tuple(technical_names),
+        unapproved_words=unapproved_words,
     )
+
+
+def _parse_asd_unapproved_words(value: Any, profile_path: Path) -> tuple[dict[str, str], ...]:
+    if value is None:
+        return ()
+    if not isinstance(value, list):
+        raise StyleProfileValidationError(f"asdSte100.unapprovedWords must be a list in {profile_path}")
+    entries: list[dict[str, str]] = []
+    for index, entry in enumerate(value):
+        if not isinstance(entry, dict) or set(entry) - {"word", "approvedAlternative"}:
+            raise StyleProfileValidationError(
+                f"asdSte100.unapprovedWords[{index}] must be a mapping with 'word' and 'approvedAlternative' "
+                f"in {profile_path}"
+            )
+        word = _require_non_empty_string(entry.get("word"), f"asdSte100.unapprovedWords[{index}].word", profile_path)
+        alternative = _require_non_empty_string(
+            entry.get("approvedAlternative"),
+            f"asdSte100.unapprovedWords[{index}].approvedAlternative",
+            profile_path,
+        )
+        entries.append({"word": word, "approvedAlternative": alternative})
+    return tuple(entries)
 
 
 def _parse_judge(value: Any, profile_path: Path) -> JudgeConfig | None:

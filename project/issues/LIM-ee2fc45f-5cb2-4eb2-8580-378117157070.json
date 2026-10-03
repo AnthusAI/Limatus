@@ -1,0 +1,27 @@
+{
+  "id": "LIM-ee2fc45f-5cb2-4eb2-8580-378117157070",
+  "title": "Spec: Gherkin for active voice, imperative procedures, -ing forms, and articles",
+  "description": "Spec-first. Scenarios: passive constructions surface findings (extend the existing _PASSIVE_PATTERN approach); a procedure step not written as an imperative surfaces a finding; -ing forms outside approved technical nouns surface findings; missing required articles (a/an/the) surface findings.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-34df426a-51ec-417d-a213-5847e7196c32",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:07.570016Z",
+  "updated_at": "2026-10-03T15:49:07.570050Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

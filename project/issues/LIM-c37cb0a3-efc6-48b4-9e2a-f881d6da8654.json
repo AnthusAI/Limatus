@@ -1,0 +1,27 @@
+{
+  "id": "LIM-c37cb0a3-efc6-48b4-9e2a-f881d6da8654",
+  "title": "Spec: Gherkin for procedure-vs-description mode detection",
+  "description": "Spec-first. Scenarios: a numbered/stepped section is detected as a procedure and judged with procedure limits; running prose is detected as description and judged with description limits; mixed topics report the mode used per finding; unclassifiable text falls back to description limits.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-d8d79bb4-d379-40d7-81fe-55cb83658123",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:10.216325Z",
+  "updated_at": "2026-10-03T15:49:10.216364Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

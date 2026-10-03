@@ -1,0 +1,27 @@
+{
+  "id": "LIM-b4c2f7e9-4357-4413-bc93-2bbad072959a",
+  "title": "ASD-STE100 CLI and docs",
+  "description": "As an operator or copy-edit agent, I want the CLI, SDK, SKILL.md, and README to surface and document ASD-STE100 findings, so that the rule set is discoverable and usable without reading source.",
+  "type": "epic",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-501c5c60-d0d4-4a4b-b1cb-0d39014c3d3f",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:48:26.127266Z",
+  "updated_at": "2026-10-03T15:48:26.127304Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

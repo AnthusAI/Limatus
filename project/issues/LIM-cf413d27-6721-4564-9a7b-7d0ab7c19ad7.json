@@ -1,0 +1,27 @@
+{
+  "id": "LIM-cf413d27-6721-4564-9a7b-7d0ab7c19ad7",
+  "title": "Implement behave steps for asd-ste100 scenarios",
+  "description": "Add step definitions under features/steps/ following the existing editorial scan/diagnosis steps so behave runs the new feature green.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-beea9e7c-ea9e-4baf-9576-248f55e47331",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:14.513160Z",
+  "updated_at": "2026-10-03T15:49:14.513209Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

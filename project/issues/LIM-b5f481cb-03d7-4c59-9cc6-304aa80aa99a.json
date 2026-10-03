@@ -1,0 +1,27 @@
+{
+  "id": "LIM-b5f481cb-03d7-4c59-9cc6-304aa80aa99a",
+  "title": "ASD-STE100 plugin scaffolding and registration",
+  "description": "As a Limatus maintainer, I want the ASD-STE100 rule set to load and register like the existing bot-slop diagnosis checks, so that operators can opt a style profile into STE rules without forking the diagnose pipeline. Spec first: define the profile-preset load path, checks gating keys, and finding-kind registration before any code.",
+  "type": "epic",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-501c5c60-d0d4-4a4b-b1cb-0d39014c3d3f",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:48:23.657794Z",
+  "updated_at": "2026-10-03T15:48:23.657821Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

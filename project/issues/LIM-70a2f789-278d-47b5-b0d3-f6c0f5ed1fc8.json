@@ -1,0 +1,27 @@
+{
+  "id": "LIM-70a2f789-278d-47b5-b0d3-f6c0f5ed1fc8",
+  "title": "Implement topic and document mode detection",
+  "description": "Add mode detection over paragraphs and list structure using editorial_text helpers, exposing mode per section so rule checks can select the right limits.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-d8d79bb4-d379-40d7-81fe-55cb83658123",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:11.018508Z",
+  "updated_at": "2026-10-03T15:49:11.018541Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

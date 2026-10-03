@@ -1,0 +1,27 @@
+{
+  "id": "LIM-a1a14065-d330-4082-9c72-702143efe50c",
+  "title": "Implement active-voice and imperative-procedure checks",
+  "description": "Add heuristics detecting passive voice and non-imperative procedure steps, reusing and extending the passive-voice regex approach already present in editorial_diagnosis.py.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-34df426a-51ec-417d-a213-5847e7196c32",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:08.844986Z",
+  "updated_at": "2026-10-03T15:49:08.845024Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

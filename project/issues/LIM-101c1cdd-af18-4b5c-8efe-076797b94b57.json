@@ -1,0 +1,27 @@
+{
+  "id": "LIM-101c1cdd-af18-4b5c-8efe-076797b94b57",
+  "title": "Allow dictionary overrides through style-profile rules",
+  "description": "Let profiles extend or override the packaged dictionary (project-specific approved words and technical names) via the rules section, reusing the RULES_FIELD_NAMES validation pattern; unknown keys must fail validation.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-55e2b783-a51a-42c8-b440-fbbe2cca99c8",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:06.215502Z",
+  "updated_at": "2026-10-03T15:49:06.215545Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

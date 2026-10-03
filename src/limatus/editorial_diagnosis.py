@@ -151,7 +151,7 @@ def diagnose_draft(
     unsupported_claims: list[dict[str, Any]] = []
     voice_observations: list[dict[str, Any]] = []
     required_facts: list[dict[str, Any]] = []
-repetition_groups: list[dict[str, Any]] = []
+    repetition_groups: list[dict[str, Any]] = []
     density_summary: dict[str, Any] | None = None
 
     if not ste_only:

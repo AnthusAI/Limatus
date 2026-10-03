@@ -3,7 +3,7 @@
   "title": "Implement vocabulary checks in the diagnose pipeline",
   "description": "Add the unapproved-word and one-meaning-per-word check heuristics to src/limatus/editorial_diagnosis.py following the _check_* function pattern, gated by the new checks keys, honoring profile lexicon prefer/avoid interactions like _rules_term_conflicts_with_lexicon does.",
   "type": "task",
-  "status": "open",
+  "status": "closed",
   "priority": 2,
   "assignee": null,
   "creator": null,
@@ -12,10 +12,18 @@
     "asd-ste100"
   ],
   "dependencies": [],
-  "comments": [],
+  "comments": [
+    {
+      "id": "cd61deae-2eb1-4e4e-ac22-f1d2a6c2533c",
+      "author": "home",
+      "text": "Implemented in src/limatus/editorial_diagnosis.py: _check_asd_vocabulary (unapproved words with approved alternatives, technical-name span occupation) and _check_asd_multi_meaning (part-of-speech heuristics: article-prefixed noun usage vs sentence-initial imperative/modal verb usage), gated by disabledRules approvedWords/oneMeaningPerWord. 14 unit tests in tests/test_asd_ste100_vocabulary.py.",
+      "created_at": "2026-10-03T16:12:13.039877Z",
+      "comment_type": "default"
+    }
+  ],
   "created_at": "2026-10-03T15:49:05.533056Z",
-  "updated_at": "2026-10-03T15:49:05.533084Z",
-  "closed_at": null,
+  "updated_at": "2026-10-03T16:12:13.690146Z",
+  "closed_at": "2026-10-03T16:12:13.690123Z",
   "agent": {
     "platform": "cursor",
     "model": "GLM 5.3 Flash",

@@ -315,3 +315,22 @@ def step_then_summary_detected_mode(context, expected_mode):
 def step_given_asd_description_profile(context):
     _given_profile(context, "description")
     _given_draft(context, "procedure")
+
+
+@given("the checked-in ASD-STE100 eval manifest")
+def step_given_asd_eval_manifest(context):
+    context.eval_manifest = FIXTURE_ROOT / "eval-manifest.yml"
+
+
+@then("it reports the ASD-STE100 gold coverage")
+def step_then_asd_gold_coverage(context):
+    for entry_id in (
+        "mustFail/gold-vocabulary",
+        "mustFail/gold-structure",
+        "mustFail/gold-voice",
+        "mustPass/gold-clean-procedure",
+        "mustPass/gold-clean-description",
+    ):
+        assert f"PASS {entry_id}" in context.eval_result.stdout, context.eval_result.stdout
+    assert "offline eval: 5 passed, 0 failed" in context.eval_result.stdout
+    assert "finding metrics: precision=1.0000 recall=1.0000" in context.eval_result.stdout

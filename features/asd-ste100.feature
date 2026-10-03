@@ -148,3 +148,9 @@ Feature: ASD-STE100 rule-set plugin registration
     Given an ASD-STE100 style profile in description mode
     When I run the diagnose command on the long-procedure draft
     Then the diagnosis reports no asd_ findings
+
+  Scenario: The gold corpus meets the offline eval targets
+    Given the checked-in ASD-STE100 eval manifest
+    When I run the offline eval command
+    Then the offline eval exits successfully
+    And it reports the ASD-STE100 gold coverage

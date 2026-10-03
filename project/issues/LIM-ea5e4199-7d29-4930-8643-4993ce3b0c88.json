@@ -1,0 +1,27 @@
+{
+  "id": "LIM-ea5e4199-7d29-4930-8643-4993ce3b0c88",
+  "title": "Add gold must-fail and must-pass fixture drafts",
+  "description": "Copy the field-reject-to-fixture loop from README: STE-violating drafts under features/fixtures/editorial-diagnosis/must-fail/ with expectTerms, and clean STE drafts as mustPass rows; minimized excerpts that reproduce the behavior.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-beea9e7c-ea9e-4baf-9576-248f55e47331",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:13.117469Z",
+  "updated_at": "2026-10-03T15:49:13.117508Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

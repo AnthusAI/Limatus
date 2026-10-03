@@ -1,0 +1,27 @@
+{
+  "id": "LIM-b6112529-8a30-47ae-9d8d-b72657e7e402",
+  "title": "Write end-to-end features/asd-ste100.feature",
+  "description": "The product narrative for the plugin: one Feature covering diagnose against an STE profile across vocabulary, writing rules, mode handling, and CLI output, ordered happy path then variations then errors, matching how features/editorial-diagnosis.feature reads.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-beea9e7c-ea9e-4baf-9576-248f55e47331",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:12.385287Z",
+  "updated_at": "2026-10-03T15:49:12.385324Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

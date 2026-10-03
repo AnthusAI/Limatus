@@ -1,0 +1,27 @@
+{
+  "id": "LIM-b9b3f2a6-8a00-436d-8d03-9eaf398d5a49",
+  "title": "Spec: Gherkin for CLI and SDK surfacing of STE findings",
+  "description": "Spec-first. Scenarios: limatus diagnose with an STE profile emits STE kinds in the validated JSON; the SDK diagnose() call exposes the same; profile validation errors are reported on load; no rewrite payloads in diagnosis output.",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-b4c2f7e9-4357-4413-bc93-2bbad072959a",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:15.240775Z",
+  "updated_at": "2026-10-03T15:49:15.240815Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

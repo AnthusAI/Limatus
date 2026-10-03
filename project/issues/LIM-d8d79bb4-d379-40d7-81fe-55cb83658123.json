@@ -1,0 +1,27 @@
+{
+  "id": "LIM-d8d79bb4-d379-40d7-81fe-55cb83658123",
+  "title": "ASD-STE100 procedure vs description handling",
+  "description": "As a technical writer, I want Limatus to tell procedural text (steps, numbered instructions) from descriptive text and apply the correct rule set per topic, so that procedure limits and description limits never cross-fire. Spec first: mode detection behavior in Gherkin before implementation.",
+  "type": "epic",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-501c5c60-d0d4-4a4b-b1cb-0d39014c3d3f",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:48:25.048781Z",
+  "updated_at": "2026-10-03T15:48:25.048813Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

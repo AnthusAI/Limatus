@@ -1,0 +1,27 @@
+{
+  "id": "LIM-24c5da3c-1d02-4f85-88d6-ed99bd1439ec",
+  "title": "Verify STE and bot-slop checks coexist via checks gating",
+  "description": "Add a validation scenario proving an STE profile can enable or disable individual bot-slop checks and STE checks independently, mirroring the checks mapping contract in README (unknown keys fail profile validation).",
+  "type": "task",
+  "status": "open",
+  "priority": 2,
+  "assignee": null,
+  "creator": null,
+  "parent": "LIM-b5f481cb-03d7-4c59-9cc6-304aa80aa99a",
+  "labels": [
+    "asd-ste100"
+  ],
+  "dependencies": [],
+  "comments": [],
+  "created_at": "2026-10-03T15:49:03.262068Z",
+  "updated_at": "2026-10-03T15:49:03.262113Z",
+  "closed_at": null,
+  "agent": {
+    "platform": "cursor",
+    "model": "GLM 5.3 Flash",
+    "name": "Cursor Cloud Agent"
+  },
+  "right_now_summary": null,
+  "right_now_updated_at": null,
+  "custom": {}
+}

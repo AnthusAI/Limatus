@@ -29,6 +29,11 @@ Feature: Punch-line cadence
     When I diagnose it with the surface-rules profile
     Then diagnosis reports no punch-line cadence finding
 
+  Scenario: A closing ellipsis is not a punch line
+    Given a paragraph that ends on a stand-alone ellipsis after a long sentence
+    When I diagnose it with the surface-rules profile
+    Then diagnosis reports no punch-line cadence finding
+
   Scenario: One short sentence in the middle of a paragraph is not flagged
     Given a paragraph with a single short sentence between two long ones
     When I diagnose it with the surface-rules profile
